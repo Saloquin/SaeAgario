@@ -1,21 +1,21 @@
-package com.example.demo1wdassdfsdf;
+package com.example.sae;
 
-import java.util.Random;
-
-import javafx.collections.ObservableMap;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 
-abstract class MoveableBody extends Entity{
 
+abstract class MoveableBody extends Entity{
     public double Speed = 1.5; // self explanatory, the player's speed
     public double Smoothing = 80; // higher numbers mean more smoothing, but also slower circle
 
     MoveableBody(Group group, double initialSize){
         super(group, initialSize);
+    }
+    MoveableBody(Group group, double initialSize, Color color){
+        super(group, initialSize,color);
     }
     MoveableBody(double initialSize){
         super(initialSize);
@@ -24,7 +24,7 @@ abstract class MoveableBody extends Entity{
     public void checkCollision(){
         //go through each of the children of the root scene
         for(Node entity : AgarioApplication.root.getChildren()){
-            if (entity instanceof Entity collider && !(entity instanceof Player)){
+            if (entity instanceof Entity collider /*&& !(entity instanceof Player)*/){
 
                 //make sure we dont check if the body is colliding with itself
                 if (entity != this){
@@ -35,14 +35,10 @@ abstract class MoveableBody extends Entity{
                     //if the body is colliding with something, increase the bodys size and remove the food from the scene
                     //this value will only be -1 if the player is colliding with nothing
                     if (intersect.getBoundsInLocal().getWidth() != -1){
-
-                        double foodValue = 0.5;
-
-                        //if the colliders sprite is smaller than this objects sprite, then eat the collider
                         if (isSmaller(collider.Sprite, Sprite)){
+
                             AgarioApplication.queueFree(collider);
-                            foodValue += collider.Sprite.getRadius() / 20;
-                            increaseSize(foodValue);
+                            increaseSize(((Entity) entity).getMasse());
                         }
                     }
                 }
@@ -61,8 +57,9 @@ abstract class MoveableBody extends Entity{
 
     public void increaseSize(double foodValue){
         //called whenever the player eats food
-        //once the player gets big enough, we want the camera to start zooming out
-        Sprite.setRadius(Sprite.getRadius() + foodValue);
+        //once the player gets big enough, we want the camera to start zooming out*
+        setMasse(getMasse() +foodValue);
+        Sprite.setRadius(10 * Math.sqrt(getMasse()));
         setViewOrder(-Sprite.getRadius());
 
     }
@@ -105,7 +102,7 @@ abstract class MoveableBody extends Entity{
 
 
     public void splitSprite(){
-        Player newBody = new Player(AgarioApplication.root, Sprite.getRadius() / 2);
+        Player newBody = new Player(AgarioApplication.root, Sprite.getRadius() / 2, Color.RED);
         newBody.Sprite.setCenterX(Sprite.getCenterX() + 30);
         newBody.Sprite.setCenterY(Sprite.getCenterY() + 30);
 

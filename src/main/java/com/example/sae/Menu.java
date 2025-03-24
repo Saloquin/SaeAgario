@@ -1,19 +1,11 @@
-package com.example.demo1wdassdfsdf;
+package com.example.sae;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
-import javafx.application.Application;
 import javafx.scene.control.Label;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-
-import java.io.FileInputStream;
 
 public class Menu extends VBox {
 

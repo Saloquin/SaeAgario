@@ -1,33 +1,22 @@
-package com.example.demo1wdassdfsdf;
+package com.example.sae;
 
 import javafx.animation.ScaleTransition;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.ParallelCamera;
-import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
-import static com.sun.java.accessibility.util.AWTEventMonitor.addKeyListener;
-
 public class Player extends MoveableBody{
+
 
     public ParallelCamera camera = new ParallelCamera(); // creates a camera for the player
     
     public double[] cameraScale = {camera.getScaleX(), camera.getScaleY()};
 
-    Player(Group group, double initialSize){
-        super(group, initialSize);
-        //new player made and added to the group
+    Player(Group group, double masse, Color color){
+        super(group, masse,color);
         Sprite.setCenterX(0);
         Sprite.setCenterY(0);
-
-        //puts the player infront of all the food
         Sprite.setViewOrder(-Sprite.getRadius());
 
     }

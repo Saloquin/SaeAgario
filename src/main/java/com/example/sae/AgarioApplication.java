@@ -1,31 +1,19 @@
-package com.example.demo1wdassdfsdf;
+package com.example.sae;
 
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.beans.EventHandler;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.security.Key;
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import static com.sun.java.accessibility.util.AWTEventMonitor.addKeyListener;
 
 
 public class           AgarioApplication extends Application {
@@ -90,8 +78,8 @@ public class           AgarioApplication extends Application {
 
     public static void startGame(Stage stage){
 
-        player = new Player(root, 50);
-        Enemy enemy = new Enemy(root, 50);
+        player = new Player(root, 5, Color.RED);
+        Enemy enemy = new Enemy(root, 5);
 
         scene = new Scene(root, ScreenWidth, ScreenHeight, Paint.valueOf("afafaf"));
         //set the camera to the players camera, which will follow the player
@@ -152,7 +140,7 @@ public class           AgarioApplication extends Application {
         }
 
         if (enemies < 5){
-            Enemy enemy = new Enemy(root, 50);
+            Enemy enemy = new Enemy(root, 5);
             enemies++;
         }
 
@@ -163,7 +151,7 @@ public class           AgarioApplication extends Application {
 
 
     public void createFood(){
-        Food food = new Food(root, 10);
+        Food food = new Food(root, 2);
     }
 
 

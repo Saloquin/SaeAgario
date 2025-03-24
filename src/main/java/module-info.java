@@ -5,6 +5,6 @@ module com.example.demo1wdassdfsdf {
     requires jdk.accessibility;
 
 
-    opens com.example.demo1wdassdfsdf to javafx.fxml;
-    exports com.example.demo1wdassdfsdf;
+    opens com.example.sae to javafx.fxml;
+    exports com.example.sae;
 }

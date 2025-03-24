@@ -1,8 +1,7 @@
-package com.example.demo1wdassdfsdf;
+package com.example.sae;
 
 
 import javafx.scene.Group;
-import javafx.scene.shape.Circle;
 
 
 public class Food extends Entity{

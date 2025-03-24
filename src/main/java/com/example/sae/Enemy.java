@@ -1,9 +1,6 @@
-package com.example.demo1wdassdfsdf;
+package com.example.sae;
 
 import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
 
 public class Enemy extends MoveableBody{
 
@@ -11,9 +8,8 @@ public class Enemy extends MoveableBody{
     private double closestEntityDistance;
     private Entity closestEntity;
 
-    Enemy(Group group, double initialSize){
-        super(group, initialSize);
-        //new Enemy made and added to the group
+    Enemy(Group group, double masse){
+        super(group, masse);
         Sprite.setCenterX((Math.random() * AgarioApplication.getMapLimitWidth() * 2) - AgarioApplication.getMapLimitWidth());
         Sprite.setCenterY((Math.random() * AgarioApplication.getMapLimitHeight() * 2) - AgarioApplication.getMapLimitHeight());
 
