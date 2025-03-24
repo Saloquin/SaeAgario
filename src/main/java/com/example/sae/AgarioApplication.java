@@ -1,7 +1,9 @@
 package com.example.sae;
 
 
+import com.example.sae.enemyStrategy.RandomMoveStrategy;
 import javafx.animation.AnimationTimer;
+import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -11,12 +13,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
-public class           AgarioApplication extends Application {
+public class AgarioApplication extends Application {
 
 
     public class GameTimer extends AnimationTimer{
@@ -126,6 +130,8 @@ public class           AgarioApplication extends Application {
     public int timer = maxTimer;
     public static int enemies = 0;
 
+
+
     public void Update(){
         //does something every frame, put actions in here
 
@@ -140,7 +146,7 @@ public class           AgarioApplication extends Application {
         }
 
         if (enemies < 5){
-            Enemy enemy = new Enemy(root, 5);
+            Enemy enemy = new Enemy(root, 5 );
             enemies++;
         }
 
@@ -174,4 +180,14 @@ public class           AgarioApplication extends Application {
         queuedObjectsForDeletion.clear();
 
     }
+    public static List<Entity> getEntities(Class<?> type) {
+        List<Entity> entities = new ArrayList<>();
+        for (Node entity : root.getChildren()) {
+            if (type.isInstance(entity)) {
+                entities.add((Entity) entity);  // Cast en Entity si le type est compatible
+            }
+        }
+        return entities;
+    }
+
 }

@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 
-abstract class Entity extends Group{
+public abstract class Entity extends Group{
     public Circle Sprite; // the entity's sprite
     private double masse;
 

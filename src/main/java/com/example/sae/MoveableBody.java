@@ -7,7 +7,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 
 
-abstract class MoveableBody extends Entity{
+public abstract class MoveableBody extends Entity{
     public double Speed = 1.5; // self explanatory, the player's speed
     public double Smoothing = 80; // higher numbers mean more smoothing, but also slower circle
 
@@ -35,20 +35,30 @@ abstract class MoveableBody extends Entity{
                     //if the body is colliding with something, increase the bodys size and remove the food from the scene
                     //this value will only be -1 if the player is colliding with nothing
                     if (intersect.getBoundsInLocal().getWidth() != -1){
-                        if (isSmaller(collider.Sprite, Sprite)){
-
-                            AgarioApplication.queueFree(collider);
-                            increaseSize(((Entity) entity).getMasse());
+                        if (isOverlappingEnough(this, entity, 0.33)) {
+                            if (isSmaller(collider.Sprite, Sprite)) {
+                                AgarioApplication.queueFree(collider);
+                                increaseSize(((Entity) entity).getMasse());
+                            }
                         }
                     }
                 }
             }
-
-         }
+        }
     }
 
+    private boolean isOverlappingEnough(Node a, Node b, double threshold) {
+        Shape intersect = Shape.intersect(((Entity) a).Sprite, ((Entity) b).Sprite);
+
+        double intersectionArea = intersect.getLayoutBounds().getWidth() * intersect.getLayoutBounds().getHeight();
+        double areaA = ((Entity) a).Sprite.getLayoutBounds().getWidth() * ((Entity) a).Sprite.getLayoutBounds().getHeight();
+
+        return (intersectionArea / areaA) <= threshold;
+    }
+
+
     private Boolean isSmaller(Circle circleOne, Circle circleTwo){
-        if (circleOne.getRadius() > circleTwo.getRadius() + 2){
+        if ((Math.pow(circleOne.getRadius(),2)/100)*1.33 > (Math.pow(circleTwo.getRadius(),2)/100)){
             return false;
         }
         return true;
@@ -63,41 +73,46 @@ abstract class MoveableBody extends Entity{
         setViewOrder(-Sprite.getRadius());
 
     }
-    
-    public void moveToward(double[] velocity) {
 
-        //initalize velocity, which is the mouse position - player position
-        velocity = new double[]{velocity[0] - Sprite.getCenterX(), velocity[1] - Sprite.getCenterY()};
+    public void moveToward(double[] mousePosition) {
+        double m = getMasse();
+        double maxSpeed = 100 / Math.sqrt(m); // Ajuster 100 selon le besoin
 
-        //used for the smooth movement depending on how far away the mouse is.
-        //further away from the circle, the faster the movement is etc.
-        double magnitudeSmoothing = Math.sqrt( (velocity[0] * velocity[0]) + (velocity[1] * velocity[1])) / Smoothing;
+        // Vecteur direction vers la souris
+        double[] velocity = new double[]{
+                mousePosition[0] - Sprite.getCenterX(),
+                mousePosition[1] - Sprite.getCenterY()
+        };
 
-        //limit speed of smoothing
-        if (magnitudeSmoothing > 4){
-            magnitudeSmoothing = 4 * Speed;
-        }
-        //normalize the position the player is going towards to get the direction
-        velocity = normalizeDouble(velocity);
+        // Distance du curseur au centre du joueur
+        double distance = Math.sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1]);
 
-        //multiply direction by Speed to get the final velocity value, multiply smoothing for smoother movement
-        velocity[0] *= Speed * magnitudeSmoothing;
-        velocity[1] *= Speed * magnitudeSmoothing;
-
-        //change Sprite position based on velocity
-        //also check if the player is at the world limit, if it is then it doesnt move
-        if (Sprite.getCenterX() + velocity[0] < AgarioApplication.getMapLimitWidth()){
-            if (Sprite.getCenterX() + velocity[0] > -AgarioApplication.getMapLimitWidth()){
-                Sprite.setCenterX(Sprite.getCenterX() + velocity[0] );
-            }
-        }
-        if (Sprite.getCenterY() + velocity[1] < AgarioApplication.getMapLimitHeight()){
-            if (Sprite.getCenterY() + velocity[1] > -AgarioApplication.getMapLimitHeight()){
-                Sprite.setCenterY(Sprite.getCenterY() + velocity[1]);
-            }
+        // Normalisation du vecteur de direction
+        if (distance > 0) {
+            velocity[0] /= distance;
+            velocity[1] /= distance;
         }
 
+        // Facteur de vitesse (proportionnel à la distance du curseur au joueur, max à `maxSpeed`)
+        double speedFactor = Math.min(distance / AgarioApplication.getScreenWidth(), 1.0);
+        double speed = maxSpeed * speedFactor;
+
+        // Appliquer la vitesse calculée
+        velocity[0] *= speed;
+        velocity[1] *= speed;
+
+        // Vérification des limites de la carte
+        double newX = Sprite.getCenterX() + velocity[0];
+        double newY = Sprite.getCenterY() + velocity[1];
+
+        if (newX < AgarioApplication.getMapLimitWidth() && newX > -AgarioApplication.getMapLimitWidth()) {
+            Sprite.setCenterX(newX);
+        }
+        if (newY < AgarioApplication.getMapLimitHeight() && newY > -AgarioApplication.getMapLimitHeight()) {
+            Sprite.setCenterY(newY);
+        }
     }
+
 
 
 
