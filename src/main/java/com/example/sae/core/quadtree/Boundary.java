@@ -1,4 +1,4 @@
-package com.example.sae.quadtree;
+package com.example.sae.core.quadtree;
 
 public class Boundary {
     // Position coordinates

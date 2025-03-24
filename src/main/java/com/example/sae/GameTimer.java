@@ -6,6 +6,7 @@ import javafx.scene.Node;
 
 import static com.example.sae.AgarioApplication.root;
 
+/**
 public class GameTimer extends AnimationTimer {
 
     private double framesPerSecond = 120;
@@ -38,3 +39,4 @@ public class GameTimer extends AnimationTimer {
         }
     }
 }
+*/

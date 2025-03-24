@@ -1,4 +1,4 @@
-package com.example.sae.quadtree;
+package com.example.sae.core.quadtree;
 
 import com.example.sae.entity.Entity;
 import java.util.ArrayList;

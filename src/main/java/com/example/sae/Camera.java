@@ -1,11 +1,9 @@
 package com.example.sae;
 
 import com.example.sae.entity.Entity;
-import com.example.sae.quadtree.Boundary;
-import javafx.animation.ScaleTransition;
+import com.example.sae.core.quadtree.Boundary;
 import javafx.beans.binding.Bindings;
 import javafx.scene.ParallelCamera;
-import javafx.util.Duration;
 
 public class Camera extends Boundary {
     private ParallelCamera camera;

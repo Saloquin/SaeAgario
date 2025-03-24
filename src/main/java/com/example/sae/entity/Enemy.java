@@ -13,19 +13,34 @@ public class Enemy extends MoveableBody {
     private EnemyStrategy strategy;
     private static final Random random = new Random();
     private double[] targetPosition;
+    private double strategyUpdateTimer = 0;
+    private static final double STRATEGY_UPDATE_INTERVAL = 10.0; // Secondes
+
     public Enemy(Group group, double masse) {
         super(group, masse);
         this.strategy = getRandomStrategy();
 
-        Sprite.setCenterX((Math.random() * AgarioApplication.getMapLimitWidth() * 2) - AgarioApplication.getMapLimitWidth());
-        Sprite.setCenterY((Math.random() * AgarioApplication.getMapLimitHeight() * 2) - AgarioApplication.getMapLimitHeight());
+        // Position initiale plus proche du centre
+        double spreadFactor = 0.7; // Réduire la dispersion
+        Sprite.setCenterX((Math.random() * AgarioApplication.getMapLimitWidth() * 2 - AgarioApplication.getMapLimitWidth()) * spreadFactor);
+        Sprite.setCenterY((Math.random() * AgarioApplication.getMapLimitHeight() * 2 - AgarioApplication.getMapLimitHeight()) * spreadFactor);
+
+        Speed = 2.0; // Vitesse de base plus élevée
     }
 
     @Override
     public void Update() {
+        // Changer de stratégie périodiquement
+        strategyUpdateTimer += 0.016; // Approximativement 60 FPS
+        if (strategyUpdateTimer >= STRATEGY_UPDATE_INTERVAL) {
+            strategy = getRandomStrategy();
+            strategyUpdateTimer = 0;
+        }
+
         if (strategy != null) {
             strategy.execute(this);
         }
+
         checkCollision();
     }
 
@@ -69,6 +84,11 @@ public class Enemy extends MoveableBody {
 
     @Override
     public void onDeletion() {
-        AgarioApplication.enemies--;
+        // Retirer du graphe de scène JavaFX si nécessaire
+        if (getParent() != null) {
+            ((Group) getParent()).getChildren().remove(this);
+        }
+        // Pas besoin de décrémenter enemies-- car cela devrait être géré par GameEngine
+        // qui maintient sa propre liste d'entités
     }
 }

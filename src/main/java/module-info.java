@@ -11,6 +11,6 @@ module com.example.sae {
     exports com.example.sae.entity;
     opens com.example.sae.entity to javafx.fxml;
     opens com.example.sae.controller to javafx.fxml;
-    exports com.example.sae.quadtree;
-    opens com.example.sae.quadtree to javafx.fxml; // Add this line
+    exports com.example.sae.core.quadtree;
+    opens com.example.sae.core.quadtree to javafx.fxml; // Add this line
 }

@@ -2,53 +2,68 @@ package com.example.sae;
 
 
 import com.example.sae.controller.MenuController;
+import com.example.sae.core.GameEngine;
 import com.example.sae.entity.Enemy;
 import com.example.sae.entity.Entity;
 import com.example.sae.entity.Food;
 import com.example.sae.entity.Player;
-import com.example.sae.quadtree.Boundary;
-import com.example.sae.quadtree.QuadTree;
+import com.example.sae.core.quadtree.Boundary;
+import com.example.sae.core.quadtree.QuadTree;
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
+import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
+import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 
 public class AgarioApplication extends Application {
-    public int maxTimer = 2;
-    public int timer = maxTimer;
-    public static int enemies = 0;
-    private static QuadTree quadTree;
-    private static final int QUAD_TREE_CAPACITY = 4;
-    private static final int QUAD_TREE_MAX_DEPTH = 6;
+
     private static Scene scene;
-    public static Group root = new Group();
-    public static double mapLimitWidth = 2000;
-    public static double mapLimitHeight = 2000;
-    public static double ScreenWidth = 1280;
-    public static double ScreenHeight = 720;
-    public static ArrayList queuedObjectsForDeletion = new ArrayList<>();
+    public static final Group root = new Group();
+
+    private static final double SCREEN_WIDTH = 1280;
+    private static final double SCREEN_HEIGHT = 720;
 
     public static Player player;
+    static boolean gameStarted = false;
+    private static GameEngine gameEngine;
+    private static Point2D mousePosition = new Point2D(0, 0);
+    private static boolean mouseMoved = false;
 
-    public static boolean gameStarted = false;
-    private static AgarioApplication mainApp;
+    private class GameTimer extends AnimationTimer {
+        private final double framesPerSecond = 120;
+        private final double interval = 1000000000 / framesPerSecond;
+        private double last = 0;
+
+        @Override
+        public void handle(long now) {
+            if (last == 0) {
+                last = now;
+            }
+
+            if (now - last > interval && gameStarted) {
+                last = now;
+                gameEngine.update();
+                updateGameLogic();
+            }
+        }
+    }
 
     @Override
     public void start(Stage stage) throws IOException {
-        mainApp = this;
-        GameTimer timer = new GameTimer(this);
+        GameTimer timer = new GameTimer();
         timer.start();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/menu-view.fxml"));
         VBox root = loader.load();
@@ -62,25 +77,26 @@ public class AgarioApplication extends Application {
         stage.show();
     }
 
-    public static AgarioApplication getMainApp() {
-        return mainApp;
-    }
-
     public static void startGame(Stage stage) throws IOException {
-        // Create and set root first
-        root = new Group();
-        scene = new Scene(root, ScreenWidth, ScreenHeight, Paint.valueOf("afafaf"));
-        stage.setScene(scene);
+        gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, false);
+        gameStarted = true;
+        scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT, Paint.valueOf("afafaf"));
+
+
+        // Configurer les événements souris immédiatement
+        scene.setOnMouseMoved(AgarioApplication::handleMouseMove);
+        scene.setOnMouseDragged(AgarioApplication::handleMouseMove);
+        scene.setOnMousePressed(AgarioApplication::handleMouseMove);
 
         // Create camera
         Camera camera = new Camera();
 
-        Boundary mapBoundary = new Boundary(0, 0, mapLimitWidth/2, mapLimitHeight/2);
-        quadTree = new QuadTree(mapBoundary, QUAD_TREE_CAPACITY, QUAD_TREE_MAX_DEPTH);
+
 
         // Create player with camera
         player = new Player(root, 5, Color.RED);
         player.setCamera(camera);
+        gameEngine.addEntity(player);
 
         // Set camera focus
         scene.setCamera(camera.getCamera());
@@ -93,9 +109,19 @@ public class AgarioApplication extends Application {
             }
         });
 
-        // Create enemies
-        Enemy enemy = new Enemy(root, 5);
-        gameStarted = true;
+        stage.setScene(scene);
+    }
+
+    private static void handleMouseMove(MouseEvent e) {
+        Point2D localPoint = root.screenToLocal(e.getScreenX(), e.getScreenY());
+        if (localPoint != null) {
+            mousePosition = localPoint;
+            mouseMoved = true;
+        }
+    }
+
+    public static GameEngine getGameEngine() {
+        return gameEngine;
     }
 
     public static Scene getScene() {
@@ -106,96 +132,21 @@ public class AgarioApplication extends Application {
         AgarioApplication.scene = scene;
     }
 
-    public static Group getRoot() {
-        return root;
+
+    public static double getScreenWidth() {
+        return SCREEN_WIDTH;
     }
 
-    public static void setRoot(Group root) {
-        AgarioApplication.root = root;
+    public static double getScreenHeight() {
+        return SCREEN_HEIGHT;
     }
 
-    public static void setMapLimitWidth(double mapLimitWidth) {
-        AgarioApplication.mapLimitWidth = mapLimitWidth;
+    public static double getMapLimitWidth() {
+        return gameEngine.getWorldWidth();
     }
 
-    public static void setMapLimitHeight(double mapLimitHeight) {
-        AgarioApplication.mapLimitHeight = mapLimitHeight;
-    }
-
-    public static void setScreenWidth(double screenWidth) {
-        ScreenWidth = screenWidth;
-    }
-
-    public static void setScreenHeight(double screenHeight) {
-        ScreenHeight = screenHeight;
-    }
-
-    public static ArrayList getQueuedObjectsForDeletion() {
-        return queuedObjectsForDeletion;
-    }
-
-    public static void setQueuedObjectsForDeletion(ArrayList queuedObjectsForDeletion) {
-        AgarioApplication.queuedObjectsForDeletion = queuedObjectsForDeletion;
-    }
-
-    public static Player getPlayer() {
-        return player;
-    }
-
-    public static void setPlayer(Player player) {
-        AgarioApplication.player = player;
-    }
-
-    public static boolean isGameStarted() {
-        return gameStarted;
-    }
-
-    public static void setGameStarted(boolean gameStarted) {
-        AgarioApplication.gameStarted = gameStarted;
-    }
-
-    public int getMaxTimer() {
-        return maxTimer;
-    }
-
-    public void setMaxTimer(int maxTimer) {
-        this.maxTimer = maxTimer;
-    }
-
-    public int getTimer() {
-        return timer;
-    }
-
-    public void setTimer(int timer) {
-        this.timer = timer;
-    }
-
-    public static int getEnemies() {
-        return enemies;
-    }
-
-    public static void setEnemies(int enemies) {
-        AgarioApplication.enemies = enemies;
-    }
-
-    static public double getScreenWidth(){
-        return scene.getWindow().getWidth();
-    }
-    static public double getScreenHeight(){
-        return scene.getWindow().getHeight();
-    }
-    static public double getMapLimitWidth(){
-        return mapLimitWidth;
-    }
-    static public double getMapLimitHeight(){
-        return mapLimitHeight;
-    }
-
-
-    static public double[] getMousePosition(){
-        java.awt.Point mouse = java.awt.MouseInfo.getPointerInfo().getLocation();
-        Point2D mousePos = root.screenToLocal(mouse.x, mouse.y);
-        return new double[]{mousePos.getX(), mousePos.getY()};
+    public static double getMapLimitHeight() {
+        return  gameEngine.getWorldHeight();
     }
 
 
@@ -204,67 +155,44 @@ public class AgarioApplication extends Application {
     }
 
 
+    private void updateGameLogic() {
+        // Gestion de la création de nourriture
+        if (gameEngine.getEntitiesOfType(Food.class).size() < 100) {
+            Food food = new Food(root, 2);
+            gameEngine.addEntity(food);
+        }
+
+        // Gestion des ennemis - Augmenter le nombre minimum d'ennemis
+        int currentEnemies = gameEngine.getEntitiesOfType(Enemy.class).size();
+        if (currentEnemies < 10) { // Augmenter de 5 à 10 ennemis
+            Enemy enemy = new Enemy(root, 5);
+            gameEngine.addEntity(enemy);
+        }
+    }
+
+    public static double[] getMousePosition() {
+        // Si la souris n'a pas encore bougé, retourner le centre de l'écran
+        if (!mouseMoved) {
+            return new double[]{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+        }
+        return new double[]{mousePosition.getX(), mousePosition.getY()};
+    }
 
 
+    public static void queueFree(Entity entity) {
+        // Remove from GameEngine instead of using a queue
+        if (gameEngine != null) {
+            gameEngine.removeEntity(entity);
+            entity.onDeletion();
 
-
-    public void Update(){
-        //does something every frame, put actions in here
-
-
-        //spawn food every 5 frames
-        if (timer <= 0){
-            if (root.getChildren().size() < 1000){
-                createFood();
+            // If the entity is in the JavaFX scene graph, remove it
+            if (entity.getParent() != null) {
+                root.getChildren().remove(entity);
             }
-            
-            timer = maxTimer; //reset the timer
         }
-
-        if (enemies < 5){
-            Enemy enemy = new Enemy(root, 5 );
-            enemies++;
-        }
-
-        timer--; //decrement timer
-
     }
 
 
 
-    public void createFood(){
-        Food food = new Food(root, 2);
-        quadTree.insert(food);
-    }
-
-
-    public static void queueFree(Object object){
-        //there are errors when deleting objects inbetween of frames, mostly just unsafe in general
-        //so when you want to delete an object, reference AgarioApplication and call this function queueFree
-        //e.g. AgarioApplication.queueFree(foodSprite);
-        //puts objects in a dynamic array, just means an array that doesnt have a fixed size
-        //every frame before the update function is called, the objects in the queue will be deleted
-        queuedObjectsForDeletion.add(object);
-        Entity entity = (Entity) object;    
-        entity.onDeletion();
-    }
-
-    public void freeQueuedObjects(){
-        //deletes all objects in the queue
-        //complicated to explain why we have to do it this way
-        //just know if we dont, there will be tons of lag and errors every frame
-        root.getChildren().removeAll(queuedObjectsForDeletion);
-        queuedObjectsForDeletion.clear();
-
-    }
-    public static List<Entity> getNearbyEntities(Entity entity, double range) {
-        Boundary searchArea = new Boundary(
-                entity.Sprite.getCenterX(),
-                entity.Sprite.getCenterY(),
-                range,
-                range
-        );
-        return quadTree.query(searchArea);
-    }
 
 }

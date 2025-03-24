@@ -1,0 +1,177 @@
+package com.example.sae.network;
+
+import com.example.sae.core.GameEngine;
+import com.example.sae.entity.Entity;
+import com.example.sae.entity.Food;
+import com.example.sae.entity.Player;
+import javafx.scene.paint.Color;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+public class AgarioServer {
+    private static final int PORT = 12345;
+    private static final int TARGET_FPS = 30;
+    private static final long FRAME_TIME = 1000000000 / TARGET_FPS; // 33ms en nanos
+
+    private final GameEngine gameEngine;
+    private final Map<String, ClientHandler> clientHandlers;
+    private final ServerSocket serverSocket;
+    private volatile boolean running;
+
+    public AgarioServer() throws IOException {
+        this.gameEngine = new GameEngine(2000, 2000, true); // Même taille que le jeu original
+        this.clientHandlers = new ConcurrentHashMap<>();
+        this.serverSocket = new ServerSocket(PORT);
+        this.running = true;
+
+        initializeWorld();
+    }
+
+    private void initializeWorld() {
+        // Initialiser la nourriture
+        for (int i = 0; i < 100; i++) {
+            Food food = new Food(null, 2); // null car pas besoin de Group côté serveur
+            gameEngine.addEntity(food);
+        }
+    }
+
+    public void start() {
+        // Thread pour la mise à jour du jeu
+        Thread gameUpdateThread = new Thread(this::gameLoop);
+        gameUpdateThread.start();
+
+        // Thread principal pour accepter les connexions
+        System.out.println("Serveur démarré sur le port " + PORT);
+        while (running) {
+            try {
+                Socket clientSocket = serverSocket.accept();
+                String clientId = UUID.randomUUID().toString();
+                ClientHandler handler = new ClientHandler(clientSocket, clientId);
+                clientHandlers.put(clientId, handler);
+                new Thread(handler).start();
+            } catch (IOException e) {
+                if (running) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void gameLoop() {
+        long lastUpdate = System.nanoTime();
+
+        while (running) {
+            long now = System.nanoTime();
+            if (now - lastUpdate >= FRAME_TIME) {
+                gameEngine.update();
+                broadcastGameState();
+                lastUpdate = now;
+            }
+        }
+    }
+
+    private void broadcastGameState() {
+        String gameState = serializeGameState();
+        clientHandlers.values().stream()
+                .filter(ClientHandler::isReady)
+                .forEach(handler -> handler.sendMessage(gameState));
+    }
+
+    private String serializeGameState() {
+        StringBuilder state = new StringBuilder("GAMESTATE|");
+
+        for (Entity entity : gameEngine.getEntities()) {
+            state.append(String.format("%s,%s,%.2f,%.2f,%.2f|",
+                    entity.getClass().getSimpleName(),
+                    entity instanceof Player ? ((Player)entity).getId() : "food",
+                    entity.getPosition()[0],
+                    entity.getPosition()[1],
+                    entity.getMasse()));
+        }
+
+        return state.toString();
+    }
+
+    class ClientHandler implements Runnable {
+        private final Socket socket;
+        private final String clientId;
+        private final PrintWriter out;
+        private final BufferedReader in;
+        private boolean ready;
+        private Player player;
+
+        public ClientHandler(Socket socket, String clientId) throws IOException {
+            this.socket = socket;
+            this.clientId = clientId;
+            this.out = new PrintWriter(socket.getOutputStream(), true);
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.ready = false;
+
+            // Créer un nouveau joueur pour ce client
+            this.player = new Player(null, 5, Color.RED); // null car pas besoin de Group côté serveur
+            gameEngine.addEntity(player);
+
+            // Envoyer l'ID et les informations initiales
+            sendMessage("ID|" + clientId);
+        }
+
+        @Override
+        public void run() {
+            try {
+                String input;
+                while ((input = in.readLine()) != null) {
+                    handleClientInput(input);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                disconnect();
+            }
+        }
+
+        private void handleClientInput(String input) {
+            String[] parts = input.split("\\|");
+            if (parts.length < 1) return;
+
+            switch (parts[0]) {
+                case "READY" -> ready = true;
+                case "MOVE" -> {
+                    if (parts.length == 3) {
+                        double x = Double.parseDouble(parts[1]);
+                        double y = Double.parseDouble(parts[2]);
+                        player.moveToward(new double[]{x, y});
+                    }
+                }
+            }
+        }
+
+        public void sendMessage(String message) {
+            out.println(message);
+        }
+
+        public boolean isReady() {
+            return ready;
+        }
+
+        private void disconnect() {
+            try {
+                gameEngine.removeEntity(player);
+                clientHandlers.remove(clientId);
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            new AgarioServer().start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}

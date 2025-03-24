@@ -1,6 +1,7 @@
 package com.example.sae.entity;
 
 import com.example.sae.AgarioApplication;
+import com.example.sae.core.GameEngine;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -9,7 +10,7 @@ import javafx.scene.shape.Shape;
 
 
 public abstract class MoveableBody extends Entity{
-    public double Speed = 1.5; // self explanatory, the player's speed
+    public double Speed = 1.5;
     public double Smoothing = 80; // higher numbers mean more smoothing, but also slower circle
 
     MoveableBody(Group group, double initialSize){
@@ -21,26 +22,21 @@ public abstract class MoveableBody extends Entity{
     MoveableBody(double initialSize){
         super(initialSize);
     }
-    
-    public void checkCollision(){
-        //go through each of the children of the root scene
-        for(Node entity : AgarioApplication.root.getChildren()){
-            if (entity instanceof Entity collider /*&& !(entity instanceof Player)*/){
 
-                //make sure we dont check if the body is colliding with itself
-                if (entity != this){
+    public void checkCollision() {
+        // Obtenir le GameEngine via AgarioApplicationTest2
+        GameEngine gameEngine = AgarioApplication.getGameEngine();
+        if (gameEngine == null) return;
 
-                    //checks if the body is intersecting with the current child that we're looking at
-                    Shape intersect = Shape.intersect(Sprite, collider.Sprite);
-
-                    //if the body is colliding with something, increase the bodys size and remove the food from the scene
-                    //this value will only be -1 if the player is colliding with nothing
-                    if (intersect.getBoundsInLocal().getWidth() != -1){
-                        if (isOverlappingEnough(this, entity, 0.33)) {
-                            if (isSmaller(collider.Sprite, Sprite)) {
-                                AgarioApplication.queueFree(collider);
-                                increaseSize(((Entity) entity).getMasse());
-                            }
+        // Utiliser la liste thread-safe du GameEngine
+        for (Entity collider : gameEngine.getEntities()) {
+            if (collider != this) {
+                Shape intersect = Shape.intersect(Sprite, collider.Sprite);
+                if (intersect.getBoundsInLocal().getWidth() != -1) {
+                    if (isOverlappingEnough(this, collider, 0.33)) {
+                        if (isSmaller(collider.Sprite, Sprite)) {
+                            AgarioApplication.queueFree(collider);
+                            increaseSize(collider.getMasse());
                         }
                     }
                 }

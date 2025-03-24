@@ -39,8 +39,6 @@ public class Player extends MoveableBody{
 
     }
 
-
-
     public void moveToward(double[] velocity) {
         super.moveToward(velocity);
     }
@@ -48,7 +46,7 @@ public class Player extends MoveableBody{
 
 
     public void gameOver(){
-        AgarioApplication.queueFree(Sprite);
+        AgarioApplication.queueFree(this);
     }
 
     @Override
@@ -56,14 +54,12 @@ public class Player extends MoveableBody{
         moveToward(AgarioApplication.getMousePosition());
         checkCollision();
     }
-    public ParallelCamera getCameraParallel() {
-        return camera.getCamera();
-    }
+
     public Camera getCamera() {
         return camera;
     }
 
-    public void setCamera(Camera camou) {
-        this.camera = camou;
+    public void setCamera(Camera cam) {
+        this.camera = cam;
     }
 }
