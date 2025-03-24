@@ -1,8 +1,8 @@
 package com.example.sae.enemyStrategy;
 
-import com.example.sae.Enemy;
-import com.example.sae.Entity;
-import com.example.sae.Food;
+import com.example.sae.entity.Enemy;
+import com.example.sae.entity.Entity;
+import com.example.sae.entity.Food;
 import com.example.sae.AgarioApplication;
 
 public class SeekFoodStrategy implements EnemyStrategy {
@@ -11,7 +11,7 @@ public class SeekFoodStrategy implements EnemyStrategy {
         double closestFoodDistance = Double.MAX_VALUE;
         Entity closestFood = null;
 
-        for (Entity entity : AgarioApplication.getEntities(Food.class)) {
+        for (Entity entity : AgarioApplication.getNearbyEntities(enemy,2.5)) {
             if (entity instanceof Food) {
                 double distance = enemy.distanceTo(entity.getPosition());
                 if (distance < closestFoodDistance) {

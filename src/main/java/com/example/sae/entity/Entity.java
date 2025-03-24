@@ -1,4 +1,4 @@
-package com.example.sae;
+package com.example.sae.entity;
 
 import java.util.Random;
 import javafx.scene.Group;

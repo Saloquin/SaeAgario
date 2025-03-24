@@ -1,9 +1,8 @@
 package com.example.sae.enemyStrategy;
 
 import com.example.sae.AgarioApplication;
-import com.example.sae.Enemy;
-import com.example.sae.Entity;
-import com.example.sae.MoveableBody;
+import com.example.sae.entity.Enemy;
+import com.example.sae.entity.Entity;
 
 
 public class ChaseClosestEntityStrategy implements EnemyStrategy {
@@ -11,7 +10,7 @@ public class ChaseClosestEntityStrategy implements EnemyStrategy {
     public void execute(Enemy enemy) {
         double closestEntityDistance = enemy.distanceTo(AgarioApplication.player.getPosition());
         Entity closestEntity = AgarioApplication.player;
-        for (Entity entity : AgarioApplication.getEntities(Enemy.class)) {
+        for (Entity entity : AgarioApplication.getNearbyEntities(enemy,1.5)) {
             if (entity instanceof Enemy) {
                 if(entity.toString().equals(enemy.toString()))
                     continue;

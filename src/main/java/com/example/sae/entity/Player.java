@@ -1,5 +1,7 @@
-package com.example.sae;
+package com.example.sae.entity;
 
+import com.example.sae.AgarioApplication;
+import com.example.sae.Camera;
 import javafx.animation.ScaleTransition;
 import javafx.scene.Group;
 import javafx.scene.ParallelCamera;
@@ -11,11 +13,9 @@ import static com.example.sae.AgarioApplication.*;
 public class Player extends MoveableBody{
 
 
-    public ParallelCamera camera = new ParallelCamera(); // creates a camera for the player
+    private Camera camera;
 
-    public double[] cameraScale = {camera.getScaleX(), camera.getScaleY()};
-
-    Player(Group group, double masse, Color color){
+    public Player(Group group, double masse, Color color){
         super(group, masse,color);
         Sprite.setCenterX(0);
         Sprite.setCenterY(0);
@@ -30,24 +30,12 @@ public class Player extends MoveableBody{
 
         //puts the player infront of all the food
         Sprite.setViewOrder(-Sprite.getRadius());
-
     }
 
 
     public void increaseSize(double foodValue){
         super.increaseSize(foodValue);
-
-
-        ScaleTransition cameraZoom = new ScaleTransition(Duration.millis(200), camera);
-
-        if (Sprite.getRadius() > 70){
-            cameraScale[0] += foodValue / 200;
-            cameraScale[1] += foodValue / 200;
-        }
-
-        cameraZoom.setToX(cameraScale[0]);
-        cameraZoom.setToY(cameraScale[1]);
-        cameraZoom.play();
+        //camera.adjustZoom(this);
 
     }
 
@@ -55,10 +43,6 @@ public class Player extends MoveableBody{
 
     public void moveToward(double[] velocity) {
         super.moveToward(velocity);
-
-        // Centrer la caméra sur le joueur
-        camera.setLayoutX(Sprite.getCenterX() - (getScreenWidth() / 2) * camera.getScaleX());
-        camera.setLayoutY(Sprite.getCenterY() - (AgarioApplication.getScreenHeight() / 2) * camera.getScaleY());
     }
 
 
@@ -69,14 +53,17 @@ public class Player extends MoveableBody{
 
     @Override
     public void Update(){
-        //move player towards the mouse position
         moveToward(AgarioApplication.getMousePosition());
-
-        //check if player is colliding with anything
         checkCollision();
-
-
-
+    }
+    public ParallelCamera getCameraParallel() {
+        return camera.getCamera();
+    }
+    public Camera getCamera() {
+        return camera;
     }
 
+    public void setCamera(Camera camou) {
+        this.camera = camou;
+    }
 }

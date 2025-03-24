@@ -1,5 +1,6 @@
-package com.example.sae;
+package com.example.sae.entity;
 
+import com.example.sae.AgarioApplication;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;

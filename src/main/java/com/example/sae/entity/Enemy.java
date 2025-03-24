@@ -1,5 +1,6 @@
-package com.example.sae;
+package com.example.sae.entity;
 
+import com.example.sae.AgarioApplication;
 import com.example.sae.enemyStrategy.ChaseClosestEntityStrategy;
 import com.example.sae.enemyStrategy.EnemyStrategy;
 import com.example.sae.enemyStrategy.RandomMoveStrategy;

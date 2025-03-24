@@ -1,6 +1,6 @@
 package com.example.sae.enemyStrategy;
 
-import com.example.sae.Enemy;
+import com.example.sae.entity.Enemy;
 
 import java.util.Random;
 
