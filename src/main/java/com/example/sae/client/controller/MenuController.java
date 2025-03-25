@@ -1,13 +1,13 @@
 package com.example.sae.client.controller;
 
-import com.example.sae.client.AgarioApplication;
+import com.example.sae.client.controller.template.Dialog;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
-import java.io.IOException;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -29,29 +29,33 @@ public class MenuController implements Initializable {
     @FXML
     private Button exit;
 
+    /*
+    Override of the initialize function to prevent hidden buttons from taking place in the UI
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources){
         onlinePlay.setManaged(false);
         localPlay.setManaged(false);
     }
 
-    private void toggleButtonVisibility(Button button){
-        button.setVisible(!button.isVisible());
-        button.setManaged(button.isVisible());
-        button.setDisable(!button.isVisible());
-    }
-
-    private void gameButtonClicked()
-    {
-        toggleButtonVisibility(onlinePlay);
-        toggleButtonVisibility(localPlay);
-        toggleButtonVisibility(start);
-    }
-
     public void onStart(ActionEvent event)
     {
-        gameButtonClicked();
+        toggleGameButtonsVisibility();
         onlinePlay.requestFocus();
+    }
+
+    public void onOnlinePlay(ActionEvent event)
+    {
+        toggleGameButtonsVisibility();
+        start.requestFocus();
+        lauchGameWindow();
+    }
+
+    public void onLocalPlay(ActionEvent actionEvent)
+    {
+        toggleGameButtonsVisibility();
+        start.requestFocus();
+        lauchGameWindow();
     }
 
     public void onChangeSkin(ActionEvent event)
@@ -69,16 +73,35 @@ public class MenuController implements Initializable {
         Platform.exit();
     }
 
-
-    public void onOnlinePlay(ActionEvent event)
-    {
-        gameButtonClicked();
-        start.requestFocus();
+    /**
+     * Toggle the visibility of a button
+     * @param button the button being toggled
+     */
+    private void toggleButtonVisibility(Button button){
+        button.setVisible(!button.isVisible());
+        button.setManaged(button.isVisible());
+        button.setDisable(!button.isVisible());
     }
 
-    public void onLocalPlay(ActionEvent actionEvent)
+    /**
+     * Toggle the visibility of the buttons related to the launch of the game
+     */
+    private void toggleGameButtonsVisibility()
     {
-        gameButtonClicked();
-        start.requestFocus();
+        toggleButtonVisibility(onlinePlay);
+        toggleButtonVisibility(localPlay);
+        toggleButtonVisibility(start);
+    }
+
+    private void lauchGameWindow()
+    {
+        try
+        {
+            Stage stage = new Stage();
+        }
+        catch(Exception e)
+        {
+            Dialog.alertWindow("An error occured", "An error occured while trying to start the game.", e.getMessage());
+        }
     }
 }
