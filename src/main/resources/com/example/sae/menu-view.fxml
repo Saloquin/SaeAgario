@@ -6,7 +6,7 @@
 <?import javafx.geometry.Pos?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" spacing="40.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sae.controller.MenuController">
+<VBox alignment="CENTER" spacing="40.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sae.client.controller.MenuController">
     <Label text="Agar.io">
         <font>
             <Font name="Arial" size="60"/>

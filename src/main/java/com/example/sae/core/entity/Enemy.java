@@ -1,10 +1,10 @@
-package com.example.sae.entity;
+package com.example.sae.core.entity;
 
-import com.example.sae.AgarioApplication;
-import com.example.sae.enemyStrategy.ChaseClosestEntityStrategy;
-import com.example.sae.enemyStrategy.EnemyStrategy;
-import com.example.sae.enemyStrategy.RandomMoveStrategy;
-import com.example.sae.enemyStrategy.SeekFoodStrategy;
+import com.example.sae.client.AgarioApplication;
+import com.example.sae.core.entity.enemyStrategy.ChaseClosestEntityStrategy;
+import com.example.sae.core.entity.enemyStrategy.EnemyStrategy;
+import com.example.sae.core.entity.enemyStrategy.RandomMoveStrategy;
+import com.example.sae.core.entity.enemyStrategy.SeekFoodStrategy;
 import javafx.scene.Group;
 
 import java.util.Random;

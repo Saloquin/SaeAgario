@@ -1,7 +1,7 @@
-package com.example.sae.entity;
+package com.example.sae.core.entity;
 
 
-import com.example.sae.AgarioApplication;
+import com.example.sae.client.AgarioApplication;
 import javafx.scene.Group;
 
 

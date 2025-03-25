@@ -1,10 +1,10 @@
-package com.example.sae.enemyStrategy;
+package com.example.sae.core.entity.enemyStrategy;
 
 import com.example.sae.core.GameEngine;
-import com.example.sae.entity.Enemy;
-import com.example.sae.entity.Entity;
-import com.example.sae.entity.Food;
-import com.example.sae.AgarioApplication;
+import com.example.sae.core.entity.Enemy;
+import com.example.sae.core.entity.Entity;
+import com.example.sae.core.entity.Food;
+import com.example.sae.client.AgarioApplication;
 
 public class SeekFoodStrategy implements EnemyStrategy {
     @Override

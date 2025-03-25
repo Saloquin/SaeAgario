@@ -1,14 +1,13 @@
-package com.example.sae;
+package com.example.sae.client;
 
 
-import com.example.sae.controller.MenuController;
+import com.example.sae.client.controller.MenuController;
+import com.example.sae.core.Camera;
 import com.example.sae.core.GameEngine;
-import com.example.sae.entity.Enemy;
-import com.example.sae.entity.Entity;
-import com.example.sae.entity.Food;
-import com.example.sae.entity.Player;
-import com.example.sae.core.quadtree.Boundary;
-import com.example.sae.core.quadtree.QuadTree;
+import com.example.sae.core.entity.Enemy;
+import com.example.sae.core.entity.Entity;
+import com.example.sae.core.entity.Food;
+import com.example.sae.core.entity.Player;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

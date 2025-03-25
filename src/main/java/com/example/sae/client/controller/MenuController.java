@@ -1,6 +1,6 @@
-package com.example.sae.controller;
+package com.example.sae.client.controller;
 
-import com.example.sae.AgarioApplication;
+import com.example.sae.client.AgarioApplication;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

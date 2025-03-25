@@ -1,6 +1,7 @@
-package com.example.sae;
+package com.example.sae.core;
 
-import com.example.sae.entity.Entity;
+import com.example.sae.client.AgarioApplication;
+import com.example.sae.core.entity.Entity;
 import com.example.sae.core.quadtree.Boundary;
 import javafx.beans.binding.Bindings;
 import javafx.scene.ParallelCamera;
