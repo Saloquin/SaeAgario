@@ -78,8 +78,11 @@ public abstract class Entity extends Group{
 
     }
 
-    public void onDeletion(){
-
+    public void onDeletion() {
+        // Remove from JavaFX scene graph if necessary
+        if (getParent() != null) {
+            ((Group) getParent()).getChildren().remove(this);
+        }
     }
 
 }

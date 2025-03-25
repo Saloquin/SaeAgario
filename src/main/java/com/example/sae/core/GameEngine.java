@@ -8,8 +8,12 @@ import com.example.sae.core.entity.MoveableBody;
 import com.example.sae.core.entity.Player;
 import javafx.scene.shape.Shape;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameEngine {
     private final List<Entity> entities;
@@ -25,6 +29,9 @@ public class GameEngine {
     public static final double MAP_LIMIT_HEIGHT = 2000;
 
     private final boolean isServer;
+
+    private final Map<Integer, Player> players = new ConcurrentHashMap<>();
+    private final AtomicInteger nextPlayerId = new AtomicInteger(0);
 
     public GameEngine(double worldWidth, double worldHeight, boolean isServer) {
         this.entities = new CopyOnWriteArrayList<>();
@@ -124,24 +131,35 @@ private void updateEntities() {
         }
     }
 
+
     private boolean checkCollision(Entity entity1, Entity entity2) {
         Shape intersect = Shape.intersect(entity1.Sprite, entity2.Sprite);
-        return intersect.getBoundsInLocal().getWidth() != -1;
+        if (intersect.getBoundsInLocal().getWidth() != -1) {
+            // Calculate intersection area
+            double intersectionArea = intersect.getBoundsInLocal().getWidth() * intersect.getBoundsInLocal().getHeight();
+            double entity1Area = Math.PI * Math.pow(entity1.Sprite.getRadius(), 2);
+
+            // Check if overlap is at least 33%
+            return (intersectionArea / entity1Area) <= 0.33;
+        }
+        return false;
     }
 
     private void handleCollision(MoveableBody predator, Entity prey) {
-        if (canEat(predator, prey)) {
-            predator.increaseSize(prey.getMasse());
+        if (checkCollision(predator, prey) && canEat(predator, prey)) {
             removeEntity(prey);
-            prey.onDeletion(); // Appel de la méthode onDeletion pour le nettoyage
+
+            predator.increaseSize(prey.getMasse());
+            prey.onDeletion();
         }
     }
 
     private boolean canEat(Entity predator, Entity prey) {
-        double predatorArea = Math.pow(predator.Sprite.getRadius(), 2);
-        double preyArea = Math.pow(prey.Sprite.getRadius(), 2);
-        return predatorArea > preyArea * 1.33;
+        double predatorArea = Math.PI * Math.pow(predator.Sprite.getRadius(), 2);
+        double preyArea = Math.PI * Math.pow(prey.Sprite.getRadius(), 2);
+        return predatorArea > preyArea * 1.33; // Must be 33% larger
     }
+
 
     private void handleMovement() {
         for (Entity entity : entities) {
@@ -150,6 +168,7 @@ private void updateEntities() {
             }
         }
     }
+
 
     private void moveWithinBounds(MoveableBody entity) {
         double[] currentPos = entity.getPosition();
@@ -160,6 +179,7 @@ private void updateEntities() {
         entity.Sprite.setCenterX(newPos[0]);
         entity.Sprite.setCenterY(newPos[1]);
     }
+
 
     public void addEntity(Entity entity) {
         entitiesToAdd.add(entity);
@@ -175,6 +195,28 @@ private void updateEntities() {
     private void cleanupEntities() {
         entitiesToRemove.clear();
         entitiesToAdd.clear();
+    }
+
+    public int addPlayer(Player player) {
+        int playerId = nextPlayerId.getAndIncrement();
+        players.put(playerId, player);
+        addEntity(player);
+        return playerId;
+    }
+
+    public void removePlayer(int playerId) {
+        Player player = players.remove(playerId);
+        if (player != null) {
+            removeEntity(player);
+        }
+    }
+
+    public Player getPlayer(int playerId) {
+        return players.get(playerId);
+    }
+
+    public Map<Integer, Player> getPlayers() {
+        return Collections.unmodifiableMap(players);
     }
 
     public List<Entity> getEntities() {

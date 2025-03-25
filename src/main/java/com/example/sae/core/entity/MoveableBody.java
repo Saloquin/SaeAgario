@@ -1,12 +1,11 @@
 package com.example.sae.core.entity;
 
 import com.example.sae.client.AgarioApplication;
-import com.example.sae.core.GameEngine;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
+
+import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
+import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 
 public abstract class MoveableBody extends Entity{
@@ -18,47 +17,6 @@ public abstract class MoveableBody extends Entity{
     }
     MoveableBody(Group group, double initialSize, Color color){
         super(group, initialSize,color);
-    }
-    MoveableBody(double initialSize){
-        super(initialSize);
-    }
-
-    public void checkCollision() {
-        // Obtenir le GameEngine via AgarioApplicationTest2
-        GameEngine gameEngine = AgarioApplication.getGameEngine();
-        if (gameEngine == null) return;
-
-        // Utiliser la liste thread-safe du GameEngine
-        for (Entity collider : gameEngine.getEntities()) {
-            if (collider != this) {
-                Shape intersect = Shape.intersect(Sprite, collider.Sprite);
-                if (intersect.getBoundsInLocal().getWidth() != -1) {
-                    if (isOverlappingEnough(this, collider, 0.33)) {
-                        if (isSmaller(collider.Sprite, Sprite)) {
-                            AgarioApplication.queueFree(collider);
-                            increaseSize(collider.getMasse());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private boolean isOverlappingEnough(Node a, Node b, double threshold) {
-        Shape intersect = Shape.intersect(((Entity) a).Sprite, ((Entity) b).Sprite);
-
-        double intersectionArea = intersect.getLayoutBounds().getWidth() * intersect.getLayoutBounds().getHeight();
-        double areaA = ((Entity) a).Sprite.getLayoutBounds().getWidth() * ((Entity) a).Sprite.getLayoutBounds().getHeight();
-
-        return (intersectionArea / areaA) <= threshold;
-    }
-
-
-    private Boolean isSmaller(Circle circleOne, Circle circleTwo){
-        if ((Math.pow(circleOne.getRadius(),2)/100)*1.33 > (Math.pow(circleTwo.getRadius(),2)/100)){
-            return false;
-        }
-        return true;
     }
 
 
@@ -91,7 +49,7 @@ public abstract class MoveableBody extends Entity{
         }
 
         // Facteur de vitesse (proportionnel à la distance du curseur au joueur, max à `maxSpeed`)
-        double speedFactor = Math.min(distance / AgarioApplication.getScreenWidth(), 1.0);
+        double speedFactor = Math.min(distance / MAP_LIMIT_WIDTH, 1.0);
         double speed = maxSpeed * speedFactor;
 
         // Appliquer la vitesse calculée
@@ -102,17 +60,15 @@ public abstract class MoveableBody extends Entity{
         double newX = Sprite.getCenterX() + velocity[0];
         double newY = Sprite.getCenterY() + velocity[1];
 
-        if (newX < AgarioApplication.getMapLimitWidth() && newX > -AgarioApplication.getMapLimitWidth()) {
+        if (newX < MAP_LIMIT_WIDTH && newX > -MAP_LIMIT_WIDTH) {
             Sprite.setCenterX(newX);
         }
-        if (newY < AgarioApplication.getMapLimitHeight() && newY > -AgarioApplication.getMapLimitHeight()) {
+        if (newY < MAP_LIMIT_HEIGHT && newY > -MAP_LIMIT_HEIGHT) {
             Sprite.setCenterY(newY);
         }
     }
 
-
-
-
+    //TODO: Implement the splitSprite method without using AgarioApplication.root
     public void splitSprite(){
         Player newBody = new Player(AgarioApplication.root, Sprite.getRadius() / 2, Color.RED);
         newBody.Sprite.setCenterX(Sprite.getCenterX() + 30);
