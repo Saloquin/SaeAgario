@@ -3,6 +3,7 @@ package com.example.sae.client;
 import com.example.sae.core.Camera;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Player;
+import javafx.animation.AnimationTimer;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -16,6 +17,8 @@ public abstract class Client {
     public int playerId;
     protected Point2D mousePosition = new Point2D(0, 0);
     protected boolean mouseMoved = false;
+    protected Point2D lastValidMousePosition = new Point2D(0, 0);  // Add this field
+
     protected Group root;
     protected Camera camera;
     protected boolean gameStarted = false;
@@ -23,6 +26,7 @@ public abstract class Client {
     public Client(Group root) {
         this.root = root;
         this.camera = new Camera();
+
     }
 
     public Camera getCamera() {
@@ -31,12 +35,25 @@ public abstract class Client {
 
     public abstract void init();
     public abstract void update();
+    protected double[] direction = new double[]{0, 0};
 
     protected void handleMouseMove(MouseEvent e) {
         Point2D localPoint = root.screenToLocal(e.getScreenX(), e.getScreenY());
         if (localPoint != null) {
             mousePosition = localPoint;
-            mouseMoved = true;
+            lastValidMousePosition = localPoint;
+
+            // Calculer le vecteur direction
+            Player player = gameEngine.getPlayer(playerId);
+            if (player != null) {
+                double dx = localPoint.getX() - player.getSprite().getCenterX();
+                double dy = localPoint.getY() - player.getSprite().getCenterY();
+                double length = Math.sqrt(dx * dx + dy * dy);
+                if (length > 0) {
+                    direction[0] = dx / length;
+                    direction[1] = dy / length;
+                }
+            }
         }
     }
 
@@ -55,14 +72,14 @@ public abstract class Client {
     }
 
     public double[] getMousePosition() {
-        if (!mouseMoved) {
-            Scene scene = root.getScene();
-            if (scene != null) {
-                return new double[]{scene.getWidth() / 2, scene.getHeight() / 2};
-            }
-            return new double[]{0, 0}; // Fallback if scene is not available
+        Player player = gameEngine.getPlayer(playerId);
+        if (player != null) {
+            // Utiliser le vecteur direction pour calculer la prochaine position
+            double nextX = player.getSprite().getCenterX() + direction[0] * 100;
+            double nextY = player.getSprite().getCenterY() + direction[1] * 100;
+            return new double[]{nextX, nextY};
         }
-        return new double[]{mousePosition.getX(), mousePosition.getY()};
+        return new double[]{lastValidMousePosition.getX(), lastValidMousePosition.getY()};
     }
 
     public GameEngine getGameEngine() {

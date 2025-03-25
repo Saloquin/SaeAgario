@@ -32,8 +32,8 @@ public abstract class MoveableBody extends Entity{
     private void initializeNameText(Group group) {
         nameText = new Text(name);
         nameText.setFill(Color.BLACK);
-        nameText.setX(Sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
-        nameText.setY(Sprite.getCenterY() - Sprite.getRadius() - 5);
+        nameText.setX(sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
+        nameText.setY(sprite.getCenterY() - sprite.getRadius() - 5);
         group.getChildren().add(nameText);
     }
 

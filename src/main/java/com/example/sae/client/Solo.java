@@ -37,6 +37,7 @@ public class Solo extends Client {
         camera.focusOn(player);
         playerId = gameEngine.addPlayer(player);
         gameTimer.start();
+
     }
 
     @Override
