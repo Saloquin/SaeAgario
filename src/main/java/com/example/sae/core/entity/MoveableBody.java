@@ -32,18 +32,23 @@ public abstract class MoveableBody extends Entity{
     private void initializeNameText(Group group) {
         nameText = new Text(name);
         nameText.setFill(Color.BLACK);
+        nameText.setStyle("-fx-font-size: 14;");
+        // Place le texte au-dessus du sprite dans l'ordre de rendu
+        nameText.setViewOrder(-1000);
+
+        // Position initiale au centre du cercle
         nameText.setX(Sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
-        nameText.setY(Sprite.getCenterY() - Sprite.getRadius() - 5);
+        nameText.setY(Sprite.getCenterY());
+
         group.getChildren().add(nameText);
     }
 
-    public void increaseSize(double foodValue){
-        //called whenever the player eats food
-        //once the player gets big enough, we want the camera to start zooming out*
-        setMasse(getMasse() +foodValue);
+    public void increaseSize(double foodValue) {
+        setMasse(getMasse() + foodValue);
         Sprite.setRadius(10 * Math.sqrt(getMasse()));
         setViewOrder(-Sprite.getRadius());
-
+        nameText.setX(Sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
+        nameText.setY(Sprite.getCenterY());
     }
 
     public void moveToward(double[] mousePosition) {
@@ -79,9 +84,11 @@ public abstract class MoveableBody extends Entity{
 
         if (newX < MAP_LIMIT_WIDTH && newX > -MAP_LIMIT_WIDTH) {
             Sprite.setCenterX(newX);
+            nameText.setX(newX - nameText.getLayoutBounds().getWidth() / 2);
         }
         if (newY < MAP_LIMIT_HEIGHT && newY > -MAP_LIMIT_HEIGHT) {
             Sprite.setCenterY(newY);
+            nameText.setY(newY);
         }
     }
 
