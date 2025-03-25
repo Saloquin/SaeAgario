@@ -110,6 +110,8 @@ public class MenuController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle(title);
             stage.setScene(scene);
+            stage.setMinHeight(500);
+            stage.setMinWidth(700);
 
             currentNode.getScene().getWindow().hide();
 

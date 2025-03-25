@@ -4,10 +4,10 @@ import com.example.sae.core.Camera;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Player;
 import javafx.geometry.Point2D;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.Group;
 import javafx.scene.paint.Paint;
 
 

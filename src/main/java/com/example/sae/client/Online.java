@@ -1,5 +1,6 @@
 package com.example.sae.client;
 
+
 import javafx.scene.Group;
 
 public class Online extends Client{

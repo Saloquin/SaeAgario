@@ -10,7 +10,7 @@ public abstract class Entity extends Group{
     public Circle Sprite; // the entity's sprite
     private double masse;
 
-    Entity(Group group,double masse){
+    Entity(Group group, double masse){
         super();
         this.masse = masse;
         Random rand = new Random();

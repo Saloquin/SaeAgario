@@ -29,13 +29,6 @@ public class AgarioApplication extends Application {
         stage.show();
     }
 
-    public static void startGame(Stage stage) throws IOException {
-        client = new Solo(root);
-        client.init();
-        scene = client.createGameScene(1280, 720);
-        stage.setScene(scene);
-    }
-
     public static Client getClient() {
         return client;
     }

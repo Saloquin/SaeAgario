@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.canvas.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 
 <StackPane fx:id="rootStack" prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sae.client.controller.GameController">
 
-    <!-- Le monde du jeu (déplacé par la caméra) -->
+    <!-- The game world (moved by camera) -->
     <Pane fx:id="gameContainer" />
 
-    <!-- Le HUD : reste fixe à l'écran -->
+    <!-- The HUD : stay fixed on the screen -->
     <AnchorPane fx:id="hudContainer" pickOnBounds="false">
 
-        <!-- Scoreboard en haut à gauche -->
-        <ListView fx:id="leaderboard" prefHeight="200" prefWidth="200" />
+        <!-- Leaderboard at the top left corner -->
+        <ListView fx:id="leaderboard" prefHeight="200" prefWidth="200" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
 
-        <!-- Minimap en bas à droite -->
-        <Canvas fx:id="minimap" height="180" layoutX="900.0" layoutY="542.0" width="200" />
-
-        <!-- Chat à droite -->
-        <VBox layoutX="1100" layoutY="20">
+        <!-- Chat on the right -->
+        <VBox layoutX="1100" layoutY="20" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <ListView fx:id="chatList" prefHeight="600" prefWidth="180" />
             <TextField fx:id="chatInput" alignment="TOP_LEFT" prefHeight="101.0" prefWidth="180.0" promptText="Insérer votre message" />
+   
+           <!-- Minimap at the bottom right corner -->
+           <Canvas fx:id="minimap" height="180" width="200" />
         </VBox>
 
     </AnchorPane>

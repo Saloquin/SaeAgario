@@ -6,11 +6,13 @@ import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Entity;
 import com.example.sae.core.entity.MoveableBody;
 import com.example.sae.core.entity.Player;
+import javafx.animation.AnimationTimer;
 import javafx.scene.shape.Shape;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,6 +26,7 @@ public class GameEngine {
     private static final int QUAD_TREE_CAPACITY = 4;
     private static final int QUAD_TREE_MAX_DEPTH = 6;
     private static QuadTree quadTree;
+    private static boolean gameStarted = false;
 
     public static final double MAP_LIMIT_WIDTH = 2000;
     public static final double MAP_LIMIT_HEIGHT = 2000;
@@ -32,6 +35,7 @@ public class GameEngine {
 
     private final Map<Integer, Player> players = new ConcurrentHashMap<>();
     private final AtomicInteger nextPlayerId = new AtomicInteger(0);
+
 
     public GameEngine(double worldWidth, double worldHeight, boolean isServer) {
         this.entities = new CopyOnWriteArrayList<>();
