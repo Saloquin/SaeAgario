@@ -43,12 +43,14 @@ public abstract class MoveableBody extends Entity{
         group.getChildren().add(nameText);
     }
 
+
     public void increaseSize(double foodValue) {
         setMasse(getMasse() + foodValue);
         Sprite.setRadius(10 * Math.sqrt(getMasse()));
         setViewOrder(-Sprite.getRadius());
         nameText.setX(Sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
         nameText.setY(Sprite.getCenterY());
+
     }
 
     public void moveToward(double[] mousePosition) {
@@ -57,8 +59,8 @@ public abstract class MoveableBody extends Entity{
 
         // Vecteur direction vers la souris
         double[] velocity = new double[]{
-                mousePosition[0] - Sprite.getCenterX(),
-                mousePosition[1] - Sprite.getCenterY()
+                mousePosition[0] - sprite.getCenterX(),
+                mousePosition[1] - sprite.getCenterY()
         };
 
         // Distance du curseur au centre du joueur
@@ -79,8 +81,8 @@ public abstract class MoveableBody extends Entity{
         velocity[1] *= speed;
 
         // Vérification des limites de la carte
-        double newX = Sprite.getCenterX() + velocity[0];
-        double newY = Sprite.getCenterY() + velocity[1];
+        double newX = sprite.getCenterX() + velocity[0];
+        double newY = sprite.getCenterY() + velocity[1];
 
         if (newX < MAP_LIMIT_WIDTH && newX > -MAP_LIMIT_WIDTH) {
             Sprite.setCenterX(newX);
@@ -94,12 +96,12 @@ public abstract class MoveableBody extends Entity{
 
     //TODO: Implement the splitSprite method without using AgarioApplication.root
     public void splitSprite(){
-        Player newBody = new Player(AgarioApplication.root, Sprite.getRadius() / 2, Color.RED);
-        newBody.Sprite.setCenterX(Sprite.getCenterX() + 30);
-        newBody.Sprite.setCenterY(Sprite.getCenterY() + 30);
+        Player newBody = new Player(AgarioApplication.root, sprite.getRadius() / 2, Color.RED);
+        newBody.sprite.setCenterX(sprite.getCenterX() + 30);
+        newBody.sprite.setCenterY(sprite.getCenterY() + 30);
 
 
-        Sprite.setRadius(Sprite.getRadius() / 2);
+        sprite.setRadius(sprite.getRadius() / 2);
 
     }
     public double distanceTo(double[] position){
