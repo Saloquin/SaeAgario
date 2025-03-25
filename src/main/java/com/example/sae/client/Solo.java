@@ -1,5 +1,6 @@
 package com.example.sae.client;
 
+import com.example.sae.client.timer.GameTimer;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Food;

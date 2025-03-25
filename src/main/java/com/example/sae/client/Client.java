@@ -1,5 +1,8 @@
 package com.example.sae.client;
 
+import com.example.sae.client.factory.GameSceneFactory;
+import com.example.sae.client.handler.MouseEventHandler;
+import com.example.sae.client.handler.MouseHandler;
 import com.example.sae.core.Camera;
 import com.example.sae.core.GameEngine;
 import javafx.scene.Group;
@@ -20,6 +23,10 @@ public abstract class Client {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public boolean getGameStarted(){
+        return gameStarted;
     }
 
     public abstract void init();
