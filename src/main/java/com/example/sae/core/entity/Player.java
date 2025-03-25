@@ -1,6 +1,5 @@
 package com.example.sae.core.entity;
 
-import com.example.sae.client.AgarioApplication;
 import com.example.sae.core.Camera;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
@@ -9,6 +8,8 @@ public class Player extends MoveableBody{
 
 
     private Camera camera;
+    private boolean isLocal = false; // Pour identifier si c'est un joueur local ou distant
+    private double[] inputPosition; // Position cible (souris pour le joueur local, position reçue du serveur pour les autres)
 
     public Player(Group group, double masse, Color color){
         super(group, masse,color);
@@ -17,16 +18,15 @@ public class Player extends MoveableBody{
         Sprite.setViewOrder(-Sprite.getRadius());
 
     }
-    Player(double initialSize){
-        super(initialSize);
-        //new player made and added to the group
+
+    public Player(Group group, double masse, Color color, boolean isLocal) {
+        super(group, masse, color);
+        this.isLocal = isLocal;
         Sprite.setCenterX(0);
         Sprite.setCenterY(0);
-
-        //puts the player infront of all the food
         Sprite.setViewOrder(-Sprite.getRadius());
+        inputPosition = new double[]{0, 0};
     }
-
 
     public void increaseSize(double foodValue){
         super.increaseSize(foodValue);
@@ -38,18 +38,18 @@ public class Player extends MoveableBody{
         super.moveToward(velocity);
     }
 
+    public boolean isLocal() {
+        return isLocal;
+    }
 
-
-    public void gameOver(){
-        AgarioApplication.queueFree(this);
+    public void setInputPosition(double[] position) {
+        this.inputPosition = position;
     }
 
     @Override
-    public void Update(){
-        moveToward(AgarioApplication.getMousePosition());
-        checkCollision();
+    public void Update() {
+        moveToward(inputPosition);
     }
-
     public Camera getCamera() {
         return camera;
     }

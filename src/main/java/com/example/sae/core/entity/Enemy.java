@@ -1,6 +1,5 @@
 package com.example.sae.core.entity;
 
-import com.example.sae.client.AgarioApplication;
 import com.example.sae.core.entity.enemyStrategy.ChaseClosestEntityStrategy;
 import com.example.sae.core.entity.enemyStrategy.EnemyStrategy;
 import com.example.sae.core.entity.enemyStrategy.RandomMoveStrategy;
@@ -8,6 +7,9 @@ import com.example.sae.core.entity.enemyStrategy.SeekFoodStrategy;
 import javafx.scene.Group;
 
 import java.util.Random;
+
+import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
+import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 public class Enemy extends MoveableBody {
     private EnemyStrategy strategy;
@@ -22,8 +24,8 @@ public class Enemy extends MoveableBody {
 
         // Position initiale plus proche du centre
         double spreadFactor = 0.7; // Réduire la dispersion
-        Sprite.setCenterX((Math.random() * AgarioApplication.getMapLimitWidth() * 2 - AgarioApplication.getMapLimitWidth()) * spreadFactor);
-        Sprite.setCenterY((Math.random() * AgarioApplication.getMapLimitHeight() * 2 - AgarioApplication.getMapLimitHeight()) * spreadFactor);
+        Sprite.setCenterX((Math.random() * MAP_LIMIT_WIDTH * 2 -MAP_LIMIT_WIDTH) * spreadFactor);
+        Sprite.setCenterY((Math.random() * MAP_LIMIT_HEIGHT * 2 - MAP_LIMIT_HEIGHT) * spreadFactor);
 
         Speed = 2.0; // Vitesse de base plus élevée
     }
@@ -41,7 +43,6 @@ public class Enemy extends MoveableBody {
             strategy.execute(this);
         }
 
-        checkCollision();
     }
 
     public void setStrategy(EnemyStrategy strategy) {
@@ -81,14 +82,4 @@ public class Enemy extends MoveableBody {
         }
     }
 
-
-    @Override
-    public void onDeletion() {
-        // Retirer du graphe de scène JavaFX si nécessaire
-        if (getParent() != null) {
-            ((Group) getParent()).getChildren().remove(this);
-        }
-        // Pas besoin de décrémenter enemies-- car cela devrait être géré par GameEngine
-        // qui maintient sa propre liste d'entités
-    }
 }

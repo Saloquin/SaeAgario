@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!--
+    Checkstyle configuration that checks the IUT-CAEN coding style.
+ -->
+
+<module name="Checker">
+
+    <property name="charset" value="UTF-8"/>
+
+    <property name="severity" value="warning" />
+
+
+
+    <module name="LineLength">
+        <property name="fileExtensions" value="java"/>
+        <property name="max" value="100"/>
+        <property name="ignorePattern"
+                  value="^package.*|^import.*|href\s*=\s*&quot;[^&quot;]*&quot;|http://|https://|ftp://"/>
+    </module>
+
+    <module name="FileLength">
+        <property name="max" value="500"/>
+    </module>
+
+
+    <module name="TreeWalker">
+
+        <module name="MethodLength">
+            <property name="tokens" value="METHOD_DEF"/>
+            <property name="max" value="50"/>
+        </module>
+
+        <module name="MethodCount"/>
+
+
+        <module name="ParameterNumber">
+            <property name="max" value="7"/>
+        </module>
+
+        <module name="BooleanExpressionComplexity"/>
+        <module name="CyclomaticComplexity">
+            <property name="max" value="15"/>
+        </module>
+
+
+        <module name="EmptyBlock"/>
+        <module name="EmptyCatchBlock">
+            <property name="exceptionVariableName" value="expected"/>
+        </module>
+
+        <module name="EmptyStatement"/>
+        <module name="MissingSwitchDefault"/>
+
+
+        <module name="AvoidStarImport"/>
+        <module name="NeedBraces"/>
+
+        <module name="TypeName"/>
+        <module name="MemberName"/>
+        <module name="LocalVariableName"/>
+        <module name="ClassTypeParameterName"/>
+        <module name="MethodName"/>
+        <module name="ConstantName"/>
+
+        <module name="HiddenField"/>
+        <module name="MagicNumber"/>
+
+        <module name="DesignForExtension"/>
+
+        <module name="VisibilityModifier"/>
+
+
+    </module>
+</module>

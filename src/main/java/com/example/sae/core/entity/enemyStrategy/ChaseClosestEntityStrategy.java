@@ -1,32 +1,33 @@
 package com.example.sae.core.entity.enemyStrategy;
 
-import com.example.sae.client.AgarioApplication;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Entity;
-
+import com.example.sae.client.AgarioApplication;
 
 public class ChaseClosestEntityStrategy implements EnemyStrategy {
     @Override
     public void execute(Enemy enemy) {
-        GameEngine gameEngine = AgarioApplication.getGameEngine();
+        GameEngine gameEngine = AgarioApplication.getClient().getGameEngine();
         if (gameEngine == null) return;
 
-        double closestEntityDistance = enemy.distanceTo(AgarioApplication.player.getPosition());
-        Entity closestEntity = AgarioApplication.player;
+        Entity closestEntity = null;
+        double closestDistance = Double.MAX_VALUE;
 
-        for (Entity entity : gameEngine.getEntitiesOfType(Enemy.class)) {
-            if (entity == enemy) continue;
+        // Find closest entity among existing entities
+        for (Entity entity : gameEngine.getEntities()) {
+            if (entity == enemy || entity.getParent() == null) continue;
 
             double distance = enemy.distanceTo(entity.getPosition());
-            if (distance < closestEntityDistance) {
-                closestEntityDistance = distance;
+            if (distance < closestDistance) {
+                closestDistance = distance;
                 closestEntity = entity;
             }
         }
 
-        enemy.moveToward(closestEntity.getPosition());
+        // Move toward closest entity if found
+        if (closestEntity != null) {
+            enemy.moveToward(closestEntity.getPosition());
+        }
     }
 }
-
-
