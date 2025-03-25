@@ -5,7 +5,26 @@ import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Entity;
 import com.example.sae.client.AgarioApplication;
 
+/**
+ * AI strategy: seek out and attempt to devour the closest entity
+ *
+ * @see Enemy
+ * @see RandomMoveStrategy
+ * @see SeekFoodStrategy
+ *
+ * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+ */
 public class ChaseClosestEntityStrategy implements EnemyStrategy {
+    /**
+     * Executes the AI's strategy of seeking out and attempting to devour the closest entity
+     *
+     * @see Enemy
+     * @see RandomMoveStrategy
+     * @see SeekFoodStrategy
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param enemy Strategy executed on this AI
+     */
     @Override
     public void execute(Enemy enemy) {
         GameEngine gameEngine = AgarioApplication.getClient().getGameEngine();
