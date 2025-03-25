@@ -1,12 +1,11 @@
 package com.example.sae.core;
 
-import com.example.sae.*;
 import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
-import com.example.sae.entity.Enemy;
-import com.example.sae.entity.Entity;
-import com.example.sae.entity.MoveableBody;
-import com.example.sae.entity.Player;
+import com.example.sae.core.entity.Enemy;
+import com.example.sae.core.entity.Entity;
+import com.example.sae.core.entity.MoveableBody;
+import com.example.sae.core.entity.Player;
 import javafx.scene.shape.Shape;
 
 import java.util.List;

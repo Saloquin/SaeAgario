@@ -1,14 +1,9 @@
-package com.example.sae.entity;
+package com.example.sae.core.entity;
 
-import com.example.sae.AgarioApplication;
-import com.example.sae.Camera;
-import javafx.animation.ScaleTransition;
+import com.example.sae.client.AgarioApplication;
+import com.example.sae.core.Camera;
 import javafx.scene.Group;
-import javafx.scene.ParallelCamera;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
-
-import static com.example.sae.AgarioApplication.*;
 
 public class Player extends MoveableBody{
 

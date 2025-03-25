@@ -1,9 +1,9 @@
-package com.example.sae.network;
+package com.example.sae.server;
 
 import com.example.sae.core.GameEngine;
-import com.example.sae.entity.Entity;
-import com.example.sae.entity.Food;
-import com.example.sae.entity.Player;
+import com.example.sae.core.entity.Entity;
+import com.example.sae.core.entity.Food;
+import com.example.sae.core.entity.Player;
 import javafx.scene.paint.Color;
 
 import java.io.*;
