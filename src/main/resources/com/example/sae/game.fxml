@@ -4,23 +4,25 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <HBox prefHeight="201.0" prefWidth="223.0">
-            <children>
-                <ListView fx:id="leaderboard" prefHeight="202.0" prefWidth="224.0" />
-            </children>
-        </HBox>
-        <HBox alignment="BOTTOM_RIGHT" layoutX="1080.0" layoutY="545.0" prefHeight="175.0" prefWidth="200.0">
-            <children>
-                <Canvas fx:id="minimap" height="176.0" width="200.0" />
-            </children>
-        </HBox>
-        <VBox layoutX="1280.0" prefHeight="720.0" prefWidth="165.0">
-            <children>
-                <ListView fx:id="listChat" prefHeight="640.0" prefWidth="200.0" />
-                <TextField fx:id="sendMessage" alignment="TOP_LEFT" prefHeight="77.0" prefWidth="200.0" promptText="Insérer votre message" />
-            </children>
+<StackPane fx:id="rootStack" prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sae.client.controller.GameController">
+
+    <!-- Le monde du jeu (déplacé par la caméra) -->
+    <Pane fx:id="gameContainer" />
+
+    <!-- Le HUD : reste fixe à l'écran -->
+    <AnchorPane fx:id="hudContainer" pickOnBounds="false">
+
+        <!-- Scoreboard en haut à gauche -->
+        <ListView fx:id="leaderboard" prefHeight="200" prefWidth="200" />
+
+        <!-- Minimap en bas à droite -->
+        <Canvas fx:id="minimap" height="180" layoutX="900.0" layoutY="542.0" width="200" />
+
+        <!-- Chat à droite -->
+        <VBox layoutX="1100" layoutY="20">
+            <ListView fx:id="chatList" prefHeight="600" prefWidth="180" />
+            <TextField fx:id="chatInput" alignment="TOP_LEFT" prefHeight="101.0" prefWidth="180.0" promptText="Insérer votre message" />
         </VBox>
-    </children>
-</Pane>
+
+    </AnchorPane>
+</StackPane>
