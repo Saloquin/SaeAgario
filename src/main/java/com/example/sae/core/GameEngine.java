@@ -147,11 +147,24 @@ private void updateEntities() {
 
     private void handleCollision(MoveableBody predator, Entity prey) {
         if (checkCollision(predator, prey) && canEat(predator, prey)) {
-            removeEntity(prey);
+            if (prey instanceof Player) {
+                int playerId = getPlayerId((Player) prey);
+                removePlayer(playerId);
+            } else {
+                removeEntity(prey);
+            }
 
             predator.increaseSize(prey.getMasse());
             prey.onDeletion();
         }
+    }
+
+    private int getPlayerId(Player player) {
+        return players.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(player))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(-1);
     }
 
     private boolean canEat(Entity predator, Entity prey) {

@@ -70,6 +70,11 @@ public abstract class Entity extends Group{
 
     }
 
+    public Circle getSprite() {
+        return Sprite;
+    }
+
+
     public void onDeletion() {
         // Remove from JavaFX scene graph if necessary
         if (getParent() != null) {

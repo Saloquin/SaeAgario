@@ -1,18 +1,27 @@
 package com.example.sae.client;
 
+import com.example.sae.client.controller.MenuController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 public class Solo extends Client {
     private GameTimer gameTimer;
+    private int playerId;
 
     public Solo(Group root) {
         super(root);
@@ -26,14 +35,24 @@ public class Solo extends Client {
         Player player = new Player(root, 5, Color.RED, true); // Joueur local
         player.setCamera(camera);
         camera.focusOn(player);
-        gameEngine.addPlayer(player);
+        playerId = gameEngine.addPlayer(player);
         gameTimer.start();
     }
 
     @Override
     public void update() {
-        gameEngine.getPlayer(playerId).setInputPosition(getMousePosition());
+        Player player = gameEngine.getPlayer(playerId);
+        if (player == null) {
+            new javafx.animation.Timeline(
+                    new javafx.animation.KeyFrame(
+                            javafx.util.Duration.seconds(2),
+                            event -> returnToMenu()
+                    )
+            ).play();
+            return;
+        }
 
+        player.setInputPosition(getMousePosition());
         if (gameEngine.getEntitiesOfType(Food.class).size() < 100) {
             gameEngine.addEntity(new Food(root, 2));
         }
@@ -66,5 +85,9 @@ public class Solo extends Client {
                 client.update();
             }
         }
+    }
+
+    private void returnToMenu() {
+        Platform.exit();
     }
 }

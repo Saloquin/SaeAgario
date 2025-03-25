@@ -2,20 +2,19 @@ package com.example.sae.core;
 
 import com.example.sae.core.entity.Entity;
 import com.example.sae.core.quadtree.Boundary;
+import javafx.animation.ScaleTransition;
 import javafx.beans.binding.Bindings;
 import javafx.scene.ParallelCamera;
 import javafx.scene.Scene;
+import javafx.util.Duration;
 
 public class Camera extends Boundary {
     private ParallelCamera camera;
     private static final double BASE_ZOOM = 500.0;
-    private static final double ZOOM_FACTOR = 100.0;
     private double currentScale = 1.0;
-    private static final double DEFAULT_WIDTH = 1280;
-    private static final double DEFAULT_HEIGHT = 720;
 
     public Camera() {
-        super(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        super(0, 0, GameEngine.MAP_LIMIT_WIDTH, GameEngine.MAP_LIMIT_HEIGHT);
         camera = new ParallelCamera();
     }
 
@@ -27,7 +26,7 @@ public class Camera extends Boundary {
         camera.translateXProperty().bind(Bindings.createDoubleBinding(
                 () -> {
                     Scene scene = entity.getScene();
-                    double width = scene != null ? scene.getWidth() : DEFAULT_WIDTH;
+                    double width = scene != null ? scene.getWidth() : GameEngine.MAP_LIMIT_WIDTH;
                     return entity.Sprite.getCenterX() - width / 2;
                 },
                 entity.Sprite.centerXProperty()
@@ -36,7 +35,7 @@ public class Camera extends Boundary {
         camera.translateYProperty().bind(Bindings.createDoubleBinding(
                 () -> {
                     Scene scene = entity.getScene();
-                    double height = scene != null ? scene.getHeight() : DEFAULT_HEIGHT;
+                    double height = scene != null ? scene.getHeight() : GameEngine.MAP_LIMIT_HEIGHT;
                     return entity.Sprite.getCenterY() - height / 2;
                 },
                 entity.Sprite.centerYProperty()
@@ -45,18 +44,19 @@ public class Camera extends Boundary {
         updateBoundary(entity);
     }
 
-    private void updateBoundary(Entity entity) {
-        Scene scene = entity.getScene();
-        double width = scene != null ? scene.getWidth() : DEFAULT_WIDTH;
-        double height = scene != null ? scene.getHeight() : DEFAULT_HEIGHT;
-
-        this.x = entity.Sprite.getCenterX() - width / 2;
-        this.y = entity.Sprite.getCenterY() - height / 2;
-        this.w = width;
-        this.h = height;
-    }
-
     public void adjustZoom(Entity entity) {
         // TODO: Implement zoom adjustment based on entity size
+    }
+
+    public void updateBoundary(Entity entity) {
+        Scene scene = entity.getScene();
+        double width = scene != null ? scene.getWidth() : GameEngine.MAP_LIMIT_WIDTH;
+        double height = scene != null ? scene.getHeight() : GameEngine.MAP_LIMIT_HEIGHT;
+
+        // Met à jour les coordonnées du Boundary pour le quadtree
+        this.x = entity.getSprite().getCenterX() - width / (2 * currentScale);
+        this.y = entity.getSprite().getCenterY() - height / (2 * currentScale);
+        this.w = width / currentScale;
+        this.h = height / currentScale;
     }
 }
