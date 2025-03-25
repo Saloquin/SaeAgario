@@ -1,8 +1,13 @@
 package com.example.sae.core.entity;
 
 import com.example.sae.client.AgarioApplication;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
@@ -11,14 +16,26 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 public abstract class MoveableBody extends Entity{
     public double Speed = 1.5;
     public double Smoothing = 80; // higher numbers mean more smoothing, but also slower circle
+    public String name="Camou";
+    private Text nameText;
 
-    MoveableBody(Group group, double initialSize){
+    MoveableBody(Group group, double initialSize) {
         super(group, initialSize);
-    }
-    MoveableBody(Group group, double initialSize, Color color){
-        super(group, initialSize,color);
+        initializeNameText(group);
     }
 
+    MoveableBody(Group group, double initialSize, Color color) {
+        super(group, initialSize, color);
+        initializeNameText(group);
+    }
+
+    private void initializeNameText(Group group) {
+        nameText = new Text(name);
+        nameText.setFill(Color.BLACK);
+        nameText.setX(Sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
+        nameText.setY(Sprite.getCenterY() - Sprite.getRadius() - 5);
+        group.getChildren().add(nameText);
+    }
 
     public void increaseSize(double foodValue){
         //called whenever the player eats food
@@ -91,6 +108,14 @@ public abstract class MoveableBody extends Entity{
             return new double[]{array[0] / magnitude, array[1] / magnitude};
         }
         return new double[]{0,0};
+    }
+
+    @Override
+    public void onDeletion() {
+        super.onDeletion();
+        if (nameText.getParent() != null) {
+            ((Group) nameText.getParent()).getChildren().remove(nameText);
+        }
     }
 
 
