@@ -19,7 +19,7 @@ public class AgarioApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/menu-view.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/menu.fxml"));
         VBox menuRoot = loader.load();
         MenuController menuController = loader.getController();
         menuController.setStage(stage);
