@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 public class GameEngine {
     private final HashSet<Entity> entities;
     public final HashSet<Entity> entitiesMovable;
-    private final WorldBounds worldBounds;
 
     private static final int QUAD_TREE_MAX_DEPTH = 6;
     private static QuadTree quadTree;
@@ -30,7 +29,6 @@ public class GameEngine {
     public GameEngine(double worldWidth, double worldHeight, boolean isServer) {
         this.entitiesMovable = new HashSet<>();
         this.entities = new HashSet<>();
-        this.worldBounds = new WorldBounds(worldWidth, worldHeight);
         this.isServer = isServer;
 
         Boundary mapBoundary = new Boundary(0, 0, MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT);
@@ -62,12 +60,10 @@ public class GameEngine {
     }
 
 
-
-
     private void handleCollisions() {
         for (Entity entity1 : entitiesMovable) {
 
-            double detectionRange = entity1.sprite.getRadius()+  10;
+            double detectionRange = entity1.getSprite().getRadius()+  10;
 
             HashSet<Entity> nearbyEntities = getNearbyEntities(entity1, detectionRange);
 
@@ -81,11 +77,11 @@ public class GameEngine {
     }
 
     private boolean checkCollision(Entity entity1, Entity entity2) {
-        Shape intersect = Shape.intersect(entity1.sprite, entity2.sprite);
+        Shape intersect = Shape.intersect(entity1.getSprite(), entity2.getSprite());
         if (intersect.getBoundsInLocal().getWidth() != -1) {
             // Calculate intersection area
             double intersectionArea = intersect.getBoundsInLocal().getWidth() * intersect.getBoundsInLocal().getHeight();
-            double entity1Area = Math.PI * Math.pow(entity1.sprite.getRadius(), 2);
+            double entity1Area = Math.PI * Math.pow(entity1.getSprite().getRadius(), 2);
 
             // Check if overlap is at least 33%
             return (intersectionArea / entity1Area) <= 0.33;
@@ -97,26 +93,33 @@ public class GameEngine {
         if (!entities.contains(prey)) {
             return;
         }
-
-
-        if (checkCollision(predator, prey)) {
-            if (canEat(predator, prey)) {
+        if (checkCollision(predator, prey) && canEat(predator, prey)) {
+            if (prey instanceof Player) {
+                int playerId = getPlayerId((Player) prey);
+                removePlayer(playerId);
+            } else {
                 removeEntity(prey);
-                predator.increaseSize(prey.getMasse());
-                prey.onDeletion();
-            } else if (prey instanceof MoveableBody && canEat(prey, predator)) {
-                removeEntity(predator);
-                ((MoveableBody) prey).increaseSize(predator.getMasse());
-                predator.onDeletion();
             }
+
+            predator.increaseSize(prey.getMasse());
+            prey.onDeletion();
         }
     }
 
+    private int getPlayerId(Player player) {
+        return players.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(player))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(-1);
+    }
+
     private boolean canEat(Entity predator, Entity prey) {
-        double predatorArea = Math.PI * Math.pow(predator.sprite.getRadius(), 2);
-        double preyArea = Math.PI * Math.pow(prey.sprite.getRadius(), 2);
+        double predatorArea = Math.PI * Math.pow(predator.getSprite().getRadius(), 2);
+        double preyArea = Math.PI * Math.pow(prey.getSprite().getRadius(), 2);
         return predatorArea > preyArea * 1.33; // Must be 33% larger
     }
+
 
 
 
@@ -171,8 +174,8 @@ public class GameEngine {
     public HashSet<Entity> getNearbyEntities(Entity entity, double range) {
         // Définir un boundary avec un rayon de recherche autour de l'entité
         Boundary searchBoundary = new Boundary(
-                entity.sprite.getCenterX() - range,
-                entity.sprite.getCenterY() - range,
+                entity.getSprite().getCenterX() - range,
+                entity.getSprite().getCenterY() - range,
                 range * 2, // Largeur du carré = 2 * range
                 range * 2  // Hauteur du carré = 2 * range
         );
@@ -189,5 +192,3 @@ public class GameEngine {
 
 
 }
-
-record WorldBounds(double width, double height) {}

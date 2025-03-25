@@ -56,7 +56,7 @@ public class QuadTree {
     }
 
     public boolean insert(Entity entity) {
-        if (!boundary.contains(entity.sprite.getCenterX(), entity.sprite.getCenterY())) {
+        if (!boundary.contains(entity.getSprite().getCenterX(), entity.getSprite().getCenterY())) {
             return false;
         }
 
@@ -79,7 +79,7 @@ public class QuadTree {
 
     public boolean remove(Entity entity) {
         // Si l'entité n'est pas dans la zone du QuadTree, ne rien faire
-        if (!boundary.contains(entity.sprite.getCenterX(), entity.sprite.getCenterY())) {
+        if (!boundary.contains(entity.getSprite().getCenterX(), entity.getSprite().getCenterY())) {
             return false;
         }
 
@@ -122,7 +122,7 @@ public class QuadTree {
         }
 
         for (Entity entity : entities) {
-            if (range.contains(entity.sprite.getCenterX(), entity.sprite.getCenterY())) {
+            if (range.contains(entity.getSprite().getCenterX(), entity.getSprite().getCenterY())) {
                 found.add(entity);
             }
         }
@@ -156,8 +156,8 @@ public class QuadTree {
 
         for (Entity entity : entities) {
             System.out.println(indent + "- " + entity.getClass().getSimpleName() +
-                    " at [" + String.format("%.2f", entity.sprite.getCenterX()) +
-                    ", " + String.format("%.2f", entity.sprite.getCenterY()) + "]");
+                    " at [" + String.format("%.2f", entity.getSprite().getCenterX()) +
+                    ", " + String.format("%.2f", entity.getSprite().getCenterY()) + "]");
         }
 
         // Recursively print child nodes

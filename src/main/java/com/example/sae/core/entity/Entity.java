@@ -7,7 +7,7 @@ import javafx.scene.shape.Circle;
 
 
 public abstract class Entity extends Group{
-    public Circle sprite; // the entity's sprite
+    protected Circle sprite; // the entity's sprite
     private double masse;
 
     Entity(Group group,double masse){
@@ -72,6 +72,11 @@ public abstract class Entity extends Group{
     }
 
     public abstract void Update();
+
+    public Circle getSprite() {
+        return sprite;
+    }
+
 
     public void onDeletion() {
         // Remove from JavaFX scene graph if necessary
