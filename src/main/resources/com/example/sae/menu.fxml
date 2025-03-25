@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.geometry.Pos?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" spacing="40.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sae.client.controller.MenuController">
-    <Label text="Agar.io">
-        <font>
-            <Font name="Arial" size="60"/>
-        </font>
-    </Label>
-    <Button fx:id="startButton" text="Start" onAction="#handleStartButton"/>
-    <Button fx:id="changeSkinButton" text="Change Skin" onAction="#handleChangeSkinButton"/>
-    <Button fx:id="changeNameButton" text="Change Name" onAction="#handleChangeNameButton"/>
-    <Button fx:id="exitButton" text="Exit" onAction="#handleExitButton"/>
-</VBox>
+<AnchorPane prefHeight="400.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sae.client.controller.MenuController">
+    <VBox alignment="CENTER" spacing="40.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+        <Label text="Agar.io">
+            <font>
+                <Font name="Arial" size="60" />
+            </font>
+        </Label>
+        <Button fx:id="start" defaultButton="true" mnemonicParsing="false" onAction="#onStart" text="Start" />
+        <Button fx:id="onlinePlay" disable="true" mnemonicParsing="false" onAction="#onOnlinePlay" text="Online Game" visible="false" />
+        <Button fx:id="localPlay" disable="true" mnemonicParsing="false" onAction="#onLocalPlay" text="Local Game" visible="false" />
+        <Button fx:id="changeSkin" mnemonicParsing="false" onAction="#onChangeSkin" text="Change Skin" />
+        <Button fx:id="changeName" mnemonicParsing="false" onAction="#onChangeName" text="Change Name" />
+        <Button fx:id="exit" cancelButton="true" mnemonicParsing="false" onAction="#onExit" text="Exit" />
+    </VBox>
+</AnchorPane>

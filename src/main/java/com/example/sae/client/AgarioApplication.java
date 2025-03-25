@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -19,14 +20,17 @@ public class AgarioApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/menu-view.fxml"));
-        VBox menuRoot = loader.load();
-        MenuController menuController = loader.getController();
-        menuController.setStage(stage);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/menu.fxml"));
 
-        scene = new Scene(menuRoot, 1280, 720);
+        // TODO : Update code to remove load before scene change
+        // AnchorPane menuRoot = loader.load();
+        // MenuController menuController = loader.getController();
+        // menuController.setStage(stage);
+
+        scene = new Scene(loader.load(), 250, 500);
         stage.setTitle("Agar.io");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 
