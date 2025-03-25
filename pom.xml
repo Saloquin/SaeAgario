@@ -151,6 +151,13 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.10</version>
+                <configuration>
+                    <excludes>
+                        <!-- Prevent the plugin from checking the coverage of UI related class -->
+                        <exclude>**/com/example/sae/client/controller/*</exclude>
+                        <exclude>**/com/example/sae/client/controller/template/*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
