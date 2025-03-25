@@ -3,6 +3,7 @@ package com.example.sae.client;
 import com.example.sae.client.controller.MenuController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
+import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
 import javafx.animation.AnimationTimer;
@@ -32,7 +33,7 @@ public class Solo extends Client {
     @Override
     public void init() {
         gameStarted = true;
-        Player player = new Player(root, 3, Color.RED, true);
+        Player player = EntityFactory.createPlayer(3, Color.RED, true);
         player.setCamera(camera);
         camera.focusOn(player);
         playerId = gameEngine.addPlayer(player);
@@ -55,11 +56,11 @@ public class Solo extends Client {
 
         player.setInputPosition(getMousePosition());
         if (gameEngine.getEntitiesOfType(Food.class).size() < 100) {
-            gameEngine.addEntity(new Food(root, 2));
+            gameEngine.addEntity(EntityFactory.createFood(2));
         }
 
         if (gameEngine.getEntitiesOfType(Enemy.class).size() < 10) {
-            gameEngine.addEntity(new Enemy(root, 5));
+            gameEngine.addEntity(EntityFactory.createEnemy(5));
         }
 
 

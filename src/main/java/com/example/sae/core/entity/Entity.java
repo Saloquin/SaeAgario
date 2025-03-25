@@ -38,6 +38,14 @@ public abstract class Entity extends Group{
         group.getChildren().add(this);
     }
 
+    public void setRandomColor(){
+        Random rand = new Random();
+        int r = rand.nextInt(255);
+        int g  = rand.nextInt(255);
+        int b  = rand.nextInt(255);
+        sprite.setFill(Color.rgb(r, g , b, 0.99));
+    }
+
     Entity(double masse){
         super();
         this.masse = masse;

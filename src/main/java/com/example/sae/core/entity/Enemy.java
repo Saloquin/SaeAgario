@@ -18,8 +18,8 @@ public class Enemy extends MoveableBody {
     private double strategyUpdateTimer = 0;
     private static final double STRATEGY_UPDATE_INTERVAL = 10.0; // Secondes
 
-    public Enemy(Group group, double masse) {
-        super(group, masse);
+    public Enemy(Group group, double masse, String name) {
+        super(group, masse, name);
         this.strategy = getRandomStrategy();
 
         // Position initiale plus proche du centre
