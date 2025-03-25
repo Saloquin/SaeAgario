@@ -1,27 +1,21 @@
 package com.example.sae.core;
 
+import com.example.sae.core.entity.*;
 import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
-import com.example.sae.core.entity.Enemy;
-import com.example.sae.core.entity.Entity;
-import com.example.sae.core.entity.MoveableBody;
-import com.example.sae.core.entity.Player;
 import javafx.scene.shape.Shape;
-
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class GameEngine {
-    private final List<Entity> entities;
-    private final List<Entity> entitiesToRemove;
-    private final List<Entity> entitiesToAdd;
+    private final HashSet<Entity> entities;
+    public final HashSet<Entity> entitiesMovable;
     private final WorldBounds worldBounds;
 
-    private static final int QUAD_TREE_CAPACITY = 4;
     private static final int QUAD_TREE_MAX_DEPTH = 6;
     private static QuadTree quadTree;
 
@@ -34,110 +28,64 @@ public class GameEngine {
     private final AtomicInteger nextPlayerId = new AtomicInteger(0);
 
     public GameEngine(double worldWidth, double worldHeight, boolean isServer) {
-        this.entities = new CopyOnWriteArrayList<>();
-        this.entitiesToRemove = new CopyOnWriteArrayList<>();
-        this.entitiesToAdd = new CopyOnWriteArrayList<>();
+        this.entitiesMovable = new HashSet<>();
+        this.entities = new HashSet<>();
         this.worldBounds = new WorldBounds(worldWidth, worldHeight);
         this.isServer = isServer;
 
-        Boundary mapBoundary = new Boundary(0, 0, MAP_LIMIT_WIDTH/2, MAP_LIMIT_HEIGHT/2);
-        quadTree = new QuadTree(mapBoundary, QUAD_TREE_CAPACITY, QUAD_TREE_MAX_DEPTH);
+        Boundary mapBoundary = new Boundary(0, 0, MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT);
+        quadTree = new QuadTree(mapBoundary, QUAD_TREE_MAX_DEPTH);
+
     }
+
 
     public void update() {
-
-        // Reconstruire le QuadTree à chaque frame
-        rebuildQuadTree();
-
-        // Phase 1 : Mise à jour des entités
         updateEntities();
 
-        // Phase 2 : Gestion des collisions
         handleCollisions();
 
-        // Phase 3 : Gestion des mouvements et limites
-        handleMovement();
+    }
+    private void updateEntityInQuadTree(Entity entity) {
+        // Supprimer l'entité de sa position actuelle dans le QuadTree
+        quadTree.remove(entity);
 
-        // Phase 4 : Nettoyage
-        cleanupEntities();
+        // Réinsérer l'entité à sa nouvelle position dans le QuadTree
+        quadTree.insert(entity);
     }
 
-    private void rebuildQuadTree() {
-        // Réinitialiser le QuadTree
-        Boundary mapBoundary = new Boundary(0, 0, MAP_LIMIT_WIDTH/2, MAP_LIMIT_HEIGHT/2);
-        quadTree = new QuadTree(mapBoundary, QUAD_TREE_CAPACITY, QUAD_TREE_MAX_DEPTH);
 
-        // Insérer toutes les entités dans le QuadTree
-        for (Entity entity : entities) {
-            quadTree.insert(entity);
-        }
-    }
-
-    private void handleCollisionsWithQuadTree() {
-        for (Entity entity1 : entities) {
-            if (entity1 instanceof MoveableBody moveable1) {
-                // Créer une zone de recherche autour de l'entité
-                double searchRadius = moveable1.Sprite.getRadius() * 2;
-                Boundary searchArea = new Boundary(
-                        moveable1.Sprite.getCenterX(),
-                        moveable1.Sprite.getCenterY(),
-                        searchRadius,
-                        searchRadius
-                );
-
-                // Récupérer uniquement les entités proches via le QuadTree
-                List<Entity> nearbyEntities = quadTree.query(searchArea);
-
-                for (Entity entity2 : nearbyEntities) {
-                    if (entity1 != entity2) {
-                        if (checkCollision(moveable1, entity2)) {
-                            handleCollision(moveable1, entity2);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-private void updateEntities() {
-    for (Entity entity : entities) {
-        if (!isServer) {
-            // En mode client
-            if (entity instanceof Player) {
-                // Le joueur local gère ses propres updates
-                entity.Update();
-            } else if (entity instanceof Enemy) {
-                // Les ennemis doivent aussi être mis à jour en mode client
-                entity.Update();
-            }
-        } else {
-            // En mode serveur, on met à jour toutes les entités
+    private void updateEntities() {
+        for (Entity entity : entitiesMovable) {
             entity.Update();
+            updateEntityInQuadTree(entity);
         }
     }
-}
+
+
+
 
     private void handleCollisions() {
-        for (Entity entity1 : entities) {
-            if (entity1 instanceof MoveableBody moveable1) {
-                for (Entity entity2 : entities) {
-                    if (entity1 != entity2) {
-                        if (checkCollision(moveable1, entity2)) {
-                            handleCollision(moveable1, entity2);
-                        }
-                    }
+        for (Entity entity1 : entitiesMovable) {
+
+            double detectionRange = entity1.sprite.getRadius()+  10;
+
+            HashSet<Entity> nearbyEntities = getNearbyEntities(entity1, detectionRange);
+
+            for (Entity entity2 : nearbyEntities) {
+                if (checkCollision(entity1, entity2)) {
+                    System.out.println("Collision detected between: " + entity1 + " and " + entity2);
+                    handleCollision((MoveableBody) entity1, entity2);
                 }
             }
         }
     }
 
-
     private boolean checkCollision(Entity entity1, Entity entity2) {
-        Shape intersect = Shape.intersect(entity1.Sprite, entity2.Sprite);
+        Shape intersect = Shape.intersect(entity1.sprite, entity2.sprite);
         if (intersect.getBoundsInLocal().getWidth() != -1) {
             // Calculate intersection area
             double intersectionArea = intersect.getBoundsInLocal().getWidth() * intersect.getBoundsInLocal().getHeight();
-            double entity1Area = Math.PI * Math.pow(entity1.Sprite.getRadius(), 2);
+            double entity1Area = Math.PI * Math.pow(entity1.sprite.getRadius(), 2);
 
             // Check if overlap is at least 33%
             return (intersectionArea / entity1Area) <= 0.33;
@@ -146,55 +94,45 @@ private void updateEntities() {
     }
 
     private void handleCollision(MoveableBody predator, Entity prey) {
-        if (checkCollision(predator, prey) && canEat(predator, prey)) {
-            removeEntity(prey);
-
-            predator.increaseSize(prey.getMasse());
-            prey.onDeletion();
+        if (!entities.contains(prey)) {
+            return;
         }
-    }
-
-    private boolean canEat(Entity predator, Entity prey) {
-        double predatorArea = Math.PI * Math.pow(predator.Sprite.getRadius(), 2);
-        double preyArea = Math.PI * Math.pow(prey.Sprite.getRadius(), 2);
-        return predatorArea > preyArea * 1.33; // Must be 33% larger
-    }
 
 
-    private void handleMovement() {
-        for (Entity entity : entities) {
-            if (entity instanceof MoveableBody moveable) {
-                moveWithinBounds(moveable);
+        if (checkCollision(predator, prey)) {
+            if (canEat(predator, prey)) {
+                removeEntity(prey);
+                predator.increaseSize(prey.getMasse());
+                prey.onDeletion();
+            } else if (prey instanceof MoveableBody && canEat(prey, predator)) {
+                removeEntity(predator);
+                ((MoveableBody) prey).increaseSize(predator.getMasse());
+                predator.onDeletion();
             }
         }
     }
 
-
-    private void moveWithinBounds(MoveableBody entity) {
-        double[] currentPos = entity.getPosition();
-        double[] newPos = new double[]{
-                Math.max(-worldBounds.width(), Math.min(worldBounds.width(), currentPos[0])),
-                Math.max(-worldBounds.height(), Math.min(worldBounds.height(), currentPos[1]))
-        };
-        entity.Sprite.setCenterX(newPos[0]);
-        entity.Sprite.setCenterY(newPos[1]);
+    private boolean canEat(Entity predator, Entity prey) {
+        double predatorArea = Math.PI * Math.pow(predator.sprite.getRadius(), 2);
+        double preyArea = Math.PI * Math.pow(prey.sprite.getRadius(), 2);
+        return predatorArea > preyArea * 1.33; // Must be 33% larger
     }
+
 
 
     public void addEntity(Entity entity) {
-        entitiesToAdd.add(entity);
-        entities.add(entity); // Ajout immédiat pour éviter les problèmes de synchronisation
+        entities.add(entity);
         quadTree.insert(entity);
+        if(entity instanceof MoveableBody) {
+            entitiesMovable.add(entity);
+        }
     }
+
 
     public void removeEntity(Entity entity) {
-        entitiesToRemove.add(entity);
-        entities.remove(entity); // Suppression immédiate pour éviter les problèmes de synchronisation
-    }
+        entities.remove(entity);
+        entity.setPosition(-999999, -999999); //TODO Move entity off screen before removing
 
-    private void cleanupEntities() {
-        entitiesToRemove.clear();
-        entitiesToAdd.clear();
     }
 
     public int addPlayer(Player player) {
@@ -219,39 +157,37 @@ private void updateEntities() {
         return Collections.unmodifiableMap(players);
     }
 
-    public List<Entity> getEntities() {
+    public HashSet<Entity> getEntities() {
         return entities;
     }
 
-    public List<Entity> getEntitiesOfType(Class<?> type) {
-        return entities.stream()
-                .filter(type::isInstance)
-                .toList();
+    public HashSet<Entity> getEntitiesOfType(Class<?> type) {
+        return
+            entities.stream()
+                .filter(e -> type.isAssignableFrom(e.getClass()))
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
-    public List<Entity> getNearbyEntities(Entity entity, double range) {
-        Boundary searchArea = new Boundary(
-                entity.Sprite.getCenterX(),
-                entity.Sprite.getCenterY(),
-                range,
-                range
+    public HashSet<Entity> getNearbyEntities(Entity entity, double range) {
+        // Définir un boundary avec un rayon de recherche autour de l'entité
+        Boundary searchBoundary = new Boundary(
+                entity.sprite.getCenterX() - range,
+                entity.sprite.getCenterY() - range,
+                range * 2, // Largeur du carré = 2 * range
+                range * 2  // Hauteur du carré = 2 * range
         );
-        return quadTree.query(searchArea);
+
+        // Récupérer les entités dans la zone du QuadTree
+        HashSet<Entity> nearbyEntities = new HashSet<>(quadTree.query(searchBoundary));
+
+        // Exclure l'entité elle-même
+        nearbyEntities.remove(entity);
+
+        return nearbyEntities;
     }
 
-    public double getWorldWidth() {
-        return worldBounds.width();
-    }
-
-    public double getWorldHeight() {
-        return worldBounds.height();
-    }
 
 
-
-    public WorldBounds getWorldBounds() {
-        return worldBounds;
-    }
 }
 
 record WorldBounds(double width, double height) {}

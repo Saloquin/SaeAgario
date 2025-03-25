@@ -13,7 +13,7 @@ import javafx.scene.paint.Paint;
 
 public abstract class Client {
     protected GameEngine gameEngine;
-    protected int playerId;
+    public int playerId;
     protected Point2D mousePosition = new Point2D(0, 0);
     protected boolean mouseMoved = false;
     protected Group root;
@@ -23,6 +23,10 @@ public abstract class Client {
     public Client(Group root) {
         this.root = root;
         this.camera = new Camera();
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 
     public abstract void init();

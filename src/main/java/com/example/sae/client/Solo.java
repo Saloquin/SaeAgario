@@ -23,10 +23,11 @@ public class Solo extends Client {
     @Override
     public void init() {
         gameStarted = true;
-        Player player = new Player(root, 5, Color.RED, true); // Joueur local
+        Player player = new Player(root, 3, Color.RED, true);
         player.setCamera(camera);
         camera.focusOn(player);
         gameEngine.addPlayer(player);
+
         gameTimer.start();
     }
 
@@ -41,6 +42,7 @@ public class Solo extends Client {
         if (gameEngine.getEntitiesOfType(Enemy.class).size() < 10) {
             gameEngine.addEntity(new Enemy(root, 5));
         }
+
 
         gameEngine.update();
     }
