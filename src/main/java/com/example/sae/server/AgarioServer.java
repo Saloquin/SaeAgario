@@ -4,7 +4,6 @@ import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Entity;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
-import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
 import java.io.*;
@@ -13,6 +12,8 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class AgarioServer {
+    // note : ne pas envoyer un gamestate par frame
+    // envoyer simplement quand un élément est créé/modifié/supprimé avec les informations de cet élément
     private static final int PORT = 12345;
     private static final int TARGET_FPS = 30;
     private static final long FRAME_TIME = 1000000000 / TARGET_FPS; // 33ms en nanos
@@ -67,7 +68,7 @@ public class AgarioServer {
         while (running) {
             long now = System.nanoTime();
             if (now - lastUpdate >= FRAME_TIME) {
-                gameEngine.update();
+                // gameEngine.update();
                 broadcastGameState();
                 lastUpdate = now;
             }
@@ -85,12 +86,15 @@ public class AgarioServer {
         StringBuilder state = new StringBuilder("GAMESTATE|");
 
         for (Entity entity : gameEngine.getEntities()) {
-            state.append(String.format("%s,%s,%.2f,%.2f,%.2f|",
+            state.append(String.format(Locale.US, "%s,%s,%.2f,%.2f,%.2f,%.0f,%.0f,%.0f|",
                     entity.getClass().getSimpleName(),
                     entity instanceof Player ? ((Player)entity).getId() : "food",
                     entity.getPosition()[0],
                     entity.getPosition()[1],
-                    entity.getMasse()));
+                    entity.getMasse(),
+                    entity.getColor().getRed()*255,
+                    entity.getColor().getBlue()*255,
+                    entity.getColor().getGreen()*255));
         }
 
         return state.toString();
@@ -127,13 +131,14 @@ public class AgarioServer {
                     handleClientInput(input);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
             } finally {
                 disconnect();
             }
         }
 
         private void handleClientInput(String input) {
+            // System.out.println("Server received: " + input);
             String[] parts = input.split("\\|");
             if (parts.length < 1) return;
 
@@ -159,6 +164,7 @@ public class AgarioServer {
 
         private void disconnect() {
             try {
+                System.out.println("LOG TEMPORAIRE : client déconnecté");
                 gameEngine.removeEntity(player);
                 clientHandlers.remove(clientId);
                 socket.close();

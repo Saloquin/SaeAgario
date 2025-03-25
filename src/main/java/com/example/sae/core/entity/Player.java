@@ -25,7 +25,16 @@ public class Player extends MoveableBody{
         Sprite.setCenterX(0);
         Sprite.setCenterY(0);
         Sprite.setViewOrder(-Sprite.getRadius());
-        inputPosition = new double[]{0, 0};
+        inputPosition = new double[] { 0, 0 };
+    }
+
+    public Player(Group group, double x, double y, double masse, Color color, boolean isLocal) {
+        super(group, masse, color);
+        this.isLocal = isLocal;
+        Sprite.setCenterX(0);
+        Sprite.setCenterY(0);
+        Sprite.setViewOrder(-Sprite.getRadius());
+        inputPosition = new double[] { x, y };
     }
 
     public void increaseSize(double foodValue){

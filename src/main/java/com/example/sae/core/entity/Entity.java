@@ -65,6 +65,10 @@ public abstract class Entity extends Group{
         this.masse = masse;
     }
 
+    public Color getColor() {
+        return (Color) Sprite.getFill();
+    }
+
     public double[] getPosition() {
         //returns current position of the sprite
         return new double[]{Sprite.getCenterX(), Sprite.getCenterY()};
