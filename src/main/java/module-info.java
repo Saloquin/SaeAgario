@@ -5,7 +5,7 @@ module com.example.sae {
     requires jdk.accessibility;
 
     opens com.example.sae to javafx.fxml;
-    exports com.example.sae;
+    //exports com.example.sae;
     exports com.example.sae.core.entity.enemyStrategy;
     opens com.example.sae.core.entity.enemyStrategy to javafx.fxml;
     exports com.example.sae.core.entity;
