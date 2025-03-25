@@ -16,7 +16,7 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 public abstract class MoveableBody extends Entity{
     public double Speed = 1.5;
     public double Smoothing = 80; // higher numbers mean more smoothing, but also slower circle
-    public String name="Camou";
+    public String name= "°-°";
     private Text nameText;
 
     MoveableBody(Group group, double initialSize) {
@@ -26,6 +26,18 @@ public abstract class MoveableBody extends Entity{
 
     MoveableBody(Group group, double initialSize, Color color) {
         super(group, initialSize, color);
+        initializeNameText(group);
+    }
+
+    MoveableBody(Group group, double initialSize,Color color, String name) {
+        super(group, initialSize);
+        this.name = name;
+        sprite.setFill(color);
+        initializeNameText(group);
+    }
+    MoveableBody(Group group, double initialSize,String name) {
+        super(group, initialSize);
+        this.name = name;
         initializeNameText(group);
     }
 
@@ -96,7 +108,7 @@ public abstract class MoveableBody extends Entity{
 
     //TODO: Implement the splitSprite method without using AgarioApplication.root
     public void splitSprite(){
-        Player newBody = new Player(AgarioApplication.root, sprite.getRadius() / 2, Color.RED);
+        Player newBody = EntityFactory.createPlayer(sprite.getRadius() / 2, Color.RED);
         newBody.sprite.setCenterX(sprite.getCenterX() + 30);
         newBody.sprite.setCenterY(sprite.getCenterY() + 30);
 
