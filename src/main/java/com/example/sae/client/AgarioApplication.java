@@ -22,13 +22,8 @@ public class AgarioApplication extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/menu.fxml"));
 
-        // TODO : Update code to remove load before scene change
-        // AnchorPane menuRoot = loader.load();
-        // MenuController menuController = loader.getController();
-        // menuController.setStage(stage);
-
         scene = new Scene(loader.load(), 250, 500);
-        stage.setTitle("Agar.io");
+        stage.setTitle("agarIO - Menu");
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();

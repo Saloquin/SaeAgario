@@ -4,8 +4,12 @@ import com.example.sae.client.controller.template.Dialog;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -13,8 +17,6 @@ import java.util.ResourceBundle;
 
 
 public class MenuController implements Initializable {
-
-    private Stage stage;
 
     @FXML
     private Button start;
@@ -46,16 +48,12 @@ public class MenuController implements Initializable {
 
     public void onOnlinePlay(ActionEvent event)
     {
-        toggleGameButtonsVisibility();
-        start.requestFocus();
-        lauchGameWindow();
+        lauchGameWindow(true, event);
     }
 
-    public void onLocalPlay(ActionEvent actionEvent)
+    public void onLocalPlay(ActionEvent event)
     {
-        toggleGameButtonsVisibility();
-        start.requestFocus();
-        lauchGameWindow();
+        lauchGameWindow(false, event);
     }
 
     public void onChangeSkin(ActionEvent event)
@@ -93,11 +91,33 @@ public class MenuController implements Initializable {
         toggleButtonVisibility(start);
     }
 
-    private void lauchGameWindow()
+    private void lauchGameWindow(boolean isOnline, ActionEvent event)
     {
         try
         {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/game.fxml"));
+
+            Node currentNode = (Node) (event.getSource());
+
+            Scene scene = new Scene(loader.load(), Screen.getPrimary().getBounds().getWidth()*0.9, Screen.getPrimary().getBounds().getHeight()*0.9);
+            String title = "AgarIO - ";
+            if(isOnline){
+                title += "Online";
+            }
+            else {
+                title += "Local";
+            }
             Stage stage = new Stage();
+            stage.setTitle(title);
+            stage.setScene(scene);
+
+            currentNode.getScene().getWindow().hide();
+
+            stage.showAndWait();
+
+            ((Stage) currentNode.getScene().getWindow()).show();
+            toggleGameButtonsVisibility();
+            start.requestFocus();
         }
         catch(Exception e)
         {
