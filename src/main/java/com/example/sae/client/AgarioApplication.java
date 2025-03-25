@@ -1,6 +1,7 @@
 package com.example.sae.client;
 
 
+import com.example.sae.client.controller.GameController;
 import com.example.sae.client.controller.MenuController;
 import com.example.sae.core.Camera;
 import com.example.sae.core.GameEngine;
@@ -16,10 +17,12 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
+import javafx.scene.Parent;
 
 import java.io.IOException;
 
@@ -59,12 +62,12 @@ public class AgarioApplication extends Application {
             }
         }
     }
-
+    /*
     @Override
     public void start(Stage stage) throws IOException {
         GameTimer timer = new GameTimer();
         timer.start();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/menu-view.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/menu.fxml"));
         VBox root = loader.load();
 
         MenuController menuController = loader.getController();
@@ -76,39 +79,66 @@ public class AgarioApplication extends Application {
         stage.show();
     }
 
-    public static void startGame(Stage stage) throws IOException {
+     */
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        // Lancer le timer
+        GameTimer timer = new GameTimer();
+        timer.start();
+        // Charger l'interface depuis le fichier FXML
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/menu.fxml"));
+        Parent root = loader.load();
+
+        // Charge le controlleur
+        MenuController controller = loader.getController();
+        controller.setStage(primaryStage);
+
+        // Créer la scène et l'afficher
+        Scene scene = new Scene(root ,1280,720);
+        primaryStage.setTitle("Agario Menu");
+        primaryStage.setScene(scene);
+
+        primaryStage.show();
+
+
+
+
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+    public static void startGame(Stage stage, Pane gameContainer) {
         gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, false);
         gameStarted = true;
-        scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT, Paint.valueOf("afafaf"));
 
+        // Ajouter le monde de jeu à la partie mobile
+        gameContainer.getChildren().add(root);
 
-        // Configurer les événements souris immédiatement
-        scene.setOnMouseMoved(AgarioApplication::handleMouseMove);
-        scene.setOnMouseDragged(AgarioApplication::handleMouseMove);
-        scene.setOnMousePressed(AgarioApplication::handleMouseMove);
-
-        // Create camera
+        // Créer caméra
         Camera camera = new Camera();
+        camera.attachTo(root);
 
-
-
-        // Create player with camera
+        // Créer joueur
         player = new Player(root, 5, Color.RED);
         player.setCamera(camera);
         gameEngine.addEntity(player);
 
-        // Set camera focus
-        scene.setCamera(camera.getCamera());
+        // Maintenant on peut dire à la caméra de suivre le joueur
         camera.focusOn(player);
 
-        // Add controls
+        // Événements clavier/souris
+        scene = stage.getScene(); // ← Assure-toi que la scène existe bien ici
         scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.SPACE) {
                 player.splitSprite();
             }
         });
 
-        stage.setScene(scene);
+        scene.setOnMouseMoved(AgarioApplication::handleMouseMove);
+        scene.setOnMouseDragged(AgarioApplication::handleMouseMove);
+        scene.setOnMousePressed(AgarioApplication::handleMouseMove);
     }
 
     private static void handleMouseMove(MouseEvent e) {
@@ -148,10 +178,12 @@ public class AgarioApplication extends Application {
         return  gameEngine.getWorldHeight();
     }
 
-
+    /*
     public static void main(String[] args) {
         launch();
     }
+
+     */
 
 
     private void updateGameLogic() {

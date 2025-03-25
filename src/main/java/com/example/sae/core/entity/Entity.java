@@ -19,6 +19,8 @@ public abstract class Entity extends Group{
         int b  = rand.nextInt(255);
 
         Sprite = new Circle(10*Math.sqrt(masse), Color.rgb(r, g , b, 0.99));
+        Sprite.setCenterX(0); // Centré dans le group
+        Sprite.setCenterY(0);
         
         setViewOrder(-Sprite.getRadius());
         Sprite.setRadius(10*Math.sqrt(masse));
@@ -31,6 +33,8 @@ public abstract class Entity extends Group{
         Random rand = new Random();
 
         Sprite = new Circle(10*Math.sqrt(masse), color);
+        Sprite.setCenterX(0); // Centré dans le group
+        Sprite.setCenterY(0);
 
         setViewOrder(-Sprite.getRadius());
         Sprite.setRadius(10*Math.sqrt(masse));
@@ -47,6 +51,8 @@ public abstract class Entity extends Group{
         int b  = rand.nextInt(255);
 
         Sprite = new Circle(10*Math.sqrt(masse), Color.rgb(r, g , b, 0.99));
+        Sprite.setCenterX(0); // Centré dans le group
+        Sprite.setCenterY(0);
 
         setViewOrder(-Sprite.getRadius());
         Sprite.setRadius(10*Math.sqrt(masse));
@@ -62,9 +68,9 @@ public abstract class Entity extends Group{
     }
 
     public double[] getPosition() {
-        //returns current position of the sprite
-        return new double[]{Sprite.getCenterX(), Sprite.getCenterY()};
+        return new double[]{getLayoutX(), getLayoutY()};
     }
+
 
     public void Update(){
 

@@ -75,40 +75,33 @@ public abstract class MoveableBody extends Entity{
         double m = getMasse();
         double maxSpeed = 100 / Math.sqrt(m); // Ajuster 100 selon le besoin
 
-        // Vecteur direction vers la souris
-        double[] velocity = new double[]{
-                mousePosition[0] - Sprite.getCenterX(),
-                mousePosition[1] - Sprite.getCenterY()
-        };
+        // Direction vers la souris
+        double dx = mousePosition[0] - getLayoutX();
+        double dy = mousePosition[1] - getLayoutY();
+        double distance = Math.sqrt(dx * dx + dy * dy);
 
-        // Distance du curseur au centre du joueur
-        double distance = Math.sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1]);
+        // Normalisation
+        if (distance == 0) return;
 
-        // Normalisation du vecteur de direction
-        if (distance > 0) {
-            velocity[0] /= distance;
-            velocity[1] /= distance;
-        }
+        dx /= distance;
+        dy /= distance;
 
-        // Facteur de vitesse (proportionnel à la distance du curseur au joueur, max à `maxSpeed`)
+        // Calcul de la vitesse
         double speedFactor = Math.min(distance / AgarioApplication.getScreenWidth(), 1.0);
         double speed = maxSpeed * speedFactor;
 
-        // Appliquer la vitesse calculée
-        velocity[0] *= speed;
-        velocity[1] *= speed;
+        double newX = getLayoutX() + dx * speed;
+        double newY = getLayoutY() + dy * speed;
 
-        // Vérification des limites de la carte
-        double newX = Sprite.getCenterX() + velocity[0];
-        double newY = Sprite.getCenterY() + velocity[1];
+        // Limites de la carte
+        newX = Math.max(0, Math.min(newX, AgarioApplication.getMapLimitWidth()));
+        newY = Math.max(0, Math.min(newY, AgarioApplication.getMapLimitHeight()));
 
-        if (newX < AgarioApplication.getMapLimitWidth() && newX > -AgarioApplication.getMapLimitWidth()) {
-            Sprite.setCenterX(newX);
-        }
-        if (newY < AgarioApplication.getMapLimitHeight() && newY > -AgarioApplication.getMapLimitHeight()) {
-            Sprite.setCenterY(newY);
-        }
+        // Appliquer déplacement
+        setLayoutX(newX);
+        setLayoutY(newY);
     }
+
 
 
 

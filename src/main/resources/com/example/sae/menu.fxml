@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="CENTER" spacing="40.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sae.client.controller.MenuController">
+    <Label text="Agar.io">
+        <font>
+            <Font name="Arial" size="60" />
+        </font>
+    </Label>
+    <Button fx:id="startButton" onAction="#handleStartButton" text="Start" />
+   <TextField promptText="Nickname" />
+    <Button fx:id="changeSkinButton" onAction="#handleChangeSkinButton" text="Change Skin" />
+    <Button fx:id="exitButton" onAction="#handleExitButton" text="Exit" />
+</VBox>
