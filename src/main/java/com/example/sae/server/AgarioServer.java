@@ -4,6 +4,7 @@ import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Entity;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
 import java.io.*;

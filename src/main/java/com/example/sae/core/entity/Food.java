@@ -9,9 +9,12 @@ public class Food extends Entity{
 
 
     public Food(Group group, double size){
+        // super(group == null ? new Group() : group, size);
         super(group, size);
-        Sprite.setCenterX(Math.random() * (AgarioApplication.getMapLimitWidth() * 2) - AgarioApplication.getMapLimitWidth());
-        Sprite.setCenterY(Math.random() * (AgarioApplication.getMapLimitHeight() * 2) - AgarioApplication.getMapLimitHeight());
 
+        if (group != null) {
+            Sprite.setCenterX(Math.random() * (AgarioApplication.getMapLimitWidth() * 2) - AgarioApplication.getMapLimitWidth());
+            Sprite.setCenterY(Math.random() * (AgarioApplication.getMapLimitHeight() * 2) - AgarioApplication.getMapLimitHeight());
+        }
     }
 }

@@ -23,7 +23,9 @@ public abstract class Entity extends Group{
         setViewOrder(-Sprite.getRadius());
         Sprite.setRadius(10*Math.sqrt(masse));
         getChildren().add(Sprite);
-        group.getChildren().add(this);
+        if (group != null) {
+            group.getChildren().add(this);
+        }
     }
     Entity(Group group,double masse, Color color){
         super();
@@ -35,7 +37,9 @@ public abstract class Entity extends Group{
         setViewOrder(-Sprite.getRadius());
         Sprite.setRadius(10*Math.sqrt(masse));
         getChildren().add(Sprite);
-        group.getChildren().add(this);
+        if (group != null) {
+            group.getChildren().add(this);
+        }
     }
 
     Entity(double masse){
@@ -64,6 +68,10 @@ public abstract class Entity extends Group{
     public double[] getPosition() {
         //returns current position of the sprite
         return new double[]{Sprite.getCenterX(), Sprite.getCenterY()};
+    }
+
+    public void setPosition(double[] pos) {
+        // updates position of the entity
     }
 
     public void Update(){
