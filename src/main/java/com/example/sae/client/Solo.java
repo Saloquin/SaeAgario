@@ -1,5 +1,6 @@
 package com.example.sae.client;
 
+import com.example.sae.client.debug.DebugWindow;
 import com.example.sae.client.timer.GameTimer;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
@@ -29,6 +30,9 @@ public class Solo extends Client {
         player.setCamera(camera);
         camera.focusOn(player);
         playerId = gameEngine.addPlayer(player);
+        if(DebugWindow.DEBUG_MODE) {
+            DebugWindow.getInstance();
+        }
         gameTimer.start();
     }
 
@@ -46,15 +50,19 @@ public class Solo extends Client {
         }
 
         player.setInputPosition(getMousePosition());
-        if (gameEngine.getEntitiesOfType(Food.class).size() < 100) {
+        if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
             gameEngine.addEntity(EntityFactory.createFood(2));
         }
 
-        if (gameEngine.getEntitiesOfType(Enemy.class).size() < 10) {
+        if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
             gameEngine.addEntity(EntityFactory.createEnemy(5));
         }
 
         gameEngine.update();
+        if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
+            DebugWindow.getInstance().update(gameEngine, playerId);
+        }
+
     }
 
     private void returnToMenu() {

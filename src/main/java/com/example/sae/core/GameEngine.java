@@ -1,5 +1,6 @@
 package com.example.sae.core;
 
+import com.example.sae.client.debug.DebugWindowController;
 import com.example.sae.core.entity.*;
 import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
@@ -14,7 +15,8 @@ import java.util.stream.Collectors;
 public class GameEngine {
     private final HashSet<Entity> entities;
     public final HashSet<Entity> entitiesMovable;
-
+    public final  static double NB_FOOD_MAX = 100;
+    public final  static double NB_ENEMY_MAX = 10;
     private static final int QUAD_TREE_MAX_DEPTH = 6;
     private static QuadTree quadTree;
 
@@ -68,7 +70,7 @@ public class GameEngine {
 
             for (Entity entity2 : nearbyEntities) {
                 if (checkCollision(entity1, entity2)) {
-                    System.out.println("Collision detected between: " + entity1 + " and " + entity2);
+                    DebugWindowController.addLog("Collision detected between: " + entity1 + " and " + entity2);
                     handleCollision((MoveableBody) entity1, entity2);
                 }
             }
