@@ -8,6 +8,8 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
+import java.util.Arrays;
+
 import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
@@ -43,6 +45,11 @@ public class Solo extends Client {
         }
 
         gameEngine.update();
+        System.out.println(Arrays.toString(gameEngine.getPlayer(playerId).getPosition()));
+    }
+
+    public void stopSoloGame() {
+        gameTimer.stop();
     }
 
     private static class GameTimer extends AnimationTimer {

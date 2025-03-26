@@ -30,8 +30,7 @@ public class Player extends MoveableBody{
 
     public void increaseSize(double foodValue){
         super.increaseSize(foodValue);
-        //camera.adjustZoom(this);
-
+        camera.adjustZoom(this);
     }
 
     public void moveToward(double[] velocity) {
