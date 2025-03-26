@@ -3,7 +3,7 @@
 <?import javafx.scene.canvas.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane fx:id="rootStack" prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sae.client.controller.SoloController">
+<StackPane fx:id="rootStack" prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
 
     <!-- The game world (moved by camera) -->
     <Pane fx:id="gameContainer" minHeight="100" minWidth="100" viewOrder="1.0" />

@@ -15,9 +15,11 @@ public abstract class Client {
     protected Camera camera;
     protected boolean gameStarted = false;
     protected MouseEventHandler mouseHandler;
+    protected String playerName;
 
-    public Client(Group root) {
+    public Client(Group root, String name) {
         this.root = root;
+        this.playerName = name;
         this.camera = new Camera();
     }
 

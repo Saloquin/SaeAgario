@@ -38,7 +38,7 @@ public class OnlineController  implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Group root = new Group();
-        client = new Solo(root);
+        client = new Solo(root, "Player");
         client.init();
         Pane scene = client.createGamePane(1280,720);
         gameContainer.getChildren().add(scene);

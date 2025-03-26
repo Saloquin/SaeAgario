@@ -3,19 +3,51 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
 
 <AnchorPane prefHeight="400.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sae.client.controller.MenuController">
-    <VBox alignment="CENTER" spacing="40.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+    <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
         <Label text="Agar.io">
             <font>
                 <Font name="Arial" size="60" />
             </font>
         </Label>
-        <Button fx:id="start" defaultButton="true" mnemonicParsing="false" onAction="#onStart" text="Start" />
-        <Button fx:id="onlinePlay" disable="true" mnemonicParsing="false" onAction="#onOnlinePlay" text="Online Game (PvP)" visible="false" />
-        <Button fx:id="localPlay" disable="true" mnemonicParsing="false" onAction="#onLocalPlay" text="Local Game (PvE)" visible="false" />
-        <Button fx:id="changeSkin" mnemonicParsing="false" onAction="#onChangeSkin" text="Change Skin" />
-        <Button fx:id="changeName" mnemonicParsing="false" onAction="#onChangeName" text="Change Name" />
-        <Button fx:id="exit" cancelButton="true" mnemonicParsing="false" onAction="#onExit" text="Exit" />
+
+        <VBox alignment="CENTER" spacing="5.0">
+            <Label text="Player Name:" />
+            <TextField fx:id="playerNameField"
+                       maxWidth="200"
+                       promptText="Enter your name"
+                       style="-fx-font-size: 14px;">
+                <VBox.margin>
+                    <Insets bottom="10.0"/>
+                </VBox.margin>
+            </TextField>
+        </VBox>
+
+        <Button fx:id="onlinePlay"
+                mnemonicParsing="false"
+                onAction="#onOnlinePlay"
+                text="Online Game (PvP)"
+                style="-fx-min-width: 150px;"/>
+
+        <Button fx:id="localPlay"
+                mnemonicParsing="false"
+                onAction="#onLocalPlay"
+                text="Local Game (PvE)"
+                style="-fx-min-width: 150px;"/>
+
+        <Button fx:id="changeSkin"
+                mnemonicParsing="false"
+                onAction="#onChangeSkin"
+                text="Change Skin"
+                style="-fx-min-width: 150px;"/>
+
+        <Button fx:id="exit"
+                cancelButton="true"
+                mnemonicParsing="false"
+                onAction="#onExit"
+                text="Exit"
+                style="-fx-min-width: 150px;"/>
     </VBox>
 </AnchorPane>

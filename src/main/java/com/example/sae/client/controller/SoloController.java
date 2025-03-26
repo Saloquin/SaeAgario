@@ -32,10 +32,17 @@ public class SoloController implements Initializable {
     public static Group root;
     private static Solo client;
 
+    private String playerName;
+
+    public void setPlayerName(String playerName) {
+        System.out.println("Setting player name to: " + playerName);
+        this.playerName = playerName;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         root = new Group();
-        client = new Solo(root);
+        client = new Solo(root, playerName);
         client.init();
 
         Pane pane = client.createGamePane(1280, 720);
@@ -47,7 +54,6 @@ public class SoloController implements Initializable {
     }
 
     private void initializeComponents() {
-        String playerName = client.getGameEngine().getPlayer(client.getPlayerId()).getNom();
         chatController.initialize(playerName);
         leaderboardController.initializeWithSupplier(() -> client.getGameEngine().getSortedMovableEntities());
     }

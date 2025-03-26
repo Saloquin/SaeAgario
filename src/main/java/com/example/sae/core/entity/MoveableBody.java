@@ -1,5 +1,7 @@
 package com.example.sae.core.entity;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -10,7 +12,7 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 public abstract class MoveableBody extends Entity{
     public double Speed = 1.5;
-    public String name= "Camou le goat";
+    private final StringProperty name = new SimpleStringProperty(this, "name", "Player");
     private Text nameText;
 
     public static final double BASE_MAX_SPEED = 5.0; // Vitesse de base maximum
@@ -29,18 +31,19 @@ public abstract class MoveableBody extends Entity{
 
     MoveableBody(Group group, double initialSize,Color color, String name) {
         super(group, initialSize);
-        this.name = name;
+        this.name.set(name);
         sprite.setFill(color);
         initializeNameText(group);
     }
     MoveableBody(Group group, double initialSize,String name) {
         super(group, initialSize);
-        this.name = name;
+        this.name.set(name);
         initializeNameText(group);
     }
 
     private void initializeNameText(Group group) {
-        nameText = new Text(name);
+        nameText = new Text();
+        nameText.textProperty().bind(name);
         nameText.setFill(Color.BLACK);
         nameText.setStyle("-fx-font-size: 14;");
         // Place le texte au-dessus du sprite dans l'ordre de rendu
@@ -144,6 +147,14 @@ public abstract class MoveableBody extends Entity{
     }
 
     public String getNom() {
+        return name.get();
+    }
+
+    public void setNom(String nom) {
+        this.name.set(nom);
+    }
+
+    public StringProperty nameProperty() {
         return name;
     }
 
