@@ -157,10 +157,15 @@ public abstract class MoveableBody extends Entity{
     @Override
     public void onDeletion() {
         super.onDeletion();
+        deleteText();
+    }
+
+    public void deleteText() {
         if (nameText.getParent() != null) {
             ((Group) nameText.getParent()).getChildren().remove(nameText);
         }
     }
+
 
 
 }
