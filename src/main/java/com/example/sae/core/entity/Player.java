@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 public class Player extends MoveableBody{
 
 
-    private Camera camera;
+
     private boolean isLocal = false; // Pour identifier si c'est un joueur local ou distant
     private double[] inputPosition; // Position cible (souris pour le joueur local, position reçue du serveur pour les autres)
 
@@ -31,9 +31,6 @@ public class Player extends MoveableBody{
     @Override
     public void Update() {
         moveToward(inputPosition);
-        if (isLocal && camera != null) {
-            camera.focusOn(this);
-        }
     }
 
     public boolean isLocal() {
@@ -44,11 +41,7 @@ public class Player extends MoveableBody{
         this.inputPosition = position;
     }
 
-    public Camera getCamera() {
-        return camera;
-    }
-
     public void setCamera(Camera cam) {
-        this.camera = cam;
+        cam.focusOn(this);
     }
 }
