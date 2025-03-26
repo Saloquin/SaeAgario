@@ -34,6 +34,15 @@ public class Player extends MoveableBody{
         inputPosition = new double[]{0, 0};
     }
 
+    public Player(Group group, String id, double masse, Color color, boolean isLocal) {
+        super(group, id, masse, color);
+        this.isLocal = isLocal;
+        sprite.setCenterX(0);
+        sprite.setCenterY(0);
+        sprite.setViewOrder(-sprite.getRadius());
+        inputPosition = new double[]{0, 0};
+    }
+
     public Player(Group group, String id, double x, double y, double masse, Color color, boolean isLocal) {
         super(group, id, masse, color);
         this.isLocal = isLocal;

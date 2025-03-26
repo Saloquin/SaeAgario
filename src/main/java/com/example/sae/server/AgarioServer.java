@@ -3,6 +3,7 @@ package com.example.sae.server;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Entity;
 import com.example.sae.core.entity.Food;
+import com.example.sae.core.entity.MoveableBody;
 import com.example.sae.core.entity.Player;
 import javafx.scene.paint.Color;
 
@@ -78,7 +79,7 @@ public class AgarioServer {
             if (now - groscaca >= 5000000000L) {
                 // System.out.println(serializeGameState());
                 clientHandlers.values().stream().findFirst().ifPresent(clientHandler -> {
-                    System.out.println(serializeEntity(clientHandler.player));
+                    // System.out.println(serializeEntity(clientHandler.player));
                 });
                 groscaca = now;
                 StringBuilder state = new StringBuilder("DELETE|");
@@ -137,7 +138,7 @@ public class AgarioServer {
             this.ready = false;
 
             // Créer un nouveau joueur pour ce client
-            this.player = new Player(null, clientId, 5, Color.RED); // null car pas besoin de Group côté serveur
+            this.player = new Player(null, clientId, MoveableBody.DEFAULT_MASSE, Color.RED); // null car pas besoin de Group côté serveur
             gameEngine.addPlayer(player);
 
             // Envoyer l'ID et les informations initiales
@@ -168,12 +169,16 @@ public class AgarioServer {
                     ready = true;
                     String gameState = serializeGameState();
                     sendMessage(gameState);
+
+                    clientHandlers.values().forEach(handler -> handler.sendMessage("CREATE|" + serializeEntity(player)));
                 }
                 case "MOVE" -> {
                     if (parts.length == 3) {
                         double x = Double.parseDouble(parts[1]);
                         double y = Double.parseDouble(parts[2]);
-                        player.moveToward(new double[]{x, y});
+                        player.moveToward(new double[]{ x, y });
+
+                        clientHandlers.values().forEach(handler -> handler.sendMessage(String.format(Locale.US, "MOVE|%s|%f|%f", player.getEntityId(), x, y)));
                     }
                 }
             }

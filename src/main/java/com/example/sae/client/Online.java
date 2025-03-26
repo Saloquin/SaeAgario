@@ -1,11 +1,9 @@
 package com.example.sae.client;
 
+import com.example.sae.client.debug.DebugWindow;
 import com.example.sae.client.timer.GameTimer;
 import com.example.sae.core.GameEngine;
-import com.example.sae.core.entity.Entity;
-import com.example.sae.core.entity.EntityFactory;
-import com.example.sae.core.entity.Food;
-import com.example.sae.core.entity.Player;
+import com.example.sae.core.entity.*;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
@@ -24,6 +22,8 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 public class Online extends Client {
+    private static final String HOST = "localhost";
+    private static final int PORT = 12345;
     private String clientId;
     private final GameTimer gameTimer;
     private final ThreadDeFond handler;
@@ -33,20 +33,14 @@ public class Online extends Client {
         super(root);
         this.gameTimer = new GameTimer(this);
         this.gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, false);
-        this.socket = new Socket("localhost", 12345);
+        this.socket = new Socket(HOST, PORT);
         handler = new ThreadDeFond(this, socket);
         new Thread(handler).start();
-        handler.sendMessage("READY");
     }
 
     @Override
     public void init() {
-        gameStarted = true;
-        Player player = EntityFactory.createPlayer(3, Color.RED, true);
-        player.setCamera(camera);
-        camera.focusOn(player);
-        gameEngine.addPlayer(player);
-        gameTimer.start();
+
     }
 
     @Override
@@ -63,16 +57,35 @@ public class Online extends Client {
             return;
         }
 
-        player.setInputPosition(getMousePosition());
-        handler.sendMessage(String.format(Locale.US, "MOVE|%f|%f", getMousePosition()[0], getMousePosition()[1]));
+        // player.setInputPosition(getMousePosition());
+        handler.sendMessage(String.format(Locale.US, "MOVE|%.2f|%.2f", getMousePosition()[0], getMousePosition()[1]));
 
         gameEngine.update();
+
+        /*
+        if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
+            DebugWindow.getInstance().update(gameEngine, playerId);
+        }*/
+    }
+
+    public void start(String id) {
+        gameStarted = true;
+        Player player = EntityFactory.createPlayer(id, MoveableBody.DEFAULT_MASSE, Color.RED, true);
+        player.setCamera(camera);
+        camera.focusOn(player);
+        gameEngine.addPlayer(player);
+        gameTimer.start();
+        if (DebugWindow.DEBUG_MODE) {
+            // DebugWindow.getInstance();
+        }
+        handler.sendMessage("READY");
     }
 
     public void handleAppClosed(Stage stage) {
         stage.setOnHiding(event -> {
             try {
                 socket.close();
+                DebugWindow.getInstance().getController().getStage().close();
             } catch (IOException e) {
                 // throw new RuntimeException(e);
             }
@@ -107,42 +120,35 @@ public class Online extends Client {
             if (parts.length < 1) return;
 
             switch (parts[0]) {
-                case "ID" -> clientId = parts[1];
-                case "GAMESTATE" -> {
-                    setupWithSocketData(Arrays.copyOfRange(parts, 1, parts.length));
-                    // System.out.println(input);
+                case "ID" -> {
+                    clientId = parts[1];
+                    Platform.runLater(() -> {
+                        start(clientId);
+                    });
                 }
-                case "CREATE" -> {}
-                case "UPDATE" -> {}
+                case "GAMESTATE", "CREATE" -> createEntityUsingSocketData(Arrays.copyOfRange(parts, 1, parts.length));
+                case "MOVE" -> movePlayerUsingSocketData(parts);
                 case "DELETE" -> {
-                    System.out.println(input);
-                    deleteWithSocketData(Arrays.copyOfRange(parts, 1, parts.length));
+                    // System.out.println(input);
+                    deleteEntityUsingSocketData(Arrays.copyOfRange(parts, 1, parts.length));
                 }
             }
         }
 
-        public void setupWithSocketData(String[] parts) {
+        public void createEntityUsingSocketData(String[] parts) {
             for (String part : parts) {
                 String[] infos = part.split(",");
 
                 switch (infos[0]) {
                     case "Player" -> {
+                        String id = infos[1];
                         double x = Double.parseDouble(infos[2]);
                         double y = Double.parseDouble(infos[3]);
-                        String id = infos[1];
-                        if (id.equals(clientId)) {
-                            /*
+                        double masse = Double.parseDouble(infos[4]);
+                        if (!id.equals(clientId)) {
+                            // System.out.println(part);
                             Platform.runLater(() -> {
-                                Player player = new Player(root, id, x, y, 5, Color.RED, true);
-                                player.setCamera(camera);
-                                camera.focusOn(player);
-                                gameEngine.addPlayer(player);
-                            });
-                            */
-                        } else {
-                            System.out.println(part);
-                            Platform.runLater(() -> {
-                                Player player = new Player(root, id, x, y, 5, Color.BLUE, false);
+                                Player player = new Player(root, id, x, y, masse, Color.BLUE, false);
                                 gameEngine.addPlayer(player);
                             });
                         }
@@ -161,67 +167,65 @@ public class Online extends Client {
                     default -> System.out.println(part);
                 }
             }
-
-            Platform.runLater(() -> {
-                gameEngine.update();
-            });
         }
 
-        public void updateWithSocketData(String[] parts) {
-            /*
-            HashSet<Entity> entities = gameEngine.getEntities();
+        // pour move un autre gars, pas nous
+        public void movePlayerUsingSocketData(String[] parts) {
+            String movingPlayerId = parts[1];
 
-            synchronized (entities) {
-                for (Entity entity : entities) {
-                    // retirer cette condition pour rebuild le joueur et les ennemis à chaque fois
-                    // if (entity instanceof Food) {
-                    Platform.runLater(() -> {
-                        gameEngine.removeEntity(entity);
-                        entity.onDeletion();
-                    });
-                    // }
-                }
+            /*
+            if (movingPlayerId.equals(clientId)) {
+                // return;
+                // System.out.println(clientId);
             }
             */
 
-            // Player,null,0,00,0,00,5,00
-            // Food,food,-1614.77,-610.76,2.00
-            for (String part : parts) {
-                String[] infos = part.split(",");
+            double x = Double.parseDouble(parts[2]);
+            double y = Double.parseDouble(parts[3]);
 
-                switch (infos[0]) {
-                    case "Player" -> {
-                        double x = Double.parseDouble(infos[2]);
-                        double y = Double.parseDouble(infos[3]);
-                        Platform.runLater(() -> {
-                            Player player = new Player(root, infos[1], x, y, 5, Color.RED, false);
-                            player.setCamera(camera);
-                            camera.focusOn(player);
-                            gameEngine.addPlayer(player);
-                        });
-                        // System.out.println(part);
+            Stream<Entity> allPlayers = gameEngine.getEntitiesOfType(Player.class).stream();
+            List<Entity> movingPlayers = allPlayers.filter(p -> movingPlayerId.equals(p.getEntityId())).toList();
+
+            movingPlayers.forEach(entity -> {
+                Platform.runLater(() -> {
+                    /*
+                    if (!movingPlayerId.equals(clientId)) {
+                        System.out.println(clientId + " /// " + movingPlayerId + " /// " + entity.getEntityId());
+                        System.out.println(x + ", " + y);
                     }
-                    case "Food" -> {
-                        double x = Double.parseDouble(infos[2]);
-                        double y = Double.parseDouble(infos[3]);
-                        double masse = Double.parseDouble(infos[4]);
-                        int r = Integer.parseInt(infos[5]);
-                        int g = Integer.parseInt(infos[6]);
-                        int b = Integer.parseInt(infos[7]);
-                        Platform.runLater(() -> {
-                            gameEngine.addEntity(new Food(root, "1", x, y, masse, Color.rgb(r, g, b, 0.99)));
-                        });
-                    }
-                    default -> System.out.println(part);
-                }
+                    */
+                    Player movingPlayer = (Player)entity;
+                    movingPlayer.setInputPosition(new double[]{ x, y });
+                });
+            });
+
+            /*
+            Stream<Entity> allPd = gameEngine.getEntitiesOfType(Player.class).stream().filter(p -> movingPlayerId.equals(p.getEntityId()));
+
+            if (!movingPlayerId.equals(clientId)) {
+                // System.out.println(movingPlayerId + " /// " + allPlayers.findFirst().get().getEntityId());
+                System.out.println(movingPlayerId + " /// " + allPd.findFirst().get().getEntityId());
+                System.out.println(x + ", " + y);
             }
 
+            /*
+            List<Entity> movingPlayers = allPlayers.filter(p -> movingPlayerId.equals(p.getEntityId())).toList();
+            Player movingPlayer = (Player)movingPlayers.get(0);
+
             Platform.runLater(() -> {
-                gameEngine.update();
+                movingPlayer.setInputPosition(new double[]{ x, y });
             });
+
+            allPlayers.filter(p -> movingPlayerId.equals(p.getEntityId())).findFirst().ifPresent(entity -> {
+                Platform.runLater(() -> {
+                    Player movingPlayer = (Player)entity;
+                    movingPlayer.setInputPosition(new double[]{ x, y });
+                });
+            });
+            */
         }
 
-        public void deleteWithSocketData(String[] entitiesId) {
+        public void deleteEntityUsingSocketData(String[] entitiesId) {
             Stream<Entity> allEntities = gameEngine.getEntities().stream();
             List<Entity> entitiesToRemove = allEntities.filter(e -> Arrays.asList(entitiesId).contains(e.getEntityId())).toList();
 

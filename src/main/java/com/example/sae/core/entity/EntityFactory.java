@@ -32,6 +32,11 @@ public class EntityFactory {
     public static Player createPlayer(double mass, Color color, boolean isLocal) {
         return new Player(root, mass, color, isLocal);
     }
+
+    public static Player createPlayer(String id, double mass, Color color, boolean isLocal) {
+        return new Player(root, id, mass, color, isLocal);
+    }
+
     public static Player createPlayer(double mass, Color color) {
         return new Player(root, mass, color);
     }
