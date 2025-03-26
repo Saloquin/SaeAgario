@@ -27,7 +27,7 @@ public class ChaseClosestEntityStrategy implements EnemyStrategy {
      */
     @Override
     public boolean execute(Enemy enemy) {
-        GameEngine gameEngine = AgarioApplication.getClient().getGameEngine();
+        GameEngine gameEngine = SoloController.getClient().getGameEngine();
         if (gameEngine == null) return false;
 
         Entity closestEntity = null;

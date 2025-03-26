@@ -1,5 +1,6 @@
 package com.example.sae.client;
 
+import com.example.sae.client.controller.SoloController;
 import com.example.sae.client.debug.DebugWindow;
 import com.example.sae.client.timer.GameTimer;
 import com.example.sae.core.GameEngine;
@@ -7,6 +8,7 @@ import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
@@ -29,11 +31,7 @@ public class Solo extends Client {
     @Override
     public void init() {
         gameStarted = true;
-<<<<<<< HEAD
-        player = new Player(root, 5, Color.RED, true); // Joueur local
-=======
         Player player = EntityFactory.createPlayer(3, Color.RED, true);
->>>>>>> main
         player.setCamera(camera);
         camera.focusOn(player);
         playerId = gameEngine.addPlayer(player);
@@ -50,7 +48,9 @@ public class Solo extends Client {
             new javafx.animation.Timeline(
                     new javafx.animation.KeyFrame(
                             javafx.util.Duration.seconds(2),
-                            event -> returnToMenu()
+                            event -> {
+                                Platform.exit();
+                            }
                     )
             ).play();
             return;
@@ -97,9 +97,5 @@ public class Solo extends Client {
                 client.update();
             }
         }
-    }
-    
-    private void returnToMenu() {
-        Platform.exit();
     }
 }

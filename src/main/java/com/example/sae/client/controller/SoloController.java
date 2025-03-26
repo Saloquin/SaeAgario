@@ -2,6 +2,7 @@ package com.example.sae.client.controller;
 
 import com.example.sae.client.Client;
 import com.example.sae.client.Solo;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
@@ -43,6 +44,7 @@ public class SoloController implements Initializable {
         if(client != null) {
             client.stopSoloGame();
         }
+        Platform.exit();
     }
 
     public static Client getClient() {
