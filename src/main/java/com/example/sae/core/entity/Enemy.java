@@ -1,5 +1,7 @@
 package com.example.sae.core.entity;
 
+import com.example.sae.client.AgarioApplication;
+import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.enemyStrategy.ChaseClosestEntityStrategy;
 import com.example.sae.core.entity.enemyStrategy.EnemyStrategy;
 import com.example.sae.core.entity.enemyStrategy.RandomMoveStrategy;
@@ -18,27 +20,21 @@ public class Enemy extends MoveableBody {
     private double strategyUpdateTimer = 0;
     private static final double STRATEGY_UPDATE_INTERVAL = 10.0; // Secondes
 
-    public Enemy(Group group, double masse) {
-        super(group, masse);
-        this.strategy = getRandomStrategy();
+    public Enemy(Group group, double masse, String name) {
+        super(group, masse, name);
+        this.strategy = chooseOptimalStrategy();
 
         // Position initiale plus proche du centre
         double spreadFactor = 0.7; // Réduire la dispersion
-        Sprite.setCenterX((Math.random() * MAP_LIMIT_WIDTH * 2 -MAP_LIMIT_WIDTH) * spreadFactor);
-        Sprite.setCenterY((Math.random() * MAP_LIMIT_HEIGHT * 2 - MAP_LIMIT_HEIGHT) * spreadFactor);
+        sprite.setCenterX((Math.random() * MAP_LIMIT_WIDTH * 2 -MAP_LIMIT_WIDTH) * spreadFactor);
+        sprite.setCenterY((Math.random() * MAP_LIMIT_HEIGHT * 2 - MAP_LIMIT_HEIGHT) * spreadFactor);
 
-        Speed = 2.0; // Vitesse de base plus élevée
+        Speed = 1;
     }
 
     @Override
     public void Update() {
-        // Changer de stratégie périodiquement
-        strategyUpdateTimer += 0.016; // Approximativement 60 FPS
-        if (strategyUpdateTimer >= STRATEGY_UPDATE_INTERVAL) {
-            strategy = getRandomStrategy();
-            strategyUpdateTimer = 0;
-        }
-
+        strategy = chooseOptimalStrategy();
         if (strategy != null) {
             strategy.execute(this);
         }
@@ -50,7 +46,7 @@ public class Enemy extends MoveableBody {
     }
 
     public boolean hasReachedTarget() {
-        double distance = Math.sqrt(Math.pow(targetPosition[0] - Sprite.getCenterX(), 2) + Math.pow(targetPosition[1] - Sprite.getCenterY(), 2));
+        double distance = Math.sqrt(Math.pow(targetPosition[0] - sprite.getCenterX(), 2) + Math.pow(targetPosition[1] - sprite.getCenterY(), 2));
         return distance < 5;
     }
 
@@ -79,6 +75,28 @@ public class Enemy extends MoveableBody {
                 return new SeekFoodStrategy();
             default:
                 return new RandomMoveStrategy();
+        }
+    }
+
+    private EnemyStrategy chooseOptimalStrategy() {
+        GameEngine gameEngine = AgarioApplication.getClient().getGameEngine();
+        if (gameEngine == null) return new RandomMoveStrategy();
+
+        var nearbyEntities = gameEngine.getNearbyEntities(this, 400);
+
+        boolean hasValidPrey = nearbyEntities.stream()
+                .anyMatch(entity -> entity.getMasse() <= this.getMasse() * 1.33
+                        && entity.getParent() != null);
+
+        boolean hasFoodNearby = nearbyEntities.stream()
+                .anyMatch(entity -> entity instanceof Food);
+
+        if (hasValidPrey) {
+            return new ChaseClosestEntityStrategy();
+        } else if (hasFoodNearby) {
+            return new SeekFoodStrategy();
+        } else {
+            return new RandomMoveStrategy();
         }
     }
 

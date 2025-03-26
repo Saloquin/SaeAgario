@@ -3,14 +3,43 @@ package com.example.sae.core.entity.enemyStrategy;
 import com.example.sae.core.entity.Enemy;
 
 import java.util.Random;
-
+/**
+ * AI strategy: move randomly
+ *
+ * @see Enemy
+ * @see ChaseClosestEntityStrategy
+ * @see SeekFoodStrategy
+ *
+ * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+ */
 public class RandomMoveStrategy implements EnemyStrategy {
+    /**
+     * function to generate random numbers
+     */
     private Random random = new Random();
+
+    /**
+     * number of seconds before updating AI direction
+     */
     private static final double UPDATE_INTERVAL = 2.0; // Secondes
+
+    /**
+     * last time direction was updated in seconds
+     */
     private double lastUpdateTime = 0;
 
+    /**
+     * Executes the AI's random move strategy
+     *
+     * @see Enemy
+     * @see ChaseClosestEntityStrategy
+     * @see SeekFoodStrategy
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param enemy Strategy executed on this AI
+     */
     @Override
-    public void execute(Enemy enemy) {
+    public boolean execute(Enemy enemy) {
         double currentTime = System.currentTimeMillis() / 1000.0;
 
         if (enemy.getTargetPosition() == null ||
@@ -36,6 +65,7 @@ public class RandomMoveStrategy implements EnemyStrategy {
         if (enemy.getTargetPosition() != null) {
             enemy.moveToward(enemy.getTargetPosition());
         }
+        return true;
     }
 
 

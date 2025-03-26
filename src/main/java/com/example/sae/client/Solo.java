@@ -1,10 +1,13 @@
 package com.example.sae.client;
 
+import com.example.sae.client.debug.DebugWindow;
+import com.example.sae.client.timer.GameTimer;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
+import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
-import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
@@ -26,26 +29,47 @@ public class Solo extends Client {
     @Override
     public void init() {
         gameStarted = true;
+<<<<<<< HEAD
         player = new Player(root, 5, Color.RED, true); // Joueur local
+=======
+        Player player = EntityFactory.createPlayer(3, Color.RED, true);
+>>>>>>> main
         player.setCamera(camera);
         camera.focusOn(player);
-        gameEngine.addPlayer(player);
+        playerId = gameEngine.addPlayer(player);
+        if(DebugWindow.DEBUG_MODE) {
+            DebugWindow.getInstance();
+        }
         gameTimer.start();
     }
 
     @Override
     public void update() {
-        gameEngine.getPlayer(playerId).setInputPosition(getMousePosition());
-
-        if (gameEngine.getEntitiesOfType(Food.class).size() < 100) {
-            gameEngine.addEntity(new Food(root, 2));
+        Player player = gameEngine.getPlayer(playerId);
+        if (player == null) {
+            new javafx.animation.Timeline(
+                    new javafx.animation.KeyFrame(
+                            javafx.util.Duration.seconds(2),
+                            event -> returnToMenu()
+                    )
+            ).play();
+            return;
         }
 
-        if (gameEngine.getEntitiesOfType(Enemy.class).size() < 10) {
-            gameEngine.addEntity(new Enemy(root, 5));
+        player.setInputPosition(getMousePosition());
+        if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
+            gameEngine.addEntity(EntityFactory.createFood(2));
+        }
+
+        if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
+            gameEngine.addEntity(EntityFactory.createEnemy(5));
         }
 
         gameEngine.update();
+        if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
+            DebugWindow.getInstance().update(gameEngine, playerId);
+        }
+
     }
 
     public void stopSoloGame() {
@@ -73,5 +97,9 @@ public class Solo extends Client {
                 client.update();
             }
         }
+    }
+    
+    private void returnToMenu() {
+        Platform.exit();
     }
 }
