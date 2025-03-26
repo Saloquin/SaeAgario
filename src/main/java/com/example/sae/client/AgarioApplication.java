@@ -2,6 +2,7 @@ package com.example.sae.client;
 
 
 import com.example.sae.client.controller.MenuController;
+import com.example.sae.core.Camera;
 import com.example.sae.server.AgarioServer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -48,6 +49,8 @@ public class AgarioApplication extends Application {
         }
         client.init();
         scene = client.createGameScene(1280, 720);
+        Camera camera = new Camera();
+        client.getGameEngine().getPlayer(client.playerId).setCamera(camera);
         stage.setScene(scene);
     }
 
