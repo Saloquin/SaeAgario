@@ -1,6 +1,7 @@
 package com.example.sae.core.entity;
 
 import com.example.sae.client.AgarioApplication;
+import com.example.sae.client.debug.DebugWindowController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.enemyStrategy.ChaseClosestEntityStrategy;
 import com.example.sae.core.entity.enemyStrategy.EnemyStrategy;
@@ -28,8 +29,6 @@ public class Enemy extends MoveableBody {
         double spreadFactor = 0.7; // Réduire la dispersion
         sprite.setCenterX((Math.random() * MAP_LIMIT_WIDTH * 2 -MAP_LIMIT_WIDTH) * spreadFactor);
         sprite.setCenterY((Math.random() * MAP_LIMIT_HEIGHT * 2 - MAP_LIMIT_HEIGHT) * spreadFactor);
-
-        Speed = 1;
     }
 
     @Override
@@ -38,7 +37,6 @@ public class Enemy extends MoveableBody {
         if (strategy != null) {
             strategy.execute(this);
         }
-
     }
 
     public void setStrategy(EnemyStrategy strategy) {
@@ -66,16 +64,11 @@ public class Enemy extends MoveableBody {
 
     private static EnemyStrategy getRandomStrategy() {
         int choice = random.nextInt(3); // 3 stratégies disponibles
-        switch (choice) {
-            case 0:
-                return new RandomMoveStrategy();
-            case 1:
-                return new ChaseClosestEntityStrategy();
-            case 2:
-                return new SeekFoodStrategy();
-            default:
-                return new RandomMoveStrategy();
-        }
+        return switch (choice) {
+            case 1 -> new ChaseClosestEntityStrategy();
+            case 2 -> new SeekFoodStrategy();
+            default -> new RandomMoveStrategy();
+        };
     }
 
     private EnemyStrategy chooseOptimalStrategy() {

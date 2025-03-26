@@ -23,12 +23,14 @@ public class DebugWindowController {
     @FXML private Label playerPositionLabel;
     @FXML private Label playerMassLabel;
     @FXML private ListView<String> logsListView;
+    @FXML private Label playerSpeedLabel;
 
     private static ObservableList<String> logs = FXCollections.observableArrayList();
     private static final int MAX_LOGS = 10;
 
     private Stage stage;
 
+    private final DoubleProperty playerSpeed = new SimpleDoubleProperty(0);
     private final IntegerProperty foodCount = new SimpleIntegerProperty(0);
     private final DoubleProperty maxFood = new SimpleDoubleProperty(0);
     private final IntegerProperty enemyCount = new SimpleIntegerProperty(0);
@@ -48,6 +50,7 @@ public class DebugWindowController {
                 playerX.asString("Position: (%.1f, ").concat(playerY.asString("%.1f)"))
         );
         playerMassLabel.textProperty().bind(playerMass.asString("Mass: %.1f"));
+        playerSpeedLabel.textProperty().bind(playerSpeed.asString("Speed: %.1f"));
 
         // Initialisation des constantes
         addConstant("MAP_WIDTH", GameEngine.MAP_LIMIT_WIDTH);
@@ -57,6 +60,8 @@ public class DebugWindowController {
         addConstant("BASE_MAX_SPEED", MoveableBody.BASE_MAX_SPEED);
         addConstant("MIN_MAX_SPEED", MoveableBody.MIN_MAX_SPEED);
         addConstant("SPEED_FACTOR", MoveableBody.SPEED_FACTOR);
+        addConstant("SPEED_FACTOR", MoveableBody.BASE_MAX_SPEED);
+        addConstant("MIN_MAX_SPEED", MoveableBody.MIN_MAX_SPEED);
 
         // Configuration de la ListView des logs
         logsListView.setItems(logs);
@@ -69,12 +74,14 @@ public class DebugWindowController {
     }
 
     public static void addLog(String message) {
-        Platform.runLater(() -> {
-            if (logs.size() >= MAX_LOGS) {
-                logs.remove(0);
-            }
-            logs.add("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "] " + message);
-        });
+        if (message != null) {
+            Platform.runLater(() -> {
+                if (logs.size() >= MAX_LOGS) {
+                    logs.remove(0);
+                }
+                logs.add("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "] " + message);
+            });
+        }
     }
 
     // Getters pour les properties
@@ -85,5 +92,6 @@ public class DebugWindowController {
     public DoubleProperty playerXProperty() { return playerX; }
     public DoubleProperty playerYProperty() { return playerY; }
     public DoubleProperty playerMassProperty() { return playerMass; }
+    public DoubleProperty playerSpeedProperty() { return playerSpeed; }
     public Stage getStage() { return stage; }
 }

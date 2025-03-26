@@ -35,7 +35,7 @@ public class ChaseClosestEntityStrategy implements EnemyStrategy {
 
         // Find closest entity among existing entities
         for (Entity entity : gameEngine.getNearbyEntities(enemy, 400)) {
-            if (entity != enemy && entity.getParent() != null && entity.getMasse()<=enemy.getMasse()*1.33 ) {
+            if (entity != enemy && entity.getParent() != null && entity.getMasse()*1.33<enemy.getMasse() ) {
                 double distance = enemy.distanceTo(entity.getPosition());
                 if (distance < closestDistance) {
                     closestDistance = distance;

@@ -1,6 +1,9 @@
 package com.example.sae.core.entity;
 
 import java.util.Random;
+
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -8,57 +11,55 @@ import javafx.scene.shape.Circle;
 
 public abstract class Entity extends Group{
     protected Circle sprite; // the entity's sprite
-    private double masse;
+    private DoubleProperty masse;
 
-    Entity(Group group,double masse){
+    Entity(Group group, double initialMasse) {
         super();
-        this.masse = masse;
-        Random rand = new Random();
-        int r = rand.nextInt(255);
-        int g  = rand.nextInt(255);
-        int b  = rand.nextInt(255);
-
-        sprite = new Circle(10*Math.sqrt(masse), Color.rgb(r, g , b, 0.99));
-        
-        setViewOrder(-sprite.getRadius());
-        sprite.setRadius(10*Math.sqrt(masse));
-        getChildren().add(sprite);
-        group.getChildren().add(this);
-    }
-    Entity(Group group,double masse, Color color){
-        super();
-        this.masse = masse;
+        this.masse = new SimpleDoubleProperty(initialMasse);
         Random rand = new Random();
 
-        sprite = new Circle(10*Math.sqrt(masse), color);
+        sprite = new Circle();
+        sprite.setFill(Color.rgb(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), 0.99));
 
-        setViewOrder(-sprite.getRadius());
-        sprite.setRadius(10*Math.sqrt(masse));
+        // Bind le rayon à la masse avec conversion explicite
+        sprite.radiusProperty().bind(masse.multiply(10)
+                .map(number -> Math.sqrt(number.doubleValue())));
+
+        // Bind le viewOrder au rayon
+        viewOrderProperty().bind(sprite.radiusProperty().negate());
+
         getChildren().add(sprite);
         group.getChildren().add(this);
     }
 
-    public void setRandomColor(){
-        Random rand = new Random();
-        int r = rand.nextInt(255);
-        int g  = rand.nextInt(255);
-        int b  = rand.nextInt(255);
-        sprite.setFill(Color.rgb(r, g , b, 0.99));
+    Entity(Group group, double initialMasse, Color color) {
+        super();
+        this.masse = new SimpleDoubleProperty(initialMasse);
+
+        sprite = new Circle();
+        sprite.setFill(color);
+
+        // Bind le rayon à la masse avec conversion explicite
+        sprite.radiusProperty().bind(masse.multiply(10)
+                .map(number -> Math.sqrt(number.doubleValue())));
+
+        // Bind le viewOrder au rayon
+        viewOrderProperty().bind(sprite.radiusProperty().negate());
+
+        getChildren().add(sprite);
+        group.getChildren().add(this);
     }
 
-    Entity(double masse){
-        super();
-        this.masse = masse;
-        Random rand = new Random();
-        int r = rand.nextInt(255);
-        int g  = rand.nextInt(255);
-        int b  = rand.nextInt(255);
+    public double getMasse() {
+        return masse.get();
+    }
 
-        sprite = new Circle(10*Math.sqrt(masse), Color.rgb(r, g , b, 0.99));
+    public void setMasse(double value) {
+        masse.set(value);
+    }
 
-        setViewOrder(-sprite.getRadius());
-        sprite.setRadius(10*Math.sqrt(masse));
-        getChildren().add(sprite);
+    public DoubleProperty masseProperty() {
+        return masse;
     }
 
     public void setPosition(double x, double y){
@@ -66,13 +67,6 @@ public abstract class Entity extends Group{
         sprite.setCenterY(y);
     }
 
-    public double getMasse() {
-        return masse;
-    }
-
-    public void setMasse(double masse) {
-        this.masse = masse;
-    }
 
     public double[] getPosition() {
         //returns current position of the sprite
