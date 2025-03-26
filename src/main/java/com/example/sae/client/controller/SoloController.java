@@ -43,6 +43,15 @@ public class SoloController implements Initializable {
         Scene scene = client.createGameScene(1280, 720);
 
         gameContainer.getChildren().add(scene.getRoot());
+
+        System.out.println("Nb enfants gc : " + gameContainer.getChildren().size());
+        System.out.println("enfants gc : " + gameContainer.getChildren().toString());
+
+        System.out.println("Scene : " + scene);
+
+        System.out.println("Root : " + root);
+        System.out.println("Root nb enfant : " + root.getChildren().size());
+        System.out.println("Root enfants : " + root.getChildren().toString());
     }
 
     public void stopGame(){
