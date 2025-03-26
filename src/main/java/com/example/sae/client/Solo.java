@@ -1,27 +1,21 @@
 package com.example.sae.client;
 
-import com.example.sae.client.controller.MenuController;
+import com.example.sae.client.debug.DebugWindow;
+import com.example.sae.client.timer.GameTimer;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
+import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
-import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-
-import java.io.IOException;
 
 import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 public class Solo extends Client {
     private GameTimer gameTimer;
-    private int playerId;
 
     public Solo(Group root) {
         super(root);
@@ -32,12 +26,14 @@ public class Solo extends Client {
     @Override
     public void init() {
         gameStarted = true;
-        Player player = new Player(root, 3, Color.RED, true);
+        Player player = EntityFactory.createPlayer(3, Color.RED, true);
         player.setCamera(camera);
         camera.focusOn(player);
         playerId = gameEngine.addPlayer(player);
+        if(DebugWindow.DEBUG_MODE) {
+            DebugWindow.getInstance();
+        }
         gameTimer.start();
-
     }
 
     @Override
@@ -54,39 +50,19 @@ public class Solo extends Client {
         }
 
         player.setInputPosition(getMousePosition());
-        if (gameEngine.getEntitiesOfType(Food.class).size() < 100) {
-            gameEngine.addEntity(new Food(root, 2));
+        if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
+            gameEngine.addEntity(EntityFactory.createFood(2));
         }
 
-        if (gameEngine.getEntitiesOfType(Enemy.class).size() < 10) {
-            gameEngine.addEntity(new Enemy(root, 5));
+        if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
+            gameEngine.addEntity(EntityFactory.createEnemy(5));
         }
-
 
         gameEngine.update();
-    }
-
-    private static class GameTimer extends AnimationTimer {
-        private final Solo client;
-        private final double framesPerSecond = 120;
-        private final double interval = 1000000000 / framesPerSecond;
-        private double last = 0;
-
-        public GameTimer(Solo client) {
-            this.client = client;
+        if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
+            DebugWindow.getInstance().update(gameEngine, playerId);
         }
 
-        @Override
-        public void handle(long now) {
-            if (last == 0) {
-                last = now;
-            }
-
-            if (now - last > interval && client.gameStarted) {
-                last = now;
-                client.update();
-            }
-        }
     }
 
     private void returnToMenu() {

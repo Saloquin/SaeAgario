@@ -15,9 +15,12 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 public abstract class MoveableBody extends Entity{
     public double Speed = 1.5;
-    public double Smoothing = 80; // higher numbers mean more smoothing, but also slower circle
-    public String name="Camou";
+    public String name= "°-°";
     private Text nameText;
+
+    public static final double BASE_MAX_SPEED = 45.0; // Vitesse de base maximum
+    public static final double MIN_MAX_SPEED = 7.0;  // Vitesse maximum minimale
+    public static final double SPEED_FACTOR = 1.5;
 
     MoveableBody(Group group, double initialSize) {
         super(group, initialSize);
@@ -26,6 +29,18 @@ public abstract class MoveableBody extends Entity{
 
     MoveableBody(Group group, double initialSize, Color color) {
         super(group, initialSize, color);
+        initializeNameText(group);
+    }
+
+    MoveableBody(Group group, double initialSize,Color color, String name) {
+        super(group, initialSize);
+        this.name = name;
+        sprite.setFill(color);
+        initializeNameText(group);
+    }
+    MoveableBody(Group group, double initialSize,String name) {
+        super(group, initialSize);
+        this.name = name;
         initializeNameText(group);
     }
 
@@ -55,7 +70,8 @@ public abstract class MoveableBody extends Entity{
 
     public void moveToward(double[] mousePosition) {
         double m = getMasse();
-        double maxSpeed = 100 / Math.sqrt(m); // Ajuster 100 selon le besoin
+        // La vitesse maximum ne peut pas descendre en dessous de MIN_MAX_SPEED
+        double maxSpeed = Math.max(BASE_MAX_SPEED / Math.sqrt(m), MIN_MAX_SPEED);
 
         // Vecteur direction vers la souris
         double[] velocity = new double[]{
@@ -66,19 +82,24 @@ public abstract class MoveableBody extends Entity{
         // Distance du curseur au centre du joueur
         double distance = Math.sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1]);
 
-        // Normalisation du vecteur de direction
-        if (distance > 0) {
-            velocity[0] /= distance;
-            velocity[1] /= distance;
+        // Si la souris est au même endroit que le joueur, pas de mouvement
+        if (distance < 1) {
+            return;
         }
 
-        // Facteur de vitesse (proportionnel à la distance du curseur au joueur, max à `maxSpeed`)
-        double speedFactor = Math.min(distance / MAP_LIMIT_WIDTH, 1.0);
-        double speed = maxSpeed * speedFactor;
+        // Normalisation du vecteur de direction
+        velocity[0] /= distance;
+        velocity[1] /= distance;
 
-        // Appliquer la vitesse calculée
-        velocity[0] *= speed;
-        velocity[1] *= speed;
+        // Le facteur de vitesse est proportionnel à la distance
+        // Distance maximale considérée pour la vitesse (rayon d'influence)
+        double maxDistance = 200.0;
+        double speedFactor = Math.min(distance / maxDistance, 1.0);
+        double currentSpeed = maxSpeed * speedFactor * SPEED_FACTOR;
+
+        // Application de la vitesse
+        velocity[0] *= currentSpeed;
+        velocity[1] *= currentSpeed;
 
         // Vérification des limites de la carte
         double newX = sprite.getCenterX() + velocity[0];
@@ -96,7 +117,7 @@ public abstract class MoveableBody extends Entity{
 
     //TODO: Implement the splitSprite method without using AgarioApplication.root
     public void splitSprite(){
-        Player newBody = new Player(AgarioApplication.root, sprite.getRadius() / 2, Color.RED);
+        Player newBody = EntityFactory.createPlayer(sprite.getRadius() / 2, Color.RED);
         newBody.sprite.setCenterX(sprite.getCenterX() + 30);
         newBody.sprite.setCenterY(sprite.getCenterY() + 30);
 

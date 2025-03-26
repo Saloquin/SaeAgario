@@ -34,10 +34,7 @@ public class Player extends MoveableBody{
 
     }
 
-    public void moveToward(double[] velocity) {
-        super.moveToward(velocity);
-        camera.focusOn(this);
-    }
+
 
     public boolean isLocal() {
         return isLocal;

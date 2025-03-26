@@ -10,7 +10,7 @@ public class RandomMoveStrategy implements EnemyStrategy {
     private double lastUpdateTime = 0;
 
     @Override
-    public void execute(Enemy enemy) {
+    public boolean execute(Enemy enemy) {
         double currentTime = System.currentTimeMillis() / 1000.0;
 
         if (enemy.getTargetPosition() == null ||
@@ -36,6 +36,7 @@ public class RandomMoveStrategy implements EnemyStrategy {
         if (enemy.getTargetPosition() != null) {
             enemy.moveToward(enemy.getTargetPosition());
         }
+        return true;
     }
 
 
