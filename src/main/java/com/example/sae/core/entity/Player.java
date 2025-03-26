@@ -125,9 +125,6 @@ public class Player extends MoveableBody{
     @Override
     public void Update() {
         moveToward(inputPosition);
-        if (isLocal && camera != null) {
-            camera.focusOn(this);
-        }
     }
 
     /**

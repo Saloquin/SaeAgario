@@ -14,7 +14,6 @@ public class GameSceneFactory {
         scene.setOnMouseMoved(mouseHandler::handleMouseMove);
         scene.setOnMouseDragged(mouseHandler::handleMouseMove);
         scene.setOnMousePressed(mouseHandler::handleMouseMove);
-        scene.setCamera(camera.getCamera());
         scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.SPACE) {
                 gameEngine.getPlayer(playerId).splitSprite();
