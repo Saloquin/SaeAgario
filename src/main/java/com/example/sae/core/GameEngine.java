@@ -4,7 +4,11 @@ import com.example.sae.client.debug.DebugWindowController;
 import com.example.sae.core.entity.*;
 import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
+import javafx.animation.ScaleTransition;
+import javafx.animation.TranslateTransition;
 import javafx.scene.shape.Shape;
+import javafx.util.Duration;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -106,15 +110,39 @@ public class GameEngine {
             return;
         }
         if (checkCollision(predator, prey) && canEat(predator, prey)) {
-            if (prey instanceof Player) {
-                int playerId = getPlayerId((Player) prey);
-                removePlayer(playerId);
-            } else {
-                removeEntity(prey);
-            }
+            entities.remove(prey);
+
+            TranslateTransition transition = new TranslateTransition(Duration.millis(200 ), prey.getSprite());
+
+            double targetX = predator.getSprite().getCenterX() - prey.getSprite().getCenterX();
+            double targetY = predator.getSprite().getCenterY() - prey.getSprite().getCenterY();
+
+            transition.setToX(targetX);
+            transition.setToY(targetY);
+
+            ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(40), prey.getSprite());
+            scaleTransition.setToX(0);
+            scaleTransition.setToY(0);
+
 
             predator.increaseSize(prey.getMasse());
-            prey.onDeletion();
+            transition.setOnFinished(e -> {
+                if (prey instanceof Player) {
+                    int playerId = getPlayerId((Player) prey);
+                    removePlayer(playerId);
+
+                } else {
+                    removeEntity(prey);
+                }
+
+                prey.onDeletion();
+            });
+            if(prey instanceof MoveableBody){
+                ((MoveableBody) prey).deleteText();
+            }
+                transition.play();
+                scaleTransition.play();
+
         }
     }
 

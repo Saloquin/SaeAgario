@@ -9,10 +9,12 @@ import javafx.scene.Scene;
 
 public class Camera extends Boundary {
     private ParallelCamera camera;
-    private double currentZoom = 1.0;
+    private double currentZoom = 1;
     private double currentX = 0;
     private double currentY = 0;
     private static final double SMOOTHING = 0.1;
+    private static final double ZOOM_FACTOR = 6; // Increased to reduce zoom intensity
+
 
     public Camera() {
         super(0, 0, GameEngine.MAP_LIMIT_WIDTH, GameEngine.MAP_LIMIT_HEIGHT);
@@ -46,7 +48,7 @@ public class Camera extends Boundary {
 
         // Handle zoom
         double radius = entity.getSprite().getRadius();
-        double targetZoom = 1.0 / (Math.sqrt(radius) / 10);
+        double targetZoom = 1.0 / (Math.sqrt(radius) / ZOOM_FACTOR);
         currentZoom += (targetZoom - currentZoom) * SMOOTHING;
 
         scene.getRoot().setScaleX(currentZoom);
