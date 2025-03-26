@@ -11,9 +11,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-
-import java.util.Arrays;
 
 import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
@@ -35,7 +32,6 @@ public class Solo extends Client {
     public void init() {
         gameStarted = true;
         player = EntityFactory.createPlayer(3, Color.BISQUE, true);
-        camera.focusOn(player);
         playerId = gameEngine.addPlayer(player);
         if(DebugWindow.DEBUG_MODE) {
             DebugWindow.getInstance();

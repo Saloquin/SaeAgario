@@ -2,6 +2,7 @@ package com.example.sae.client.controller;
 
 import com.example.sae.client.Client;
 import com.example.sae.client.Solo;
+import com.example.sae.core.Camera;
 import com.example.sae.core.entity.Player;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -38,22 +39,25 @@ public class SoloController implements Initializable {
     public static Group root;
     private static Solo client;
 
+    private Pane pane;
+
+    private Player player;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         root = new Group();
         client = new Solo(root);
-
-        System.out.println(client);
-
         client.init();
 
-        Pane pane = client.createGamePane(1280, 720);
-
+        pane = client.createGamePane(1280, 720);
         pane.prefWidthProperty().bind(rootStack.widthProperty());
         pane.prefHeightProperty().bind(rootStack.heightProperty());
 
         gameContainer.getChildren().add(pane);
+        player = client.getGameEngine().getPlayer(client.getPlayerId());
+
+        setCamera();
 
         client.getGameIsEndedProperty().addListener((observable, oldValue, newValue) -> {
             stopGame();
@@ -63,6 +67,10 @@ public class SoloController implements Initializable {
                         stage, WindowEvent.WINDOW_CLOSE_REQUEST
                 )
             );
+        });
+
+        rootStack.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
+            stopGame();
         });
 
     }
@@ -75,5 +83,18 @@ public class SoloController implements Initializable {
 
     public static Client getClient() {
         return client;
+    }
+
+    private void setCamera(){
+        Camera camera = client.getCamera();
+        camera.focusPaneOn(pane, player);
+        // Ajouter des listeners pour afficher les positions du joueur
+        player.getCenterXProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Player X: " + newValue);
+        });
+
+        player.getCenterYProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Player Y: " + newValue);
+        });
     }
 }
