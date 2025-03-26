@@ -28,13 +28,13 @@ public class Player extends MoveableBody{
         inputPosition = new double[]{0, 0};
     }
 
-    public void increaseSize(double foodValue){
-        super.increaseSize(foodValue);
-        //camera.adjustZoom(this);
-
+    @Override
+    public void Update() {
+        moveToward(inputPosition);
+        if (isLocal && camera != null) {
+            camera.focusOn(this);
+        }
     }
-
-
 
     public boolean isLocal() {
         return isLocal;
@@ -44,10 +44,6 @@ public class Player extends MoveableBody{
         this.inputPosition = position;
     }
 
-    @Override
-    public void Update() {
-        moveToward(inputPosition);
-    }
     public Camera getCamera() {
         return camera;
     }
