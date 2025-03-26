@@ -3,6 +3,7 @@ package com.example.sae.core;
 import com.example.sae.client.AgarioApplication;
 import com.example.sae.core.entity.Entity;
 import javafx.animation.AnimationTimer;
+import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 
@@ -10,7 +11,7 @@ import javafx.scene.Group;
  * Caméra 2D qui suit une entité (comme le joueur) dans un espace de jeu.
  * Applique un déplacement fluide au Group représentant le monde (ex: root).
  */
-public class Camera {
+public class Camera extends Dimension2D {
 
     // Le groupe qui contient tous les éléments du monde (joueurs, nourriture, ennemis)
     private Group targetGroup;
@@ -32,6 +33,7 @@ public class Camera {
      * Constructeur : initialise le timer de mise à jour
      */
     public Camera() {
+        super(0,0);
         cameraTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {

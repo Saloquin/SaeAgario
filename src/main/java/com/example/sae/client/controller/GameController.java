@@ -1,13 +1,21 @@
 package com.example.sae.client.controller;
 
+import com.example.sae.core.GameEngine;
+import com.example.sae.core.entity.Player;
 import javafx.animation.AnimationTimer;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Circle;
+import javafx.scene.transform.Scale;
 
 
 public class GameController {
@@ -29,6 +37,8 @@ public class GameController {
     @FXML
     public Pane gameContainer;
 
+    private ObservableList<Player> leaderboardItems = FXCollections.observableArrayList();
+
     public Pane getGameContainer() {
         return gameContainer;
     }
@@ -47,38 +57,35 @@ public class GameController {
         }.start();
     }
 
+    
+
     private void drawMinimap() {
         GraphicsContext gc = minimap.getGraphicsContext2D();
         gc.clearRect(0, 0, minimap.getWidth(), minimap.getHeight());
 
-        double scaleX = minimap.getWidth() / WORLD_WIDTH;
-        double scaleY = minimap.getHeight() / WORLD_HEIGHT;
+        double scaleX = 0.15;
+        double scaleY = 0.15;
+
 
         // Fond
         gc.setFill(Color.rgb(240, 240, 240, 0.9));
         gc.fillRect(0, 0, minimap.getWidth(), minimap.getHeight());
 
-        // 🔴 Exemple : entité fixe rouge à (1000, 1000)
-        drawEntity(gc, 1000, 450, 30, Color.RED, scaleX, scaleY);
+        SnapshotParameters params = new SnapshotParameters();
+        params.setTransform(new Scale(scaleX, scaleY));
+        WritableImage image = new WritableImage((int)(WORLD_WIDTH*scaleX), (int)(WORLD_HEIGHT*scaleY));
 
-        // 🔵 Exemple : entité bleue à (400, 300)
-        drawEntity(gc, 400, 300, 20, Color.BLUE, scaleX, scaleY);
+        gameContainer.getChildren().add(new Circle(89));
+        gameContainer.snapshot(params,image);
 
-        // 🟢 Exemple : entité verte à (1500, 1200)
-        drawEntity(gc, 1000, 500, 25, Color.GREEN, scaleX, scaleY);
+
+
+
+
+        gc.drawImage(image,0,0);
+
+
     }
 
-    private void drawEntity(GraphicsContext gc, double worldX, double worldY, double radius,
-                            Color color, double scaleX, double scaleY) {
-        double x = worldX * scaleX;
-        double y = worldY * scaleY;
-        double r = radius * scaleX;
 
-        gc.setFill(color);
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(1);
-
-        gc.fillOval(x - r, y - r, r * 2, r * 2);
-        gc.strokeOval(x - r, y - r, r * 2, r * 2);
-    }
 }

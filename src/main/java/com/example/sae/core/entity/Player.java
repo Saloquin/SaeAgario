@@ -12,8 +12,8 @@ public class Player extends MoveableBody{
 
     public Player(Group group, double masse, Color color){
         super(group, masse,color);
-        setLayoutX(AgarioApplication.getMapLimitWidth() / 2);
-        setLayoutY(AgarioApplication.getMapLimitHeight() / 2);
+        setLayoutX(0);
+        setLayoutY(0);
         Sprite.setViewOrder(-Sprite.getRadius());
 
     }
@@ -46,6 +46,7 @@ public class Player extends MoveableBody{
 
     @Override
     public void Update(){
+        System.out.println("Camera Update"+ camera.getWorldOffset());
         System.out.println("Joueur position: " + getLayoutX() + ", " + getLayoutY());
         moveToward(AgarioApplication.getMousePosition());
         checkCollision();
