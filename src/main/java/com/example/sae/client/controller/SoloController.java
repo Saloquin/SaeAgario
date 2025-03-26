@@ -22,8 +22,6 @@ public class SoloController implements Initializable {
     @FXML
     private StackPane rootStack;
     @FXML
-    private Pane gameContainer;
-    @FXML
     private AnchorPane hudContainer;
     @FXML
     private ListView leaderboard;
@@ -35,19 +33,17 @@ public class SoloController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        gameContainer.prefWidthProperty().bind(rootStack.widthProperty());
-        gameContainer.prefHeightProperty().bind(rootStack.heightProperty());
 
         root = new Group();
         client = new Solo(root);
         client.init();
 
-        Scene scene = client.createGameScene(1280, 720);
-/*
-        Stage s = new Stage();
-        s.setScene(scene);
-        s.show();*/
-        gameContainer.getChildren().add(scene.getRoot());
+        Pane pane = client.createGamePane(1280, 720);
+
+        pane.prefWidthProperty().bind(rootStack.widthProperty());
+        pane.prefHeightProperty().bind(rootStack.heightProperty());
+
+        rootStack.getChildren().add(pane);
 
     }
 

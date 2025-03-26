@@ -30,7 +30,6 @@ public class Solo extends Client {
     public void init() {
         gameStarted = true;
         player = EntityFactory.createPlayer(3, Color.BISQUE, true);
-        player.setCamera(camera);
         camera.focusOn(player);
         playerId = gameEngine.addPlayer(player);
         if(DebugWindow.DEBUG_MODE) {

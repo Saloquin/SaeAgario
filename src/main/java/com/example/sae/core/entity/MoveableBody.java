@@ -13,8 +13,8 @@ public abstract class MoveableBody extends Entity{
     public String name= "°-°";
     private Text nameText;
 
-    public static final double BASE_MAX_SPEED = 45.0; // Vitesse de base maximum
-    public static final double MIN_MAX_SPEED = 7.0;  // Vitesse maximum minimale
+    public static final double BASE_MAX_SPEED = 5.0; // Vitesse de base maximum
+    public static final double MIN_MAX_SPEED = 0.10;  // Vitesse maximum minimale
     public static final double SPEED_FACTOR = 1.5;
 
     MoveableBody(Group group, double initialSize) {
