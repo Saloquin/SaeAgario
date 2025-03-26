@@ -8,7 +8,6 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -16,7 +15,7 @@ import javafx.scene.layout.StackPane;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class GameController implements Initializable {
+public class SoloController implements Initializable {
 
     @FXML
     private StackPane rootStack;
@@ -28,32 +27,22 @@ public class GameController implements Initializable {
     private ListView leaderboard;
     @FXML
     private Canvas minimap;
-    @FXML
-    private ListView chatList;
-    @FXML
-    private TextField chatInput;
 
-    private static Client client;
+    private static Solo client;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-    }
-
-    public void stopGame(){
-        if(client != null) {
-            if(client instanceof Solo) {
-                ((Solo) client).stopSoloGame();
-            }
-        }
-    }
-
-    public void startSoloGame() {
         Group root = new Group();
         client = new Solo(root);
         client.init();
         Scene scene = client.createGameScene(1280,720);
         gameContainer.getChildren().add(scene.getRoot());
+    }
+
+    public void stopGame(){
+        if(client != null) {
+            client.stopSoloGame();
+        }
     }
 
     public static Client getClient() {

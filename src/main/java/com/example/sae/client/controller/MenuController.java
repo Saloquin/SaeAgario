@@ -11,7 +11,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -49,12 +48,12 @@ public class MenuController implements Initializable {
 
     public void onOnlinePlay(ActionEvent event)
     {
-        lauchGameWindow(true, event);
+        //lauchGameWindow(true, event);
     }
 
     public void onLocalPlay(ActionEvent event)
     {
-        lauchGameWindow(false, event);
+        lauchSoloGameWindow(false, event);
     }
 
     public void onChangeSkin(ActionEvent event)
@@ -92,32 +91,25 @@ public class MenuController implements Initializable {
         toggleButtonVisibility(start);
     }
 
-    private void lauchGameWindow(boolean isOnline, ActionEvent event)
+    private void lauchSoloGameWindow(boolean isOnline, ActionEvent event)
     {
         try
         {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/game.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/solo.fxml"));
 
             Node currentNode = (Node) (event.getSource());
 
             Scene scene = new Scene(loader.load(), Screen.getPrimary().getBounds().getWidth()*0.9, Screen.getPrimary().getBounds().getHeight()*0.9);
-            String title = "AgarIO - ";
-            if(isOnline){
-                title += "Online";
-            }
-            else {
-                title += "Local";
-            }
+            String title = "AgarIO - Local";
             Stage stage = new Stage();
             stage.setTitle(title);
             stage.setScene(scene);
             stage.setMinHeight(500);
             stage.setMinWidth(700);
 
-            currentNode.getScene().getWindow().hide();
+            SoloController gameController = loader.getController();
 
-            GameController gameController = loader.getController();
-            gameController.startSoloGame();
+            currentNode.getScene().getWindow().hide();
 
             stage.showAndWait();
 
