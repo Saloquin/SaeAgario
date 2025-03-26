@@ -21,8 +21,10 @@
                     AnchorPane.topAnchor="10.0"/>
 
         <!-- Minimap -->
-        <Canvas fx:id="minimap" height="180" width="200"
-                AnchorPane.bottomAnchor="10.0"
-                AnchorPane.rightAnchor="10.0" />
+        <AnchorPane fx:id="minimap"
+                    prefWidth="200" prefHeight="200"
+                    AnchorPane.bottomAnchor="10"
+                    AnchorPane.rightAnchor="10"/>
+
     </AnchorPane>
 </StackPane>

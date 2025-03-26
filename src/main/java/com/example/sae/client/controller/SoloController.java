@@ -4,7 +4,9 @@ import com.example.sae.client.Client;
 import com.example.sae.client.Solo;
 import com.example.sae.client.controller.components.ChatController;
 import com.example.sae.client.controller.components.LeaderboardController;
+import com.example.sae.client.controller.components.MinimapController;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
@@ -13,6 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -23,15 +26,18 @@ public class SoloController implements Initializable {
     private StackPane rootStack;
     @FXML
     private AnchorPane hudContainer;
-    @FXML
-    private Canvas minimap;
+
     @FXML
     private ChatController chatController;
     @FXML
     private LeaderboardController leaderboardController;
+    @FXML
+    private AnchorPane minimap;
+
 
     public static Group root;
     private static Solo client;
+
 
     private String playerName;
     private Color playerColor;
@@ -59,8 +65,31 @@ public class SoloController implements Initializable {
     }
 
     private void initializeComponents() {
+        initMinimap();
         chatController.initialize(playerName);
         leaderboardController.initializeWithSupplier(() -> client.getGameEngine().getSortedMovableEntities());
+    }
+
+    public void initMinimap() {
+        try {
+            System.out.println("Chargement minimap.fxml depuis : " + getClass().getResource("/com/example/sae/minimap.fxml"));
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/minimap.fxml"));
+            AnchorPane minimapNode = loader.load();
+            MinimapController minimapController = loader.getController();
+
+            System.out.println("MinimapController chargé : " + minimapController);
+
+            minimapController.setupMinimap();
+
+
+
+            minimap.getChildren().add(minimapNode);
+            AnchorPane.setBottomAnchor(minimapNode, 10.0);
+            AnchorPane.setRightAnchor(minimapNode, 10.0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void stopGame() {

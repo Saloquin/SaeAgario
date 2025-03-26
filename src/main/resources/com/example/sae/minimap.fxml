@@ -1,0 +1,10 @@
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.canvas.Canvas?>
+<AnchorPane fx:id="minimapRoot"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.sae.client.controller.components.MinimapController"
+            prefWidth="200" prefHeight="200">
+    <Canvas fx:id="minimapCanvas" width="200" height="200"
+            AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+</AnchorPane>
