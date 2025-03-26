@@ -27,8 +27,6 @@ public class Solo extends Client {
     public void init() {
         gameStarted = true;
         Player player = EntityFactory.createPlayer(10, Color.RED, true);
-        player.setCamera(camera);
-        camera.focusOn(player);
         playerId = gameEngine.addPlayer(player);
         if(DebugWindow.DEBUG_MODE) {
             DebugWindow.getInstance();
@@ -48,14 +46,12 @@ public class Solo extends Client {
             ).play();
             return;
         }
-
-        player.setInputPosition(getMousePosition());
         if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
             gameEngine.addEntity(EntityFactory.createFood(2));
         }
 
         if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
-            gameEngine.addEntity(EntityFactory.createEnemy(10));
+            gameEngine.addEntity(EntityFactory.createEnemy(20));
         }
 
         gameEngine.update();
