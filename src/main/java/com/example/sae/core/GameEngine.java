@@ -81,7 +81,7 @@ public class GameEngine {
 
             for (Entity entity2 : nearbyEntities) {
                 if (checkCollision(entity1, entity2)) {
-                    DebugWindowController.addLog("Collision detected between: " + entity1 + " and " + entity2);
+                    //DebugWindowController.addLog("Collision detected between: " + entity1 + " and " + entity2);
                     handleCollision((MoveableBody) entity1, entity2);
                 }
             }
@@ -127,9 +127,7 @@ public class GameEngine {
     }
 
     private boolean canEat(Entity predator, Entity prey) {
-        double predatorArea = Math.PI * Math.pow(predator.getSprite().getRadius(), 2);
-        double preyArea = Math.PI * Math.pow(prey.getSprite().getRadius(), 2);
-        return predatorArea > preyArea * 1.33; // Must be 33% larger
+        return predator.getMasse() > prey.getMasse() * 1.33; // Must be 33% larger
     }
 
 
