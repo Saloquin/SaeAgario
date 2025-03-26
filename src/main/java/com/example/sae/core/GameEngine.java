@@ -112,38 +112,46 @@ public class GameEngine {
         if (checkCollision(predator, prey) && canEat(predator, prey)) {
             entities.remove(prey);
 
-            TranslateTransition transition = new TranslateTransition(Duration.millis(200 ), prey.getSprite());
-
-            double targetX = predator.getSprite().getCenterX() - prey.getSprite().getCenterX();
-            double targetY = predator.getSprite().getCenterY() - prey.getSprite().getCenterY();
-
-            transition.setToX(targetX);
-            transition.setToY(targetY);
-
-            ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(40), prey.getSprite());
-            scaleTransition.setToX(0);
-            scaleTransition.setToY(0);
-
-
-            predator.increaseSize(prey.getMasse());
-            transition.setOnFinished(e -> {
-                if (prey instanceof Player) {
-                    int playerId = getPlayerId((Player) prey);
-                    removePlayer(playerId);
-
-                } else {
-                    removeEntity(prey);
-                }
-
-                prey.onDeletion();
-            });
-            if(prey instanceof MoveableBody){
+            if (prey instanceof MoveableBody) {
                 ((MoveableBody) prey).deleteText();
             }
+
+            predator.increaseSize(prey.getMasse());
+
+            if (!isServer) {
+                TranslateTransition transition = new TranslateTransition(Duration.millis(200), prey.getSprite());
+
+                double targetX = predator.getSprite().getCenterX() - prey.getSprite().getCenterX();
+                double targetY = predator.getSprite().getCenterY() - prey.getSprite().getCenterY();
+
+                transition.setToX(targetX);
+                transition.setToY(targetY);
+
+                ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(40), prey.getSprite());
+                scaleTransition.setToX(0);
+                scaleTransition.setToY(0);
+
+                transition.setOnFinished(e -> {
+                    removePrey(prey);
+                });
                 transition.play();
                 scaleTransition.play();
-
+            } else {
+                removePrey(prey);
+            }
         }
+    }
+
+    private void removePrey(Entity prey) {
+        if (prey instanceof Player) {
+            int playerId = getPlayerId((Player) prey);
+            removePlayer(playerId);
+
+        } else {
+            removeEntity(prey);
+        }
+
+        prey.onDeletion();
     }
 
     private int getPlayerId(Player player) {
@@ -210,9 +218,9 @@ public class GameEngine {
 
     public HashSet<Entity> getEntitiesOfType(Class<?> type) {
         return
-            entities.stream()
-                .filter(e -> type.isAssignableFrom(e.getClass()))
-                .collect(Collectors.toCollection(HashSet::new));
+                entities.stream()
+                        .filter(e -> type.isAssignableFrom(e.getClass()))
+                        .collect(Collectors.toCollection(HashSet::new));
     }
 
     public HashSet<Entity> getNearbyEntities(Entity entity, double range) {

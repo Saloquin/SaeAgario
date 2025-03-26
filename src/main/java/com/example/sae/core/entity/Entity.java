@@ -205,6 +205,16 @@ public abstract class Entity extends Group{
     }
 
     /**
+     * changes the entity id
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param id the new entity id
+     */
+    public void setEntityId(String id) {
+        this.entityId = id;
+    }
+
+    /**
      * removes the entity that is eaten
      *
      * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY

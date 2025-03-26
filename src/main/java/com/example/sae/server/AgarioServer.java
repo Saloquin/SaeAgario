@@ -13,8 +13,12 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class AgarioServer {
-    // note : ne pas envoyer un gamestate par frame
-    // envoyer simplement quand un élément est créé/modifié/supprimé avec les informations de cet élément
+    // actuellement : le serveur est mis à jour quand qlqn rej, leave, ou qu'il mange qlqch
+    //                les clients semblent être sync quand qlqn rej ou se déplace
+    //                si qlqn leave ou mange qlqch, les clients ne sont PAS sync
+    // à faire : sync parfaitement le serv et les joueurs lorsqu'un joueur mange qlqch
+    //           mettre les clients à jour quand qlqn leave
+    // note : les settings sympas pour MoveableBody.java = 10 2 1 (default = 20 4 1.5)
     private static final int PORT = 12345;
     private static final int TARGET_FPS = 30;
     private static final long FRAME_TIME = 1000000000 / TARGET_FPS; // 33ms en nanos
@@ -70,7 +74,7 @@ public class AgarioServer {
         while (running) {
             long now = System.nanoTime();
             if (now - lastUpdate >= FRAME_TIME) {
-                // gameEngine.update();
+                gameEngine.update();
                 // broadcastGameState();
                 lastUpdate = now;
             }
@@ -89,6 +93,8 @@ public class AgarioServer {
                 }
 
                 // clientHandlers.values().forEach(handler -> handler.sendMessage(state.toString()));
+                System.out.println("---------------");
+                clientHandlers.values().forEach(handler -> System.out.println(serializeEntity(handler.player)));
             }
         }
     }
@@ -139,6 +145,7 @@ public class AgarioServer {
 
             // Créer un nouveau joueur pour ce client
             this.player = new Player(null, clientId, MoveableBody.DEFAULT_MASSE, Color.RED); // null car pas besoin de Group côté serveur
+            this.player.setInputPosition(new double[]{ 0, 0 });
             gameEngine.addPlayer(player);
 
             // Envoyer l'ID et les informations initiales

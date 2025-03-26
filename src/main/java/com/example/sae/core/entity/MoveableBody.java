@@ -29,9 +29,9 @@ public abstract class MoveableBody extends Entity{
     public String name= "°-°";
     private Text nameText;
 
-    public static final double BASE_MAX_SPEED = 10; // Vitesse de base maximum
-    public static final double MIN_MAX_SPEED = 2;  // Vitesse maximum minimale
-    public static final double SPEED_FACTOR = 1;
+    public static final double BASE_MAX_SPEED = 20; // Vitesse de base maximum
+    public static final double MIN_MAX_SPEED = 4;  // Vitesse maximum minimale
+    public static final double SPEED_FACTOR = 1.5;
     public static final double ENEMY_SPEED_MULTIPLIER = 0.7;
 
     public static final double DEFAULT_MASSE = 10; // Masse par défaut des joueurs

@@ -28,6 +28,7 @@ public class Online extends Client {
     private final GameTimer gameTimer;
     private final ThreadDeFond handler;
     private final Socket socket;
+    private Player player;
 
     public Online(Group root) throws IOException {
         super(root);
@@ -40,7 +41,16 @@ public class Online extends Client {
 
     @Override
     public void init() {
-
+        gameStarted = true;
+        player = EntityFactory.createPlayer(MoveableBody.DEFAULT_MASSE, Color.RED, true);
+        player.setCamera(camera);
+        camera.focusOn(player);
+        gameEngine.addPlayer(player);
+        gameTimer.start();
+        if (DebugWindow.DEBUG_MODE) {
+            // DebugWindow.getInstance();
+        }
+        handler.sendMessage("READY");
     }
 
     @Override
@@ -66,19 +76,6 @@ public class Online extends Client {
         if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
             DebugWindow.getInstance().update(gameEngine, playerId);
         }*/
-    }
-
-    public void start(String id) {
-        gameStarted = true;
-        Player player = EntityFactory.createPlayer(id, MoveableBody.DEFAULT_MASSE, Color.RED, true);
-        player.setCamera(camera);
-        camera.focusOn(player);
-        gameEngine.addPlayer(player);
-        gameTimer.start();
-        if (DebugWindow.DEBUG_MODE) {
-            // DebugWindow.getInstance();
-        }
-        handler.sendMessage("READY");
     }
 
     public void handleAppClosed(Stage stage) {
@@ -123,7 +120,7 @@ public class Online extends Client {
                 case "ID" -> {
                     clientId = parts[1];
                     Platform.runLater(() -> {
-                        start(clientId);
+                        player.setEntityId(clientId);
                     });
                 }
                 case "GAMESTATE", "CREATE" -> createEntityUsingSocketData(Arrays.copyOfRange(parts, 1, parts.length));
@@ -183,7 +180,8 @@ public class Online extends Client {
             double x = Double.parseDouble(parts[2]);
             double y = Double.parseDouble(parts[3]);
 
-            Stream<Entity> allPlayers = gameEngine.getEntitiesOfType(Player.class).stream();
+            // Stream<Entity> allPlayers = gameEngine.getEntitiesOfType(Player.class).stream();
+            Stream<Entity> allPlayers = gameEngine.entitiesMovable.stream();
             List<Entity> movingPlayers = allPlayers.filter(p -> movingPlayerId.equals(p.getEntityId())).toList();
 
             movingPlayers.forEach(entity -> {
