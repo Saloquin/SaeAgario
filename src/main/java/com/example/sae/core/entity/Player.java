@@ -83,7 +83,7 @@ public class Player extends MoveableBody{
     }
 
     /**
-     * increases the size of the player's moving object that has eaten food (TODO depending on zoom)
+     * increases the size of the player's moving object that has eaten food (depending on zoom)
      *
      * @see Entity
      * @see Food
@@ -126,7 +126,7 @@ public class Player extends MoveableBody{
     }
 
     /**
-     * TODO
+     * 
      *
      * @see MoveableBody
      *
