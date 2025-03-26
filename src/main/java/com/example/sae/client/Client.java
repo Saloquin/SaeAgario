@@ -61,6 +61,10 @@ public abstract class Client {
         return new double[]{mousePosition.getX(), mousePosition.getY()};
     }
 
+    public int getPlayerId() {
+        return playerId;
+    }
+
     public GameEngine getGameEngine() {
         return gameEngine;
     }

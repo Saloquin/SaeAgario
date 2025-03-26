@@ -15,6 +15,7 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 public class Solo extends Client {
     private GameTimer gameTimer;
+    private Player player;
 
     public Solo(Group root) {
         super(root);
@@ -25,7 +26,7 @@ public class Solo extends Client {
     @Override
     public void init() {
         gameStarted = true;
-        Player player = new Player(root, 5, Color.RED, true); // Joueur local
+        player = new Player(root, 5, Color.RED, true); // Joueur local
         player.setCamera(camera);
         camera.focusOn(player);
         gameEngine.addPlayer(player);
@@ -45,7 +46,6 @@ public class Solo extends Client {
         }
 
         gameEngine.update();
-        System.out.println(Arrays.toString(gameEngine.getPlayer(playerId).getPosition()));
     }
 
     public void stopSoloGame() {

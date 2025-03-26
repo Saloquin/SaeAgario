@@ -2,7 +2,6 @@ package com.example.sae.client.controller;
 
 import com.example.sae.client.Client;
 import com.example.sae.client.Solo;
-import com.example.sae.core.GameEngine;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
@@ -13,12 +12,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.WindowEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class GameController {
+public class GameController implements Initializable {
 
     @FXML
     private StackPane rootStack;
@@ -35,9 +33,12 @@ public class GameController {
     @FXML
     private TextField chatInput;
 
-    private static final Group root = new Group();
-
     private static Client client;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+    }
 
     public void stopGame(){
         if(client != null) {
@@ -48,9 +49,10 @@ public class GameController {
     }
 
     public void startSoloGame() {
+        Group root = new Group();
         client = new Solo(root);
         client.init();
-        Scene scene = client.createGameScene(GameEngine.MAP_LIMIT_WIDTH,GameEngine.MAP_LIMIT_HEIGHT);
+        Scene scene = client.createGameScene(1280,720);
         gameContainer.getChildren().add(scene.getRoot());
     }
 
