@@ -1,17 +1,14 @@
 package com.example.sae.client;
 
 import com.example.sae.client.debug.DebugWindow;
+import com.example.sae.client.timer.GameTimer;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
-import javafx.animation.AnimationTimer;
-import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-
-import java.util.Arrays;
 
 import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
@@ -36,7 +33,10 @@ public class Solo extends Client {
         if(DebugWindow.DEBUG_MODE) {
             DebugWindow.getInstance();
         }
-        gameTimer.start();
+
+        System.out.println(gameEngine.getEntities().toString());
+        System.out.println(gameEngine.getPlayers().toString());
+        System.out.println(root.getChildren().toString());
     }
 
     @Override
@@ -64,28 +64,5 @@ public class Solo extends Client {
 
     public void stopSoloGame() {
         gameTimer.stop();
-    }
-
-    private static class GameTimer extends AnimationTimer {
-        private final Solo client;
-        private final double framesPerSecond = 120;
-        private final double interval = 1000000000 / framesPerSecond;
-        private double last = 0;
-
-        public GameTimer(Solo client) {
-            this.client = client;
-        }
-
-        @Override
-        public void handle(long now) {
-            if (last == 0) {
-                last = now;
-            }
-
-            if (now - last > interval && client.gameStarted) {
-                last = now;
-                client.update();
-            }
-        }
     }
 }

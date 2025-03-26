@@ -52,6 +52,7 @@ public class GameEngine {
 
         cleanupEntities();
     }
+
     private void updateEntityInQuadTree(Entity entity) {
         // Supprimer l'entité de sa position actuelle dans le QuadTree
         quadTree.remove(entity);
@@ -65,7 +66,6 @@ public class GameEngine {
         for (Entity entity : entitiesMovable) {
             updateEntityInQuadTree(entity);
             entity.Update();
-
         }
     }
 
