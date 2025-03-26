@@ -2,6 +2,7 @@ package com.example.sae.client;
 
 
 import com.example.sae.client.controller.MenuController;
+import com.example.sae.core.Camera;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
@@ -34,6 +35,8 @@ public class AgarioApplication extends Application {
         client = new Solo(root);
         client.init();
         scene = client.createGameScene(1280, 720);
+        Camera camera = new Camera();
+        client.getGameEngine().getPlayer(client.playerId).setCamera(camera);
         stage.setScene(scene);
     }
 
