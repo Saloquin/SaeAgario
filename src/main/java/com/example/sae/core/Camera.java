@@ -9,10 +9,12 @@ import javafx.scene.Scene;
 
 public class Camera extends Boundary {
     private ParallelCamera camera;
-    private static final double BASE_ZOOM = 500.0;
-    private double currentScale = 1.0;
-    private static final double DEFAULT_WIDTH = 1280;
-    private static final double DEFAULT_HEIGHT = 720;
+    private double currentZoom = 1;
+    private double currentX = 0;
+    private double currentY = 0;
+    private static final double SMOOTHING = 0.1;
+    private static final double ZOOM_FACTOR = 6; // Increased to reduce zoom intensity
+
 
     public Camera() {
         super(0, 0, GameEngine.MAP_LIMIT_WIDTH, GameEngine.MAP_LIMIT_HEIGHT);
@@ -24,40 +26,33 @@ public class Camera extends Boundary {
     }
 
     public void focusOn(Entity entity) {
-        camera.translateXProperty().bind(Bindings.createDoubleBinding(
-                () -> {
-                    Scene scene = entity.getScene();
-                    double width = scene != null ? scene.getWidth() : DEFAULT_WIDTH;
-                    return entity.getSprite().getCenterX() - width / 2;
-                },
-                entity.getSprite().centerXProperty()
-        ));
+        if (entity == null || entity.getSprite() == null) return;
 
-        camera.translateYProperty().bind(Bindings.createDoubleBinding(
-                () -> {
-                    Scene scene = entity.getScene();
-                    double height = scene != null ? scene.getHeight() : DEFAULT_HEIGHT;
-                    return entity.getSprite().getCenterY() - height / 2;
-                },
-                entity.getSprite().centerYProperty()
-        ));
+        Scene scene = entity.getSprite().getScene();
+        if (scene == null) return;
 
-        updateBoundary(entity);
-    }
+        // Calculate target position
+        double targetX = -entity.getSprite().getCenterX();
+        double targetY = -entity.getSprite().getCenterY();
 
-    private void updateBoundary(Entity entity) {
-        Scene scene = entity.getScene();
-        double width = scene != null ? scene.getWidth() : DEFAULT_WIDTH;
-        double height = scene != null ? scene.getHeight() : DEFAULT_HEIGHT;
+        // Smooth interpolation of position
+        currentX += (targetX - currentX) * SMOOTHING;
+        currentY += (targetY - currentY) * SMOOTHING;
 
-        this.x = entity.getSprite().getCenterX() - width / 2;
-        this.y = entity.getSprite().getCenterY() - height / 2;
-        this.w = width;
-        this.h = height;
-    }
+        // Calculate final translation with offset
+        double offsetX = scene.getWidth() / 2;
+        double offsetY = scene.getHeight() / 2;
 
-    public void adjustZoom(Entity entity) {
-        // TODO: Implémenter le zoom basé sur la taille de l'entité
+        scene.getRoot().setTranslateX(currentX * currentZoom + offsetX);
+        scene.getRoot().setTranslateY(currentY * currentZoom + offsetY);
+
+        // Handle zoom
+        double radius = entity.getSprite().getRadius();
+        double targetZoom = 1.0 / (Math.sqrt(radius) / ZOOM_FACTOR);
+        currentZoom += (targetZoom - currentZoom) * SMOOTHING;
+
+        scene.getRoot().setScaleX(currentZoom);
+        scene.getRoot().setScaleY(currentZoom);
     }
 
 }

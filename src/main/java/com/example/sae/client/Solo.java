@@ -10,6 +10,7 @@ import com.example.sae.core.entity.Player;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
@@ -26,7 +27,7 @@ public class Solo extends Client {
     @Override
     public void init() {
         gameStarted = true;
-        Player player = EntityFactory.createPlayer(3, Color.RED, true);
+        Player player = EntityFactory.createPlayer(10, Color.RED, true);
         player.setCamera(camera);
         camera.focusOn(player);
         playerId = gameEngine.addPlayer(player);
@@ -55,7 +56,7 @@ public class Solo extends Client {
         }
 
         if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
-            gameEngine.addEntity(EntityFactory.createEnemy(5));
+            gameEngine.addEntity(EntityFactory.createEnemy(10));
         }
 
         gameEngine.update();

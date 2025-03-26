@@ -12,6 +12,8 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class AgarioServer {
+    // note : ne pas envoyer un gamestate par frame
+    // envoyer simplement quand un élément est créé/modifié/supprimé avec les informations de cet élément
     private static final int PORT = 12345;
     private static final int TARGET_FPS = 30;
     private static final long FRAME_TIME = 1000000000 / TARGET_FPS; // 33ms en nanos
@@ -62,13 +64,30 @@ public class AgarioServer {
 
     private void gameLoop() {
         long lastUpdate = System.nanoTime();
+        long groscaca = System.nanoTime();
 
         while (running) {
             long now = System.nanoTime();
             if (now - lastUpdate >= FRAME_TIME) {
-                gameEngine.update();
-                broadcastGameState();
+                // gameEngine.update();
+                // broadcastGameState();
                 lastUpdate = now;
+            }
+
+            // à retirer
+            if (now - groscaca >= 5000000000L) {
+                // System.out.println(serializeGameState());
+                clientHandlers.values().stream().findFirst().ifPresent(clientHandler -> {
+                    System.out.println(serializeEntity(clientHandler.player));
+                });
+                groscaca = now;
+                StringBuilder state = new StringBuilder("DELETE|");
+
+                for (Entity entity : gameEngine.getEntitiesOfType(Food.class)) {
+                    state.append(entity.getEntityId()).append("|");
+                }
+
+                // clientHandlers.values().forEach(handler -> handler.sendMessage(state.toString()));
             }
         }
     }
@@ -80,16 +99,23 @@ public class AgarioServer {
                 .forEach(handler -> handler.sendMessage(gameState));
     }
 
+    private String serializeEntity(Entity entity) {
+        return String.format(Locale.US, "%s,%s,%.2f,%.2f,%.2f,%.0f,%.0f,%.0f|",
+                entity.getClass().getSimpleName(),
+                entity.getEntityId(),
+                entity.getPosition()[0],
+                entity.getPosition()[1],
+                entity.getMasse(),
+                entity.getColor().getRed()*255,
+                entity.getColor().getBlue()*255,
+                entity.getColor().getGreen()*255);
+    }
+
     private String serializeGameState() {
         StringBuilder state = new StringBuilder("GAMESTATE|");
 
         for (Entity entity : gameEngine.getEntities()) {
-            state.append(String.format("%s,%s,%.2f,%.2f,%.2f|",
-                    entity.getClass().getSimpleName(),
-                    entity instanceof Player ? ((Player)entity).getId() : "food",
-                    entity.getPosition()[0],
-                    entity.getPosition()[1],
-                    entity.getMasse()));
+            state.append(serializeEntity(entity));
         }
 
         return state.toString();
@@ -111,8 +137,8 @@ public class AgarioServer {
             this.ready = false;
 
             // Créer un nouveau joueur pour ce client
-            this.player = new Player(null, 5, Color.RED); // null car pas besoin de Group côté serveur
-            gameEngine.addEntity(player);
+            this.player = new Player(null, clientId, 5, Color.RED); // null car pas besoin de Group côté serveur
+            gameEngine.addPlayer(player);
 
             // Envoyer l'ID et les informations initiales
             sendMessage("ID|" + clientId);
@@ -126,18 +152,23 @@ public class AgarioServer {
                     handleClientInput(input);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
             } finally {
                 disconnect();
             }
         }
 
         private void handleClientInput(String input) {
+            // System.out.println("Server received: " + input);
             String[] parts = input.split("\\|");
             if (parts.length < 1) return;
 
             switch (parts[0]) {
-                case "READY" -> ready = true;
+                case "READY" -> {
+                    ready = true;
+                    String gameState = serializeGameState();
+                    sendMessage(gameState);
+                }
                 case "MOVE" -> {
                     if (parts.length == 3) {
                         double x = Double.parseDouble(parts[1]);
@@ -158,6 +189,7 @@ public class AgarioServer {
 
         private void disconnect() {
             try {
+                System.out.println("LOG TEMPORAIRE : client déconnecté");
                 gameEngine.removeEntity(player);
                 clientHandlers.remove(clientId);
                 socket.close();

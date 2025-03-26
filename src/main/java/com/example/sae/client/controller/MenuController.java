@@ -13,7 +13,9 @@ public class MenuController{
     private Stage stage;
 
     @FXML
-    private Button startButton;
+    private Button startSoloButton;
+    @FXML
+    private Button startOnlineButton;
     @FXML
     private Button changeSkinButton;
     @FXML
@@ -26,8 +28,13 @@ public class MenuController{
     }
 
     @FXML
-    private void handleStartButton() throws IOException {
-        AgarioApplication.startGame(stage);
+    private void handleStartSoloButton() throws IOException {
+        AgarioApplication.startGame(stage, true);
+    }
+
+    @FXML
+    private void handleStartOnlineButton() throws IOException {
+        AgarioApplication.startGame(stage, false);
     }
 
     @FXML

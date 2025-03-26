@@ -4,7 +4,11 @@ import com.example.sae.client.debug.DebugWindowController;
 import com.example.sae.core.entity.*;
 import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
+import javafx.animation.ScaleTransition;
+import javafx.animation.TranslateTransition;
 import javafx.scene.shape.Shape;
+import javafx.util.Duration;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,7 +21,7 @@ public class GameEngine {
     private final HashSet<Entity> entitiesToAdd;
     private final HashSet<Entity> entitiesToRemove;
     public final HashSet<Entity> entitiesMovable;
-    public final  static double NB_FOOD_MAX = 100;
+    public final  static double NB_FOOD_MAX = 1000;
     public final  static double NB_ENEMY_MAX = 10;
     private static final int QUAD_TREE_MAX_DEPTH = 6;
     private static QuadTree quadTree;
@@ -81,7 +85,7 @@ public class GameEngine {
 
             for (Entity entity2 : nearbyEntities) {
                 if (checkCollision(entity1, entity2)) {
-                    DebugWindowController.addLog("Collision detected between: " + entity1 + " and " + entity2);
+                    //DebugWindowController.addLog("Collision detected between: " + entity1 + " and " + entity2);
                     handleCollision((MoveableBody) entity1, entity2);
                 }
             }
@@ -106,15 +110,39 @@ public class GameEngine {
             return;
         }
         if (checkCollision(predator, prey) && canEat(predator, prey)) {
-            if (prey instanceof Player) {
-                int playerId = getPlayerId((Player) prey);
-                removePlayer(playerId);
-            } else {
-                removeEntity(prey);
-            }
+            entities.remove(prey);
+
+            TranslateTransition transition = new TranslateTransition(Duration.millis(200 ), prey.getSprite());
+
+            double targetX = predator.getSprite().getCenterX() - prey.getSprite().getCenterX();
+            double targetY = predator.getSprite().getCenterY() - prey.getSprite().getCenterY();
+
+            transition.setToX(targetX);
+            transition.setToY(targetY);
+
+            ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(40), prey.getSprite());
+            scaleTransition.setToX(0);
+            scaleTransition.setToY(0);
+
 
             predator.increaseSize(prey.getMasse());
-            prey.onDeletion();
+            transition.setOnFinished(e -> {
+                if (prey instanceof Player) {
+                    int playerId = getPlayerId((Player) prey);
+                    removePlayer(playerId);
+
+                } else {
+                    removeEntity(prey);
+                }
+
+                prey.onDeletion();
+            });
+            if(prey instanceof MoveableBody){
+                ((MoveableBody) prey).deleteText();
+            }
+                transition.play();
+                scaleTransition.play();
+
         }
     }
 
@@ -127,9 +155,7 @@ public class GameEngine {
     }
 
     private boolean canEat(Entity predator, Entity prey) {
-        double predatorArea = Math.PI * Math.pow(predator.getSprite().getRadius(), 2);
-        double preyArea = Math.PI * Math.pow(prey.getSprite().getRadius(), 2);
-        return predatorArea > preyArea * 1.33; // Must be 33% larger
+        return predator.getMasse() > prey.getMasse() * 1.33; // Must be 33% larger
     }
 
 
@@ -176,6 +202,10 @@ public class GameEngine {
 
     public HashSet<Entity> getEntities() {
         return entities;
+    }
+
+    public HashSet<Entity> getEntitiesToAdd() {
+        return entitiesToAdd;
     }
 
     public HashSet<Entity> getEntitiesOfType(Class<?> type) {
