@@ -126,7 +126,7 @@ public class Player extends MoveableBody{
     }
 
     /**
-     * 
+     *
      *
      * @see MoveableBody
      *
