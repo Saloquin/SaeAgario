@@ -33,10 +33,15 @@ public class SoloController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        gameContainer.prefWidthProperty().bind(rootStack.widthProperty());
+        gameContainer.prefHeightProperty().bind(rootStack.heightProperty());
+
         Group root = new Group();
         client = new Solo(root);
         client.init();
-        Scene scene = client.createGameScene(1280,720);
+
+        Scene scene = client.createGameScene(1280, 720);
+
         gameContainer.getChildren().add(scene.getRoot());
     }
 

@@ -7,7 +7,7 @@
 <StackPane fx:id="rootStack" prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sae.client.controller.SoloController">
 
     <!-- The game world (moved by camera) -->
-    <Pane fx:id="gameContainer" />
+    <Pane fx:id="gameContainer" minHeight="100" minWidth="100"/>
 
     <!-- The HUD : stay fixed on the screen -->
     <AnchorPane fx:id="hudContainer" pickOnBounds="false">

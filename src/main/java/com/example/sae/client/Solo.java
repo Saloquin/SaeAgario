@@ -29,10 +29,10 @@ public class Solo extends Client {
     @Override
     public void init() {
         gameStarted = true;
-        Player player = EntityFactory.createPlayer(3, Color.RED, true);
+        Player player = EntityFactory.createPlayer(3, Color.BISQUE, true);
         player.setCamera(camera);
-        camera.focusOn(player);
         playerId = gameEngine.addPlayer(player);
+        camera.focusOn(player);
         if(DebugWindow.DEBUG_MODE) {
             DebugWindow.getInstance();
         }

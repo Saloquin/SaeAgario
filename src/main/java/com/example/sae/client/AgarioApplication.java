@@ -29,10 +29,6 @@ public class AgarioApplication extends Application {
         stage.show();
     }
 
-    public static Client getClient() {
-        return client;
-    }
-
     public static void main(String[] args) {
         launch();
     }
