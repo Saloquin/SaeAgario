@@ -1,6 +1,8 @@
 package com.example.sae.core.entity;
 
 import java.util.Random;
+import java.util.UUID;
+
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -9,9 +11,11 @@ import javafx.scene.shape.Circle;
 public abstract class Entity extends Group{
     protected Circle sprite; // the entity's sprite
     private double masse;
+    protected String entityId;
 
     Entity(Group group,double masse){
         super();
+        this.entityId = UUID.randomUUID().toString();
         this.masse = masse;
         Random rand = new Random();
         int r = rand.nextInt(255);
@@ -23,19 +27,37 @@ public abstract class Entity extends Group{
         setViewOrder(-sprite.getRadius());
         sprite.setRadius(10*Math.sqrt(masse));
         getChildren().add(sprite);
-        group.getChildren().add(this);
+        if (group != null) {
+            group.getChildren().add(this);
+        }
     }
     Entity(Group group,double masse, Color color){
         super();
+        this.entityId = UUID.randomUUID().toString();
         this.masse = masse;
-        Random rand = new Random();
 
         sprite = new Circle(10*Math.sqrt(masse), color);
 
         setViewOrder(-sprite.getRadius());
         sprite.setRadius(10*Math.sqrt(masse));
         getChildren().add(sprite);
-        group.getChildren().add(this);
+        if (group != null) {
+            group.getChildren().add(this);
+        }
+    }
+    Entity(Group group, String id, double masse, Color color){
+        super();
+        this.entityId = id;
+        this.masse = masse;
+
+        sprite = new Circle(10*Math.sqrt(masse), color);
+
+        setViewOrder(-sprite.getRadius());
+        sprite.setRadius(10*Math.sqrt(masse));
+        getChildren().add(sprite);
+        if (group != null) {
+            group.getChildren().add(this);
+        }
     }
 
     public void setRandomColor(){
@@ -48,6 +70,7 @@ public abstract class Entity extends Group{
 
     Entity(double masse){
         super();
+        this.entityId = UUID.randomUUID().toString();
         this.masse = masse;
         Random rand = new Random();
         int r = rand.nextInt(255);
@@ -85,6 +108,13 @@ public abstract class Entity extends Group{
         return sprite;
     }
 
+    public Color getColor() {
+        return (Color) sprite.getFill();
+    }
+
+    public String getEntityId() {
+        return this.entityId;
+    }
 
     public void onDeletion() {
         // Remove from JavaFX scene graph if necessary

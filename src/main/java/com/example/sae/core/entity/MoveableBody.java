@@ -32,6 +32,11 @@ public abstract class MoveableBody extends Entity{
         initializeNameText(group);
     }
 
+    MoveableBody(Group group, String id, double initialSize, Color color) {
+        super(group, id, initialSize, color);
+        initializeNameText(group);
+    }
+
     MoveableBody(Group group, double initialSize,Color color, String name) {
         super(group, initialSize);
         this.name = name;
@@ -55,7 +60,9 @@ public abstract class MoveableBody extends Entity{
         nameText.setX(sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
         nameText.setY(sprite.getCenterY());
 
-        group.getChildren().add(nameText);
+        if (group != null) {
+            group.getChildren().add(nameText);
+        }
     }
 
 
