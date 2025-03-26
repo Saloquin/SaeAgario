@@ -4,6 +4,7 @@ import com.example.sae.core.entity.Entity;
 import com.example.sae.core.quadtree.Boundary;
 import javafx.scene.ParallelCamera;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 
 public class Camera extends Boundary {
     private ParallelCamera camera;
@@ -51,6 +52,11 @@ public class Camera extends Boundary {
 
         scene.getRoot().setScaleX(currentZoom);
         scene.getRoot().setScaleY(currentZoom);
+    }
+
+    public void focusOn(Pane pane, Entity entity){
+        pane.layoutXProperty().bind(entity.layoutXProperty());
+        pane.layoutYProperty().bind(entity.layoutYProperty());
     }
 
 }
