@@ -10,7 +10,7 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 public abstract class MoveableBody extends Entity{
     public double Speed = 1.5;
-    public String name= "°-°";
+    public String name= "Camou le goat";
     private Text nameText;
 
     public static final double BASE_MAX_SPEED = 5.0; // Vitesse de base maximum
@@ -141,6 +141,10 @@ public abstract class MoveableBody extends Entity{
         if (nameText.getParent() != null) {
             ((Group) nameText.getParent()).getChildren().remove(nameText);
         }
+    }
+
+    public String getNom() {
+        return name;
     }
 
 

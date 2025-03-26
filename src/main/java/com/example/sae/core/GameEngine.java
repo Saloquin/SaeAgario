@@ -5,10 +5,8 @@ import com.example.sae.core.entity.*;
 import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
 import javafx.scene.shape.Shape;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.TimerTask;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -204,6 +202,14 @@ public class GameEngine {
         nearbyEntities.remove(entity);
 
         return nearbyEntities;
+    }
+
+    public List<MoveableBody> getSortedMovableEntities() {
+        return entitiesMovable.stream()
+                .map(entity -> (MoveableBody) entity)
+                .sorted(Comparator.comparingDouble(MoveableBody::getMasse).reversed())
+                .limit(10)
+                .collect(Collectors.toList());
     }
 
 

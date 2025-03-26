@@ -19,6 +19,7 @@ public class Solo extends Client {
     private GameTimer gameTimer;
     private Player player;
 
+
     public Solo(Group root) {
         super(root);
         this.gameTimer = new GameTimer(this);
@@ -58,9 +59,6 @@ public class Solo extends Client {
         if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
             DebugWindow.getInstance().update(gameEngine, playerId);
         }
-
-        System.out.println("Player " + playerId + " is now at " + Arrays.toString(player.getPosition()));
-        System.out.println("Camera " + player.getCamera() + " is now at " + player.getCamera().getX() + " " + player.getCamera().getY());
     }
 
     public void stopSoloGame() {
