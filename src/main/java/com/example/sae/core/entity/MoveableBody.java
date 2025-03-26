@@ -1,8 +1,13 @@
 package com.example.sae.core.entity;
 
 import com.example.sae.client.AgarioApplication;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
@@ -10,72 +15,114 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 public abstract class MoveableBody extends Entity{
     public double Speed = 1.5;
-    public double Smoothing = 80; // higher numbers mean more smoothing, but also slower circle
+    public String name= "°-°";
+    private Text nameText;
 
-    MoveableBody(Group group, double initialSize){
+    public static final double BASE_MAX_SPEED = 45.0; // Vitesse de base maximum
+    public static final double MIN_MAX_SPEED = 7.0;  // Vitesse maximum minimale
+    public static final double SPEED_FACTOR = 1.5;
+
+    MoveableBody(Group group, double initialSize) {
         super(group, initialSize);
+        initializeNameText(group);
     }
-    MoveableBody(Group group, double initialSize, Color color){
-        super(group, initialSize,color);
+
+    MoveableBody(Group group, double initialSize, Color color) {
+        super(group, initialSize, color);
+        initializeNameText(group);
+    }
+
+    MoveableBody(Group group, double initialSize,Color color, String name) {
+        super(group, initialSize);
+        this.name = name;
+        sprite.setFill(color);
+        initializeNameText(group);
+    }
+    MoveableBody(Group group, double initialSize,String name) {
+        super(group, initialSize);
+        this.name = name;
+        initializeNameText(group);
+    }
+
+    private void initializeNameText(Group group) {
+        nameText = new Text(name);
+        nameText.setFill(Color.BLACK);
+        nameText.setStyle("-fx-font-size: 14;");
+        // Place le texte au-dessus du sprite dans l'ordre de rendu
+        nameText.setViewOrder(-1000);
+
+        // Position initiale au centre du cercle
+        nameText.setX(sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
+        nameText.setY(sprite.getCenterY());
+
+        group.getChildren().add(nameText);
     }
 
 
-    public void increaseSize(double foodValue){
-        //called whenever the player eats food
-        //once the player gets big enough, we want the camera to start zooming out*
-        setMasse(getMasse() +foodValue);
-        Sprite.setRadius(10 * Math.sqrt(getMasse()));
-        setViewOrder(-Sprite.getRadius());
+    public void increaseSize(double foodValue) {
+        setMasse(getMasse() + foodValue);
+        sprite.setRadius(10 * Math.sqrt(getMasse()));
+        setViewOrder(-sprite.getRadius());
+        nameText.setX(sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
+        nameText.setY(sprite.getCenterY());
 
     }
 
     public void moveToward(double[] mousePosition) {
         double m = getMasse();
-        double maxSpeed = 100 / Math.sqrt(m); // Ajuster 100 selon le besoin
+        // La vitesse maximum ne peut pas descendre en dessous de MIN_MAX_SPEED
+        double maxSpeed = Math.max(BASE_MAX_SPEED / Math.sqrt(m), MIN_MAX_SPEED);
 
         // Vecteur direction vers la souris
         double[] velocity = new double[]{
-                mousePosition[0] - Sprite.getCenterX(),
-                mousePosition[1] - Sprite.getCenterY()
+                mousePosition[0] - sprite.getCenterX(),
+                mousePosition[1] - sprite.getCenterY()
         };
 
         // Distance du curseur au centre du joueur
         double distance = Math.sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1]);
 
-        // Normalisation du vecteur de direction
-        if (distance > 0) {
-            velocity[0] /= distance;
-            velocity[1] /= distance;
+        // Si la souris est au même endroit que le joueur, pas de mouvement
+        if (distance < 1) {
+            return;
         }
 
-        // Facteur de vitesse (proportionnel à la distance du curseur au joueur, max à `maxSpeed`)
-        double speedFactor = Math.min(distance / MAP_LIMIT_WIDTH, 1.0);
-        double speed = maxSpeed * speedFactor;
+        // Normalisation du vecteur de direction
+        velocity[0] /= distance;
+        velocity[1] /= distance;
 
-        // Appliquer la vitesse calculée
-        velocity[0] *= speed;
-        velocity[1] *= speed;
+        // Le facteur de vitesse est proportionnel à la distance
+        // Distance maximale considérée pour la vitesse (rayon d'influence)
+        double maxDistance = 200.0;
+        double speedFactor = Math.min(distance / maxDistance, 1.0);
+        double currentSpeed = maxSpeed * speedFactor * SPEED_FACTOR;
+
+        // Application de la vitesse
+        velocity[0] *= currentSpeed;
+        velocity[1] *= currentSpeed;
 
         // Vérification des limites de la carte
-        double newX = Sprite.getCenterX() + velocity[0];
-        double newY = Sprite.getCenterY() + velocity[1];
+        double newX = sprite.getCenterX() + velocity[0];
+        double newY = sprite.getCenterY() + velocity[1];
 
         if (newX < MAP_LIMIT_WIDTH && newX > -MAP_LIMIT_WIDTH) {
-            Sprite.setCenterX(newX);
+            sprite.setCenterX(newX);
+            nameText.setX(newX - nameText.getLayoutBounds().getWidth() / 2);
         }
         if (newY < MAP_LIMIT_HEIGHT && newY > -MAP_LIMIT_HEIGHT) {
-            Sprite.setCenterY(newY);
+            sprite.setCenterY(newY);
+            nameText.setY(newY);
         }
     }
 
     //TODO: Implement the splitSprite method without using AgarioApplication.root
     public void splitSprite(){
-        Player newBody = new Player(AgarioApplication.root, Sprite.getRadius() / 2, Color.RED);
-        newBody.Sprite.setCenterX(Sprite.getCenterX() + 30);
-        newBody.Sprite.setCenterY(Sprite.getCenterY() + 30);
+        Player newBody = EntityFactory.createPlayer(sprite.getRadius() / 2, Color.RED);
+        newBody.sprite.setCenterX(sprite.getCenterX() + 30);
+        newBody.sprite.setCenterY(sprite.getCenterY() + 30);
 
 
-        Sprite.setRadius(Sprite.getRadius() / 2);
+        sprite.setRadius(sprite.getRadius() / 2);
 
     }
     public double distanceTo(double[] position){
@@ -91,6 +138,14 @@ public abstract class MoveableBody extends Entity{
             return new double[]{array[0] / magnitude, array[1] / magnitude};
         }
         return new double[]{0,0};
+    }
+
+    @Override
+    public void onDeletion() {
+        super.onDeletion();
+        if (nameText.getParent() != null) {
+            ((Group) nameText.getParent()).getChildren().remove(nameText);
+        }
     }
 
 

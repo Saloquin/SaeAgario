@@ -15,7 +15,7 @@ public class Boundary {
         this.h = h;
     }
 
-    // Check if a point is within this boundary
+    // Vérifie si un point est à l'intérieur de cette frontière
     public boolean contains(double px, double py) {
         return (px >= x - w &&
                 px <= x + w &&
@@ -23,7 +23,7 @@ public class Boundary {
                 py <= y + h);
     }
 
-    // Check if this boundary intersects with another boundary
+    // Vérifie si cette frontière intersecte une autre frontière
     public boolean intersects(Boundary range) {
         return !(range.x - range.w > x + w ||
                 range.x + range.w < x - w ||
@@ -36,4 +36,5 @@ public class Boundary {
     public double getY() { return y; }
     public double getWidth() { return w; }
     public double getHeight() { return h; }
+
 }

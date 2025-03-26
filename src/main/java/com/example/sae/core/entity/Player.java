@@ -13,18 +13,18 @@ public class Player extends MoveableBody{
 
     public Player(Group group, double masse, Color color){
         super(group, masse,color);
-        Sprite.setCenterX(0);
-        Sprite.setCenterY(0);
-        Sprite.setViewOrder(-Sprite.getRadius());
+        sprite.setCenterX(0);
+        sprite.setCenterY(0);
+        sprite.setViewOrder(-sprite.getRadius());
 
     }
 
     public Player(Group group, double masse, Color color, boolean isLocal) {
         super(group, masse, color);
         this.isLocal = isLocal;
-        Sprite.setCenterX(0);
-        Sprite.setCenterY(0);
-        Sprite.setViewOrder(-Sprite.getRadius());
+        sprite.setCenterX(0);
+        sprite.setCenterY(0);
+        sprite.setViewOrder(-sprite.getRadius());
         inputPosition = new double[]{0, 0};
     }
 
@@ -34,9 +34,7 @@ public class Player extends MoveableBody{
 
     }
 
-    public void moveToward(double[] velocity) {
-        super.moveToward(velocity);
-    }
+
 
     public boolean isLocal() {
         return isLocal;

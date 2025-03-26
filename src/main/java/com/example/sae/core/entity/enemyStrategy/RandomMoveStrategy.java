@@ -39,7 +39,7 @@ public class RandomMoveStrategy implements EnemyStrategy {
      * @param enemy Strategy executed on this AI
      */
     @Override
-    public void execute(Enemy enemy) {
+    public boolean execute(Enemy enemy) {
         double currentTime = System.currentTimeMillis() / 1000.0;
 
         if (enemy.getTargetPosition() == null ||
@@ -65,6 +65,7 @@ public class RandomMoveStrategy implements EnemyStrategy {
         if (enemy.getTargetPosition() != null) {
             enemy.moveToward(enemy.getTargetPosition());
         }
+        return true;
     }
 
 
