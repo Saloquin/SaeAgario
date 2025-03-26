@@ -9,7 +9,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -34,16 +36,22 @@ public class MenuController implements Initializable {
     static Stage mainStage;
 
 
+    @FXML
+    private ColorPicker playerColorPicker;
+    private Color playerColor = Color.RED;
+
 
     private String playerName = "Player";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Initialize player name field
         playerNameField.setText(playerName);
         playerNameField.textProperty().addListener((obs, old, newValue) -> {
             playerName = newValue.trim().isEmpty() ? "Player" : newValue.trim();
-            System.out.println("Player name changed to: " + playerName);
+        });
+
+        playerColorPicker.valueProperty().addListener((obs, old, newValue) -> {
+            playerColor = newValue;
         });
     }
 
@@ -52,6 +60,7 @@ public class MenuController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/solo.fxml"));
             SoloController controller = new SoloController();
             controller.setPlayerName(playerName);
+            controller.setPlayerColor(playerColor);
             loader.setController(controller);
 
             Node currentNode = (Node) (event.getSource());

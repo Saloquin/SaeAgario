@@ -11,6 +11,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -33,16 +34,20 @@ public class SoloController implements Initializable {
     private static Solo client;
 
     private String playerName;
+    private Color playerColor;
+
+    public void setPlayerColor(Color color) {
+        this.playerColor = color;
+    }
 
     public void setPlayerName(String playerName) {
-        System.out.println("Setting player name to: " + playerName);
         this.playerName = playerName;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         root = new Group();
-        client = new Solo(root, playerName);
+        client = new Solo(root, playerName, playerColor);
         client.init();
 
         Pane pane = client.createGamePane(1280, 720);

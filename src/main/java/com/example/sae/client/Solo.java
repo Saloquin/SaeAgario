@@ -20,18 +20,20 @@ public class Solo extends Client {
     private Player player;
 
 
-    public Solo(Group root, String name) {
+    private Color playerColor;
+
+    public Solo(Group root, String name, Color color) {
         super(root, name);
+        this.playerColor = color;
         this.gameTimer = new GameTimer(this);
         this.gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, false);
-
     }
 
     @Override
     public void init() {
         gameStarted = true;
         System.out.println(playerName);
-        player = EntityFactory.createPlayer(3, Color.BISQUE, true);
+        player = EntityFactory.createPlayer(3, playerColor, true);
         player.setNom(playerName != null ? playerName : "Player");
         camera.focusOn(player);
         playerId = gameEngine.addPlayer(player);

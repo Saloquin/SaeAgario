@@ -4,6 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.paint.Color?>
 
 <AnchorPane prefHeight="400.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sae.client.controller.MenuController">
     <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
@@ -23,6 +24,15 @@
                     <Insets bottom="10.0"/>
                 </VBox.margin>
             </TextField>
+        </VBox>
+
+        <VBox alignment="CENTER" spacing="5.0">
+            <Label text="Player Color:" />
+            <ColorPicker fx:id="playerColorPicker" style="-fx-min-width: 150px;">
+                <value>
+                    <Color red="1.0" green="0.0" blue="0.0" />
+                </value>
+            </ColorPicker>
         </VBox>
 
         <Button fx:id="onlinePlay"
