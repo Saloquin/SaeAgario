@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 public class GameEngine {
     private final HashSet<Entity> entities;
+    private final HashSet<Entity> entitiesToAdd;
+    private final HashSet<Entity> entitiesToRemove;
     public final HashSet<Entity> entitiesMovable;
     public final  static double NB_FOOD_MAX = 100;
     public final  static double NB_ENEMY_MAX = 10;
@@ -31,6 +33,8 @@ public class GameEngine {
     public GameEngine(double worldWidth, double worldHeight, boolean isServer) {
         this.entitiesMovable = new HashSet<>();
         this.entities = new HashSet<>();
+        this.entitiesToAdd = new HashSet<>();
+        this.entitiesToRemove = new HashSet<>();
         this.isServer = isServer;
 
         Boundary mapBoundary = new Boundary(0, 0, MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT);
@@ -43,6 +47,7 @@ public class GameEngine {
 
         handleCollisions();
 
+        cleanupEntities();
     }
     private void updateEntityInQuadTree(Entity entity) {
         // Supprimer l'entité de sa position actuelle dans le QuadTree
@@ -55,9 +60,15 @@ public class GameEngine {
 
     private void updateEntities() {
         for (Entity entity : entitiesMovable) {
-            entity.Update();
             updateEntityInQuadTree(entity);
+            entity.Update();
+
         }
+    }
+
+    public void cleanupEntities() {
+        entitiesToAdd.clear();
+        entitiesToRemove.clear();
     }
 
 
@@ -125,6 +136,7 @@ public class GameEngine {
 
 
     public void addEntity(Entity entity) {
+        entitiesToAdd.add(entity);
         entities.add(entity);
         quadTree.insert(entity);
         if(entity instanceof MoveableBody) {
@@ -134,6 +146,7 @@ public class GameEngine {
 
 
     public void removeEntity(Entity entity) {
+        entitiesToRemove.add(entity);
         entities.remove(entity);
         entity.setPosition(-999999, -999999); //TODO Move entity off screen before removing
 
@@ -181,7 +194,7 @@ public class GameEngine {
                 range * 2  // Hauteur du carré = 2 * range
         );
 
-        // Récupérer les entités dans la zone du QuadTree
+
         HashSet<Entity> nearbyEntities = new HashSet<>(quadTree.query(searchBoundary));
 
         // Exclure l'entité elle-même
