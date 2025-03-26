@@ -9,7 +9,7 @@ import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 
 public abstract class Client {
-    protected GameEngine gameEngine;
+    protected static GameEngine gameEngine;
     public int playerId;
     protected Group root;
     protected Camera camera;
@@ -45,7 +45,7 @@ public abstract class Client {
         return playerId;
     }
 
-    public GameEngine getGameEngine() {
+    public static GameEngine getGameEngine() {
         return gameEngine;
     }
 }

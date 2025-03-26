@@ -1,11 +1,14 @@
 package com.example.sae.core.entity.enemyStrategy;
 
+import com.example.sae.client.Client;
 import com.example.sae.client.Solo;
 import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Entity;
 import com.example.sae.core.entity.Food;
+import com.example.sae.core.entity.powerUp.PowerUp;
+
 /**
  * AI strategy: move around to eat as much food as possible
  *
@@ -29,18 +32,20 @@ public class SeekFoodStrategy implements EnemyStrategy {
      */
     @Override
     public boolean execute(Enemy enemy) {
-        GameEngine gameEngine = SoloController.getClient().getGameEngine();
+        GameEngine gameEngine = Client.getGameEngine();
         if (gameEngine == null) return false;
 
         double closestFoodDistance = Double.MAX_VALUE;
         Entity closestFood = null;
 
-        for (Entity entity : gameEngine.getNearbyEntities(enemy,400)) {
-            if(!(entity instanceof Food)) {
-                double distance = enemy.distanceTo(entity.getPosition());
-                if (distance < closestFoodDistance) {
-                    closestFoodDistance = distance;
-                    closestFood = entity;
+        for (Entity entity : gameEngine.getNearbyEntities(enemy,500)) {
+            if((entity instanceof Food) || (entity instanceof PowerUp)) {
+                if(entity.getMasse()*1.33<enemy.getMasse()) {
+                    double distance = enemy.distanceTo(entity.getPosition());
+                    if (distance < closestFoodDistance) {
+                        closestFoodDistance = distance;
+                        closestFood = entity;
+                    }
                 }
             }
         }
@@ -49,6 +54,7 @@ public class SeekFoodStrategy implements EnemyStrategy {
             enemy.moveToward(closestFood.getPosition());
             return true;
         } else {
+            new RandomMoveStrategy().execute(enemy);
             return false;
         }
     }

@@ -11,7 +11,7 @@ import static com.example.sae.core.entity.MoveableBody.BASE_MAX_SPEED;
 import static com.example.sae.core.entity.MoveableBody.MIN_MAX_SPEED;
 
 public class DebugWindow {
-    public static final boolean DEBUG_MODE = false;
+    public static final boolean DEBUG_MODE = true;
     private static DebugWindow instance;
     private DebugWindowController controller;
 
@@ -47,9 +47,7 @@ public class DebugWindow {
             controller.playerXProperty().set(player.getSprite().getCenterX());
             controller.playerYProperty().set(player.getSprite().getCenterY());
             controller.playerMassProperty().set(player.getMasse());
-            double speed = BASE_MAX_SPEED / (1 + Math.log10(player.getMasse()));
-            speed = Math.max(speed, MIN_MAX_SPEED);
-            controller.playerSpeedProperty().set(speed);
+            controller.playerSpeedProperty().set(player.getActualSpeed());
         }
 
         controller.foodCountProperty().set(gameEngine.getEntitiesOfType(Food.class).size());

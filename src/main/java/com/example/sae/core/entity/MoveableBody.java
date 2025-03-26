@@ -33,6 +33,9 @@ public abstract class MoveableBody extends Entity{
     public static final double SPEED_FACTOR = 1.5;
 
     public static final double ENEMY_SPEED_MULTIPLIER = 0.7;
+    private double speedMultiplier = 1.0;
+    private double actualSpeed=0;
+
 
     /**
      * constructor
@@ -164,9 +167,8 @@ public abstract class MoveableBody extends Entity{
     public void moveToward(double[] mousePosition) {
         DoubleBinding speedBinding = Bindings.createDoubleBinding(
                 () -> {
-                    double baseSpeed = Math.max(BASE_MAX_SPEED / (1 + Math.log10(getMasse())), MIN_MAX_SPEED);
                     // Applique le multiplicateur si c'est un ennemi
-                    return (this instanceof Enemy) ? baseSpeed * ENEMY_SPEED_MULTIPLIER : baseSpeed;
+                    return Math.max(BASE_MAX_SPEED / (1 + Math.log10(getMasse())), MIN_MAX_SPEED);
                 },
                 sprite.radiusProperty()
         );
@@ -195,11 +197,11 @@ public abstract class MoveableBody extends Entity{
         // Distance maximale considérée pour la vitesse (rayon d'influence)
         double maxDistance = 200.0;
         double speedFactor = Math.min(distance / maxDistance, 1.0);
-        double currentSpeed = maxSpeed * speedFactor * SPEED_FACTOR;
-
+        double currentSpeed = maxSpeed * speedFactor * SPEED_FACTOR * speedMultiplier;
+        actualSpeed = currentSpeed;
         // Application de la vitesse
         velocity[0] *= currentSpeed;
-        velocity[1] *= currentSpeed;
+        velocity[1] *= currentSpeed ;
 
         // Mise à jour de la position avec les limites de la carte
         double newX = sprite.getCenterX() + velocity[0];
@@ -260,6 +262,14 @@ public abstract class MoveableBody extends Entity{
         return new double[]{0,0};
     }
 
+    public void setSpeedMultiplier(double multiplier) {
+        this.speedMultiplier = multiplier;
+    }
+
+    public double getActualSpeed() {
+        return actualSpeed;
+    }
+
     /**
      * removes the moving object that is eaten
      *
@@ -290,6 +300,7 @@ public abstract class MoveableBody extends Entity{
         }
     }
 
-
-
+    public void resetAllEffects() {
+        setSpeedMultiplier(1.0);
+    }
 }
