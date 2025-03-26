@@ -1,14 +1,35 @@
 package com.example.sae.core.quadtree;
 
+import com.example.sae.core.Camera;
 import com.example.sae.core.entity.Entity;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * a kind of box (Boundary) divided into four parts: northwest, northeast, southwest, southeast
+ *
+ * @see Boundary
+ * @see Entity
+ *
+ * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+ */
 public class QuadTree {
+    /**
+     * a QuadTree is contained in a boundary
+     */
     private Boundary boundary;
+
     private int capacity;
+
+    /**
+     * list of entities in the quadTree
+     */
     private HashSet<Entity> entities;
+
+    /**
+     * indicates whether the quadTree has been divided
+     */
     private boolean divided;
 
     private QuadTree northwest;
@@ -16,9 +37,25 @@ public class QuadTree {
     private QuadTree southwest;
     private QuadTree southeast;
 
+    /**
+     * maximum depth of a quadTree to avoid dividing it ad infinitude
+     */
     private int maxDepth;
+
+    /**
+     * current depth of this quadTree
+     */
     private int currentDepth;
 
+    /**
+     * constructor
+     *
+     * @see Boundary
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param boundary boundary to which it belongs
+     * @param maxDepth maximum depth of boundary and quadTree
+     */
     public QuadTree(Boundary boundary,  int maxDepth) {
         this.boundary = boundary;
         this.entities = new HashSet<>();
@@ -27,13 +64,26 @@ public class QuadTree {
         this.currentDepth = 0;
     }
 
+    /**
+     * constructor
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param boundary boundary to which it belongs
+     * @param maxDepth maximum depth of boundary and quadTree
+     * @param currentDepth current depth if the builder has been engendered by a quadTree
+     */
     private QuadTree(Boundary boundary, int maxDepth, int currentDepth) {
         this(boundary, maxDepth);
         this.currentDepth = currentDepth;
     }
 
-
-
+    /**
+     * divides the quadTree
+     *
+     * @see Boundary
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     */
     public void subdivide() {
         double x = boundary.getX();
         double y = boundary.getY();
@@ -55,6 +105,16 @@ public class QuadTree {
         divided = true;
     }
 
+    /**
+     * adds an entity to the quadTree
+     *
+     * @see Boundary
+     * @see Entity
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param entity new entity entering the zone
+     * @return returns true if the entity has been added to the quadTree
+     */
     public boolean insert(Entity entity) {
         if (!boundary.contains(entity.getSprite().getCenterX(), entity.getSprite().getCenterY())) {
             return false;
@@ -77,6 +137,16 @@ public class QuadTree {
         return insertIntoChildren(entity);
     }
 
+    /**
+     * removes an entity to the quadTree
+     *
+     * @see Boundary
+     * @see Entity
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param entity new entity entering the zone
+     * @return returns true if the entity has been removed to the quadTree
+     */
     public boolean remove(Entity entity) {
         // Si l'entité n'est pas dans la zone du QuadTree, ne rien faire
         if (!boundary.contains(entity.getSprite().getCenterX(), entity.getSprite().getCenterY())) {
@@ -106,7 +176,16 @@ public class QuadTree {
         return false;
     }
 
-
+    /**
+     * when an entity is added to the QuadTree, it is automatically added to its children, until there are none left
+     *
+     * @see Boundary
+     * @see Entity
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param entity new entity entering the zone
+     * @return returns true if the entity has been added to the quadTree children
+     */
     private boolean insertIntoChildren(Entity entity) {
         if(northwest.insert(entity)) return true;
         else if(northeast.insert(entity)) return true;
@@ -145,6 +224,16 @@ public class QuadTree {
         System.out.println("=== End of QuadTree ===");
     }
 
+    /**
+     * displays all quadTree children in the terminal, recursively
+     *
+     * @see Boundary
+     * @see Entity
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param depth current depth
+     * @return number of children
+     */
     private int printEntitiesRecursive(int depth) {
         String indent = "  ".repeat(depth);
         int totalCount = entities.size();
