@@ -6,6 +6,8 @@ import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
@@ -35,7 +37,6 @@ public class GameEngine {
 
     private final Map<Integer, Player> players = new ConcurrentHashMap<>();
     private final AtomicInteger nextPlayerId = new AtomicInteger(0);
-
 
     public GameEngine(double worldWidth, double worldHeight, boolean isServer) {
         this.entitiesMovable = new HashSet<>();
@@ -193,6 +194,7 @@ public class GameEngine {
         if (player != null) {
             removeEntity(player);
         }
+
     }
 
     public Player getPlayer(int playerId) {

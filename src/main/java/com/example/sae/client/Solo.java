@@ -7,6 +7,8 @@ import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -19,6 +21,8 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 public class Solo extends Client {
     private GameTimer gameTimer;
     private Player player;
+
+    private static final BooleanProperty gameIsEnded = new SimpleBooleanProperty(false);
 
     public Solo(Group root) {
         super(root);
@@ -43,22 +47,29 @@ public class Solo extends Client {
     public void update() {
         Player player = gameEngine.getPlayer(playerId);
         if (player == null) {
-            return;
+            gameIsEnded.set(true);
+        }
+        else{
+            player.setInputPosition(getMousePosition());
+            if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
+                gameEngine.addEntity(EntityFactory.createFood(2));
+            }
+
+            if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
+                gameEngine.addEntity(EntityFactory.createEnemy(10));
+            }
+
+            gameEngine.update();
+            if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
+                DebugWindow.getInstance().update(gameEngine, playerId);
+            }
         }
 
-        player.setInputPosition(getMousePosition());
-        if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
-            gameEngine.addEntity(EntityFactory.createFood(2));
-        }
 
-        if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
-            gameEngine.addEntity(EntityFactory.createEnemy(10));
-        }
+    }
 
-        gameEngine.update();
-        if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
-            DebugWindow.getInstance().update(gameEngine, playerId);
-        }
+    public BooleanProperty getGameIsEndedProperty() {
+        return gameIsEnded;
     }
 
     public void stopSoloGame() {

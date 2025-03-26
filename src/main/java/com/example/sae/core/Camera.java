@@ -2,8 +2,6 @@ package com.example.sae.core;
 
 import com.example.sae.core.entity.Entity;
 import com.example.sae.core.quadtree.Boundary;
-import javafx.animation.ScaleTransition;
-import javafx.beans.binding.Bindings;
 import javafx.scene.ParallelCamera;
 import javafx.scene.Scene;
 

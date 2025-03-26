@@ -53,7 +53,7 @@ public class MenuController implements Initializable {
 
     public void onLocalPlay(ActionEvent event)
     {
-        lauchSoloGameWindow(false, event);
+        lauchSoloGameWindow(event);
     }
 
     public void onChangeSkin(ActionEvent event)
@@ -93,7 +93,7 @@ public class MenuController implements Initializable {
 
     static Stage mainStage;
 
-    private void lauchSoloGameWindow(boolean isOnline, ActionEvent event)
+    private void lauchSoloGameWindow(ActionEvent event)
     {
         try
         {
@@ -110,15 +110,16 @@ public class MenuController implements Initializable {
             stage.setMinHeight(500);
             stage.setMinWidth(700);
 
-            SoloController gameController = loader.getController();
+            Stage currentStage = (Stage) currentNode.getScene().getWindow();
 
-            currentNode.getScene().getWindow().hide();
+            currentStage.hide();
+
+            System.out.println(stage);
+            System.out.println(currentStage);
 
             stage.showAndWait();
 
-            gameController.stopGame();
-
-            ((Stage) currentNode.getScene().getWindow()).show();
+            currentStage.show();
             toggleGameButtonsVisibility();
             start.requestFocus();
         }

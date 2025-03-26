@@ -1,11 +1,7 @@
 package com.example.sae.core.entity;
 
-import com.example.sae.client.AgarioApplication;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;

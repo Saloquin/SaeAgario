@@ -44,14 +44,6 @@ public class OnlineController  implements Initializable {
         gameContainer.getChildren().add(scene);
     }
 
-    public void stopGame(){
-        if(client != null) {
-            if(client instanceof Solo) {
-                ((Solo) client).stopSoloGame();
-            }
-        }
-    }
-
     public static Client getClient() {
         return client;
     }
