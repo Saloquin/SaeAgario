@@ -19,11 +19,6 @@ import com.example.sae.client.Online;
 public class Player extends MoveableBody{
 
     /**
-     * camera that follows the player's moving object during a game
-     */
-    private Camera camera;
-
-    /**
      * Boolean that determines whether the player's mobile object is in the local or online game
      *
      * @see Online
@@ -163,18 +158,7 @@ public class Player extends MoveableBody{
         this.inputPosition = position;
     }
 
-    /**
-     * returns the player's moving object camera
-     *
-     * @see MoveableBody
-     * @see Camera
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @return returns the player's moving object camera
-     */
-    public Camera getCamera() {
-        return camera;
-    }
+
 
     /**
      * changes the camera of the player's moving object
@@ -186,6 +170,6 @@ public class Player extends MoveableBody{
      * @param cam the new camera
      */
     public void setCamera(Camera cam) {
-        this.camera = cam;
+        cam.focusOn(this);
     }
 }
