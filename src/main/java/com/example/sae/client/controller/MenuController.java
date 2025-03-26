@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -113,9 +114,6 @@ public class MenuController implements Initializable {
             Stage currentStage = (Stage) currentNode.getScene().getWindow();
 
             currentStage.hide();
-
-            System.out.println(stage);
-            System.out.println(currentStage);
 
             stage.showAndWait();
 

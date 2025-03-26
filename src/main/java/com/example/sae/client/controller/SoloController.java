@@ -43,6 +43,9 @@ public class SoloController implements Initializable {
 
         root = new Group();
         client = new Solo(root);
+
+        System.out.println(client);
+
         client.init();
 
         Pane pane = client.createGamePane(1280, 720);

@@ -28,7 +28,7 @@ public class GameEngine {
     public final  static double NB_ENEMY_MAX = 10;
     private static final int QUAD_TREE_MAX_DEPTH = 6;
     private static QuadTree quadTree;
-    private static boolean gameStarted = false;
+    private boolean gameStarted = false;
 
     public static final double MAP_LIMIT_WIDTH = 2000;
     public static final double MAP_LIMIT_HEIGHT = 2000;

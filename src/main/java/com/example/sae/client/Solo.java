@@ -22,7 +22,7 @@ public class Solo extends Client {
     private GameTimer gameTimer;
     private Player player;
 
-    private static final BooleanProperty gameIsEnded = new SimpleBooleanProperty(false);
+    private final BooleanProperty gameIsEnded = new SimpleBooleanProperty(false);
 
     public Solo(Group root) {
         super(root);
