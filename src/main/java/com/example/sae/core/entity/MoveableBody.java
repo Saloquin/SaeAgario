@@ -232,7 +232,6 @@ public abstract class MoveableBody extends Entity{
     }
 
     /**
-     * TODO
      * restructures an array of double
      *
      * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
