@@ -2,6 +2,7 @@ package com.example.sae.client;
 
 
 import com.example.sae.client.controller.MenuController;
+import com.example.sae.server.AgarioServer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;

@@ -1,5 +1,11 @@
 package com.example.sae.core.entity;
 
+import com.example.sae.client.AgarioApplication;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -9,13 +15,14 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 
 public abstract class MoveableBody extends Entity{
-    public double Speed = 1.5;
     public String name= "°-°";
     private Text nameText;
 
-    public static final double BASE_MAX_SPEED = 5.0; // Vitesse de base maximum
-    public static final double MIN_MAX_SPEED = 0.10;  // Vitesse maximum minimale
+    public static final double BASE_MAX_SPEED = 20; // Vitesse de base maximum
+    public static final double MIN_MAX_SPEED = 4;  // Vitesse maximum minimale
     public static final double SPEED_FACTOR = 1.5;
+    public static final double ENEMY_SPEED_MULTIPLIER = 0.7;
+
 
     MoveableBody(Group group, double initialSize) {
         super(group, initialSize);
@@ -24,6 +31,11 @@ public abstract class MoveableBody extends Entity{
 
     MoveableBody(Group group, double initialSize, Color color) {
         super(group, initialSize, color);
+        initializeNameText(group);
+    }
+
+    MoveableBody(Group group, String id, double initialSize, Color color) {
+        super(group, id, initialSize, color);
         initializeNameText(group);
     }
 
@@ -50,23 +62,30 @@ public abstract class MoveableBody extends Entity{
         nameText.setX(sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
         nameText.setY(sprite.getCenterY());
 
-        group.getChildren().add(nameText);
+        if (group != null) {
+            group.getChildren().add(nameText);
+        }
     }
 
 
     public void increaseSize(double foodValue) {
         setMasse(getMasse() + foodValue);
-        sprite.setRadius(10 * Math.sqrt(getMasse()));
-        setViewOrder(-sprite.getRadius());
+        // Suppression de setViewOrder car déjà lié au rayon
         nameText.setX(sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
         nameText.setY(sprite.getCenterY());
-
     }
 
     public void moveToward(double[] mousePosition) {
-        double m = getMasse();
-        // La vitesse maximum ne peut pas descendre en dessous de MIN_MAX_SPEED
-        double maxSpeed = Math.max(BASE_MAX_SPEED / Math.sqrt(m), MIN_MAX_SPEED);
+        DoubleBinding speedBinding = Bindings.createDoubleBinding(
+                () -> {
+                    double baseSpeed = Math.max(BASE_MAX_SPEED / (1 + Math.log10(getMasse())), MIN_MAX_SPEED);
+                    // Applique le multiplicateur si c'est un ennemi
+                    return (this instanceof Enemy) ? baseSpeed * ENEMY_SPEED_MULTIPLIER : baseSpeed;
+                },
+                sprite.radiusProperty()
+        );
+
+        double maxSpeed = speedBinding.get();
 
         // Vecteur direction vers la souris
         double[] velocity = new double[]{
@@ -96,7 +115,7 @@ public abstract class MoveableBody extends Entity{
         velocity[0] *= currentSpeed;
         velocity[1] *= currentSpeed;
 
-        // Vérification des limites de la carte
+        // Mise à jour de la position avec les limites de la carte
         double newX = sprite.getCenterX() + velocity[0];
         double newY = sprite.getCenterY() + velocity[1];
 
@@ -138,10 +157,15 @@ public abstract class MoveableBody extends Entity{
     @Override
     public void onDeletion() {
         super.onDeletion();
+        deleteText();
+    }
+
+    public void deleteText() {
         if (nameText.getParent() != null) {
             ((Group) nameText.getParent()).getChildren().remove(nameText);
         }
     }
+
 
 
 }

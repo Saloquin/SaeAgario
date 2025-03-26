@@ -9,6 +9,7 @@ import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import java.util.Arrays;
 
@@ -51,16 +52,13 @@ public class Solo extends Client {
         }
 
         if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
-            gameEngine.addEntity(EntityFactory.createEnemy(5));
+            gameEngine.addEntity(EntityFactory.createEnemy(10));
         }
 
         gameEngine.update();
         if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
             DebugWindow.getInstance().update(gameEngine, playerId);
         }
-
-        System.out.println("Player " + playerId + " is now at " + Arrays.toString(player.getPosition()));
-        System.out.println("Camera " + player.getCamera() + " is now at " + player.getCamera().getX() + " " + player.getCamera().getY());
     }
 
     public void stopSoloGame() {

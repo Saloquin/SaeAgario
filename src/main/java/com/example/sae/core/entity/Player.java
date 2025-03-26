@@ -12,11 +12,17 @@ public class Player extends MoveableBody{
     private double[] inputPosition; // Position cible (souris pour le joueur local, position reçue du serveur pour les autres)
 
     public Player(Group group, double masse, Color color){
-        super(group, masse,color);
+        super(group, masse, color);
         sprite.setCenterX(0);
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());
+    }
 
+    public Player(Group group, String id, double masse, Color color){
+        super(group, id, masse, color);
+        sprite.setCenterX(0);
+        sprite.setCenterY(0);
+        sprite.setViewOrder(-sprite.getRadius());
     }
 
     public Player(Group group, double masse, Color color, boolean isLocal) {
@@ -28,12 +34,22 @@ public class Player extends MoveableBody{
         inputPosition = new double[]{0, 0};
     }
 
-    public void increaseSize(double foodValue){
-        super.increaseSize(foodValue);
-        //camera.adjustZoom(this);
+    public Player(Group group, String id, double x, double y, double masse, Color color, boolean isLocal) {
+        super(group, id, masse, color);
+        this.isLocal = isLocal;
+        sprite.setCenterX(x);
+        sprite.setCenterY(y);
+        sprite.setViewOrder(-sprite.getRadius());
+        inputPosition = new double[] { x, y };
     }
 
-
+    @Override
+    public void Update() {
+        moveToward(inputPosition);
+        if (isLocal && camera != null) {
+            camera.focusOn(this);
+        }
+    }
 
     public boolean isLocal() {
         return isLocal;
@@ -43,10 +59,6 @@ public class Player extends MoveableBody{
         this.inputPosition = position;
     }
 
-    @Override
-    public void Update() {
-        moveToward(inputPosition);
-    }
     public Camera getCamera() {
         return camera;
     }
