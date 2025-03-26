@@ -37,6 +37,7 @@ public class RandomMoveStrategy implements EnemyStrategy {
      *
      * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
      * @param enemy Strategy executed on this AI
+     * @return will return true if execution was successful
      */
     @Override
     public boolean execute(Enemy enemy) {
