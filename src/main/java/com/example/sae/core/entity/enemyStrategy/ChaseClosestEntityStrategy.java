@@ -5,7 +5,26 @@ import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Entity;
 import com.example.sae.client.AgarioApplication;
 
+/**
+ * AI strategy: seek out and attempt to devour the closest entity
+ *
+ * @see Enemy
+ * @see RandomMoveStrategy
+ * @see SeekFoodStrategy
+ *
+ * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+ */
 public class ChaseClosestEntityStrategy implements EnemyStrategy {
+    /**
+     * Executes the AI's strategy of seeking out and attempting to devour the closest entity
+     *
+     * @see Enemy
+     * @see RandomMoveStrategy
+     * @see SeekFoodStrategy
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param enemy Strategy executed on this AI
+     */
     @Override
     public boolean execute(Enemy enemy) {
         GameEngine gameEngine = AgarioApplication.getClient().getGameEngine();
@@ -16,7 +35,7 @@ public class ChaseClosestEntityStrategy implements EnemyStrategy {
 
         // Find closest entity among existing entities
         for (Entity entity : gameEngine.getNearbyEntities(enemy, 400)) {
-            if (entity != enemy && entity.getParent() != null && entity.getMasse()<=enemy.getMasse()*1.33 ) {
+            if (entity != enemy && entity.getParent() != null && entity.getMasse()*1.33<enemy.getMasse() ) {
                 double distance = enemy.distanceTo(entity.getPosition());
                 if (distance < closestDistance) {
                     closestDistance = distance;

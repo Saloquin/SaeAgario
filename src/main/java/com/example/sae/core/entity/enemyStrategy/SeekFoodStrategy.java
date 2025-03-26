@@ -5,8 +5,26 @@ import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Entity;
 import com.example.sae.core.entity.Food;
-
+/**
+ * AI strategy: move around to eat as much food as possible
+ *
+ * @see Enemy
+ * @see ChaseClosestEntityStrategy
+ * @see RandomMoveStrategy
+ *
+ * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+ */
 public class SeekFoodStrategy implements EnemyStrategy {
+    /**
+     * Executes the AI's strategy of move around to eat as much food as possible
+     *
+     * @see Enemy
+     * @see ChaseClosestEntityStrategy
+     * @see RandomMoveStrategy
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param enemy Strategy executed on this AI
+     */
     @Override
     public boolean execute(Enemy enemy) {
         GameEngine gameEngine = AgarioApplication.getClient().getGameEngine();
