@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ListView?>
+
+<ListView fx:id="leaderboard"
+          prefHeight="250"
+          prefWidth="200"
+          style="-fx-background-color: rgba(0, 0, 0, 0.7);
+                 -fx-text-fill: white;
+                 -fx-border-color: white;
+                 -fx-border-width: 1;
+                 -fx-border-radius: 5;
+                 -fx-background-radius: 5;
+                 -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 0);"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="com.example.sae.client.controller.components.LeaderboardController"/>

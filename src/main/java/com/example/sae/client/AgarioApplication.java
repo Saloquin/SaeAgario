@@ -1,13 +1,10 @@
 package com.example.sae.client;
 
 
-import com.example.sae.client.controller.MenuController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -16,7 +13,6 @@ import java.io.IOException;
 public class AgarioApplication extends Application {
     public static final Group root = new Group();
     private static Scene scene;
-    private static Client client;
 
     @Override
     public void start(Stage stage) throws IOException {

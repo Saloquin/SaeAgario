@@ -119,6 +119,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <!--  Plugin Maven to generate test report with @DisplayName  -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
