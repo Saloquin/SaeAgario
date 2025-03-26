@@ -91,6 +91,8 @@ public class MenuController implements Initializable {
         toggleButtonVisibility(start);
     }
 
+    static Stage mainStage;
+
     private void lauchSoloGameWindow(boolean isOnline, ActionEvent event)
     {
         try
@@ -102,6 +104,7 @@ public class MenuController implements Initializable {
             Scene scene = new Scene(loader.load(), Screen.getPrimary().getBounds().getWidth()*0.9, Screen.getPrimary().getBounds().getHeight()*0.9);
             String title = "AgarIO - Local";
             Stage stage = new Stage();
+            mainStage = stage;
             stage.setTitle(title);
             stage.setScene(scene);
             stage.setMinHeight(500);

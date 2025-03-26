@@ -12,6 +12,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -42,10 +43,11 @@ public class SoloController implements Initializable {
         client.init();
 
         Scene scene = client.createGameScene(1280, 720);
-
+/*
+        Stage s = new Stage();
+        s.setScene(scene);
+        s.show();*/
         gameContainer.getChildren().add(scene.getRoot());
-
-        System.out.println(root.isVisible());
 
     }
 
