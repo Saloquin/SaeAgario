@@ -1,0 +1,120 @@
+
+.styled-list {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-text-fill: white;
+    -fx-border-color: white;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.styled-list .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-padding: 5;
+    -fx-font-size: 14px;
+}
+
+.chat-input {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-text-fill: white;
+    -fx-border-color: white;
+}
+
+.chat-button {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-text-fill: white;
+    -fx-border-color: white;
+}
+
+.game-container {
+    -fx-background-color: white;
+}
+
+/* Leaderboard stylisé */
+#leaderboard {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-border-color: white;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 5;
+}
+
+#leaderboard .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 10 5 10;
+}
+
+#leaderboard .list-cell:odd {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+}
+
+#leaderboard .list-cell:even {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+#leaderboard .list-cell:selected {
+    -fx-background-color: rgba(66, 134, 244, 0.5);
+}
+
+/* Supprimer la scrollbar */
+#leaderboard .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+}
+
+/* Minimap améliorée */
+#minimap {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-border-color: white;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+.minimap-content {
+    -fx-opacity: 0.9;
+}
+
+
+/* Placeholder du leaderboard */
+.leaderboard-placeholder {
+    -fx-text-fill: rgba(255,255,255,0.5);
+    -fx-alignment: center;
+    -fx-font-style: italic;
+}
+
+/* Conteneur leaderboard */
+.leaderboard-container {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
+}
+
+
+/* Styles pour les infos joueur */
+.player-info-box {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-border-color: white;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+    -fx-alignment: center-right;
+}
+
+.player-info-label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.player-info-value {
+    -fx-text-fill: #4a90e2;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-min-width: 80;
+    -fx-alignment: center-right;
+}

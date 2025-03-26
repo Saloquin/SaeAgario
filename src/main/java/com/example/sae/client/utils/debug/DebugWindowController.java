@@ -1,4 +1,4 @@
-package com.example.sae.client.debug;
+package com.example.sae.client.utils.debug;
 
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.MoveableBody;

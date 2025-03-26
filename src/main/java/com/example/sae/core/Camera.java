@@ -2,11 +2,9 @@ package com.example.sae.core;
 
 import com.example.sae.core.entity.Entity;
 import com.example.sae.core.quadtree.Boundary;
-import javafx.animation.ScaleTransition;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
-import javafx.scene.ParallelCamera;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 
@@ -63,17 +61,14 @@ public class Camera extends Boundary {
                 entity.getSprite().centerXProperty().subtract(Bindings.divide(pane.widthProperty(), 2)).negate()
         );
 
-        pane.translateXProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("Pane X: " + newValue);
-        });
+
 
         pane.translateYProperty().bind(
                 entity.getSprite().centerYProperty().subtract(Bindings.divide(pane.heightProperty(), 2)).negate()
         );
 
-        pane.translateYProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("Pane Y: " + newValue);
-        });
+
+
 
         // Handle zoom (simplifié pour le test)
         DoubleBinding zoomBinding = Bindings.createDoubleBinding(

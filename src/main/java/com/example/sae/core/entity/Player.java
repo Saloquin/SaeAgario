@@ -69,6 +69,16 @@ public class Player extends MoveableBody{
         sprite.setViewOrder(-sprite.getRadius());
     }
 
+
+
+    public Player(Group group, double masse, Color color,String playerName){
+        super(group, masse, color, playerName);
+        sprite.setCenterX(0);
+        sprite.setCenterY(0);
+        sprite.setViewOrder(-sprite.getRadius());
+    }
+
+
     /**
      * constructor
      *
