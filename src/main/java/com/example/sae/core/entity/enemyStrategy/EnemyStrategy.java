@@ -23,6 +23,6 @@ public interface EnemyStrategy {
      * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
      * @param enemy Strategy executed on this AI
      */
-    void execute(Enemy enemy);
+    boolean execute(Enemy enemy);
 }
 
