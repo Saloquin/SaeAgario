@@ -44,7 +44,6 @@ public class SoloController implements Initializable {
         if(client != null) {
             client.stopSoloGame();
         }
-        Platform.exit();
     }
 
     public static Client getClient() {

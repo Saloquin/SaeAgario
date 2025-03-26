@@ -1,8 +1,6 @@
 package com.example.sae.client;
 
-import com.example.sae.client.controller.SoloController;
 import com.example.sae.client.debug.DebugWindow;
-import com.example.sae.client.timer.GameTimer;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.EntityFactory;
@@ -45,14 +43,6 @@ public class Solo extends Client {
     public void update() {
         Player player = gameEngine.getPlayer(playerId);
         if (player == null) {
-            new javafx.animation.Timeline(
-                    new javafx.animation.KeyFrame(
-                            javafx.util.Duration.seconds(2),
-                            event -> {
-                                Platform.exit();
-                            }
-                    )
-            ).play();
             return;
         }
 
