@@ -1,6 +1,6 @@
 package com.example.sae.core.entity;
 
-import com.example.sae.client.AgarioApplication;
+import com.example.sae.client.controller.SoloController;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntityFactory {
-    private static Group root = AgarioApplication.root;
+    private static Group root = SoloController.root;
 
     private static final List<String> ENEMY_NAMES = List.of(
             "Michel", "Roberto", "Camou", "Bricoti", "Skibidi",

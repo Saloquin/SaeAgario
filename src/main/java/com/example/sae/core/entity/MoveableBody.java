@@ -1,10 +1,5 @@
 package com.example.sae.core.entity;
 
-import com.example.sae.client.AgarioApplication;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -115,7 +110,7 @@ public abstract class MoveableBody extends Entity{
         }
     }
 
-    //TODO: Implement the splitSprite method without using AgarioApplication.root
+    //TODO: Implement the splitSprite method without using root
     public void splitSprite(){
         Player newBody = EntityFactory.createPlayer(sprite.getRadius() / 2, Color.RED);
         newBody.sprite.setCenterX(sprite.getCenterX() + 30);

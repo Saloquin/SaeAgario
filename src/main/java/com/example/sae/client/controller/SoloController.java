@@ -29,6 +29,7 @@ public class SoloController implements Initializable {
     @FXML
     private Canvas minimap;
 
+    public static Group root;
     private static Solo client;
 
     @Override
@@ -36,7 +37,7 @@ public class SoloController implements Initializable {
         gameContainer.prefWidthProperty().bind(rootStack.widthProperty());
         gameContainer.prefHeightProperty().bind(rootStack.heightProperty());
 
-        Group root = new Group();
+        root = new Group();
         client = new Solo(root);
         client.init();
 
@@ -44,14 +45,8 @@ public class SoloController implements Initializable {
 
         gameContainer.getChildren().add(scene.getRoot());
 
-        System.out.println("Nb enfants gc : " + gameContainer.getChildren().size());
-        System.out.println("enfants gc : " + gameContainer.getChildren().toString());
+        System.out.println(root.isVisible());
 
-        System.out.println("Scene : " + scene);
-
-        System.out.println("Root : " + root);
-        System.out.println("Root nb enfant : " + root.getChildren().size());
-        System.out.println("Root enfants : " + root.getChildren().toString());
     }
 
     public void stopGame(){

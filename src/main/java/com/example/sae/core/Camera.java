@@ -43,6 +43,9 @@ public class Camera extends Boundary {
         ));
 
         updateBoundary(entity);
+
+        System.out.println("camera pos: " + camera.getTranslateX() + ", " + camera.getTranslateY());
+        System.out.println("entity pos: " + entity.getTranslateX() + ", " + entity.getTranslateY());
     }
 
     private void updateBoundary(Entity entity) {
