@@ -9,8 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 
 public class Camera extends Boundary {
-    private static final double ZOOM_FACTOR = 5; // Increased to reduce zoom intensity
-    private static final double DEZOOM_FACTOR = 1.5;
+    public static final double ZOOM_FACTOR = 6; // Increased to reduce zoom intensity
+    public static final double DEZOOM_FACTOR = 1.5;
 
 
     public Camera() {
@@ -64,7 +64,7 @@ public class Camera extends Boundary {
         if (entity == null || entity.getSprite() == null) return;
 
         DoubleBinding zoomBinding = Bindings.createDoubleBinding(
-                () -> 1.0 / ((Math.sqrt(entity.getSprite().getRadius()) / ZOOM_FACTOR)) * DEZOOM_FACTOR,
+                () -> 1.0 / ((Math.sqrt(entity.getSprite().getRadius()) / ZOOM_FACTOR)) *DEZOOM_FACTOR,
                 entity.getSprite().radiusProperty()
         );
 

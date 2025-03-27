@@ -2,6 +2,7 @@ package com.example.sae.client;
 
 import com.example.sae.client.utils.debug.DebugWindow;
 import com.example.sae.client.utils.timer.GameTimer;
+import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
@@ -24,14 +25,14 @@ public class Solo extends Client {
     @Override
     public void init() {
         gameStarted = true;
-        player = EntityFactory.createPlayer(10, playerName, color);
+        player = EntityFactory.createPlayer(GameEngine.MASSE_INIT_PLAYER, playerName, color);
         playerId = gameEngine.addPlayer(player);
         if(DebugWindow.DEBUG_MODE) {
             DebugWindow.getInstance();
         }
 
         while (gameEngine.getEntitiesOfType(Food.class).size() < 100) {
-            gameEngine.addEntity(EntityFactory.createFood(4));
+            gameEngine.addEntity(EntityFactory.createFood(GameEngine.MASSE_INIT_FOOD));
         }
 
         gameTimer.start();
@@ -44,7 +45,6 @@ public class Solo extends Client {
             gameIsEnded.set(true);
         }
         else if (!gameIsEnded.get()) {
-            player.setInputPosition(getMousePosition());
             manageEntities();
 
             gameEngine.update();

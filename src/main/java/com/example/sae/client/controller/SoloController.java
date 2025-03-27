@@ -9,6 +9,7 @@ import com.example.sae.core.entity.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
@@ -46,7 +47,13 @@ public class SoloController implements Initializable {
 
     private String playerName;
     private Color playerColor;
-    private Pane pane;
+    private static Pane pane;
+
+    static public double[] getMousePosition(){
+        java.awt.Point mouse = java.awt.MouseInfo.getPointerInfo().getLocation();
+        Point2D mousePos = root.screenToLocal(mouse.x, mouse.y);
+        return new double[]{mousePos.getX(), mousePos.getY()};
+    }
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
@@ -140,5 +147,9 @@ public class SoloController implements Initializable {
     private void setCamera() {
         Camera camera = client.getCamera();
         camera.focusPaneOn(pane, player);
+    }
+    
+    public static Pane getPane() {
+        return pane;
     }
 }
