@@ -116,12 +116,16 @@ public class MenuController implements Initializable {
                 ipDialog.setHeaderText("Server connection required");
                 ipDialog.setContentText("Enter server IP:");
                 Optional<String> result = ipDialog.showAndWait();
-                if (result.isPresent() && !result.get().trim().isEmpty()) {
-                    serverIP = result.get().trim();
-                    PreferencesManager.saveServerIP(serverIP);
+                if (result.isPresent() ) {
+                    if(!result.get().trim().isEmpty()){
+                        serverIP = result.get().trim();
+                        PreferencesManager.saveServerIP(serverIP);
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR, "Server IP is required!", ButtonType.OK);
+                        alert.showAndWait();
+                        return; // Annuler le lancement si aucune IP n'est renseignée
+                    }
                 } else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Server IP is required!", ButtonType.OK);
-                    alert.showAndWait();
                     return; // Annuler le lancement si aucune IP n'est renseignée
                 }
             }
@@ -191,8 +195,6 @@ public class MenuController implements Initializable {
             Alert confirmation = new Alert(Alert.AlertType.INFORMATION, "IP mis à jour : " + newIP, ButtonType.OK);
             confirmation.showAndWait();
         } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Server IP cannot be empty!", ButtonType.OK);
-            alert.showAndWait();
         }
     }
 
