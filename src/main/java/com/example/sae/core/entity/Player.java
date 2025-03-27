@@ -69,15 +69,42 @@ public class Player extends MoveableBody{
         sprite.setViewOrder(-sprite.getRadius());
     }
 
-
-
-    public Player(Group group, double masse, Color color, String playerName){
+    /**
+     * constructor
+     *
+     * @see MoveableBody
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param group Group
+     * @param masse mass of the player's moving object
+     * @param color name of the player's moving object
+     * @param playerName name of the player's moving object
+     */
+    public Player(Group group, double masse, Color color, String playerName) {
         super(group, masse, color, playerName);
         sprite.setCenterX(0);
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());
     }
 
+    /**
+     * constructor
+     *
+     * @see MoveableBody
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param group Group
+     * @param id entity id
+     * @param masse mass of the player's moving object
+     * @param color name of the player's moving object
+     * @param playerName name of the player's moving object
+     */
+    public Player(Group group, String id, double masse, Color color, String playerName) {
+        super(group, id, masse, color, playerName);
+        sprite.setCenterX(0);
+        sprite.setCenterY(0);
+        sprite.setViewOrder(-sprite.getRadius());
+    }
 
     /**
      * constructor
@@ -138,6 +165,7 @@ public class Player extends MoveableBody{
      * @param y coordinate of moving object
      * @param masse mass of the player's moving object
      * @param color name of the player's moving object
+     * @param playerName name of the player's moving object
      */
     public Player(Group group, String id, double x, double y, double masse, Color color, String playerName) {
         super(group, id, masse, color, playerName);

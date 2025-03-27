@@ -83,6 +83,18 @@ public abstract class MoveableBody extends Entity{
         initializeNameText(group);
     }
 
+    /**
+     * constructor
+     *
+     * @see Entity
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param group Group
+     * @param id entity id
+     * @param initialSize size of moving object
+     * @param color color of moving object
+     * @param playerName name of moving object
+     */
     MoveableBody(Group group, String id, double initialSize, Color color, String playerName) {
         super(group, id, initialSize, color);
         this.name.set(playerName);

@@ -1,10 +1,7 @@
 package com.example.sae.server;
 
 import com.example.sae.core.GameEngine;
-import com.example.sae.core.entity.Entity;
-import com.example.sae.core.entity.Food;
-import com.example.sae.core.entity.MoveableBody;
-import com.example.sae.core.entity.Player;
+import com.example.sae.core.entity.*;
 import javafx.scene.paint.Color;
 
 import java.io.*;
@@ -18,7 +15,6 @@ public class AgarioServer {
     //                si qlqn leave ou mange qlqch, le serveur n'est PAS sync
     // à faire : sync parfaitement le serv et les joueurs lorsqu'un joueur mange qlqch
     //           mettre les clients à jour quand qlqn leave
-    //           sync les couleurs et les noms des joueurs
     private static final int PORT = 12345;
     private static final int TARGET_FPS = 30;
     private static final long FRAME_TIME = 1000000000 / TARGET_FPS; // 33ms en nanos
@@ -107,7 +103,7 @@ public class AgarioServer {
     }
 
     private String serializeEntity(Entity entity) {
-        return String.format(Locale.US, "%s,%s,%.2f,%.2f,%.2f,%.0f,%.0f,%.0f|",
+        return String.format(Locale.US, "%s,%s,%.2f,%.2f,%.2f,%.0f,%.0f,%.0f,%s|",
                 entity.getClass().getSimpleName(),
                 entity.getEntityId(),
                 entity.getPosition()[0],
@@ -115,7 +111,8 @@ public class AgarioServer {
                 entity.getMasse(),
                 entity.getColor().getRed()*255,
                 entity.getColor().getBlue()*255,
-                entity.getColor().getGreen()*255);
+                entity.getColor().getGreen()*255,
+                entity instanceof MoveableBody ? ((MoveableBody) entity).getNom() : ":(");
     }
 
     private String serializeGameState() {
@@ -144,7 +141,8 @@ public class AgarioServer {
             this.ready = false;
 
             // Créer un nouveau joueur pour ce client
-            this.player = new Player(null, clientId, MoveableBody.DEFAULT_MASSE, Color.RED); // null car pas besoin de Group côté serveur
+            // this.player = new Player(null, clientId, MoveableBody.DEFAULT_MASSE, Color.RED); // null car pas besoin de Group côté serveur
+            this.player = EntityFactory.createPlayer(clientId, MoveableBody.DEFAULT_MASSE, "verisubbo", Color.GREEN);
             this.player.setInputPosition(new double[]{ 0, 0 });
             gameEngine.addPlayer(player);
 
@@ -174,6 +172,12 @@ public class AgarioServer {
             switch (parts[0]) {
                 case "READY" -> {
                     ready = true;
+                    this.player.setNom(parts[1]);
+                    int r = Integer.parseInt(parts[2]);
+                    int g = Integer.parseInt(parts[3]);
+                    int b = Integer.parseInt(parts[4]);
+                    Color playerColor = Color.rgb(r, g, b);
+                    this.player.getSprite().setFill(playerColor);
                     String gameState = serializeGameState();
                     sendMessage(gameState);
 

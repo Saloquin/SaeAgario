@@ -9,7 +9,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,13 +45,13 @@ public class Online extends Client {
     @Override
     public void init() {
         gameStarted = true;
-        player = EntityFactory.createPlayer(10, playerName, color);
+        player = EntityFactory.createPlayer(MoveableBody.DEFAULT_MASSE, playerName, color);
         playerId = gameEngine.addPlayer(player);
         gameTimer.start();
-        if(DebugWindow.DEBUG_MODE) {
+        if (DebugWindow.DEBUG_MODE) {
             DebugWindow.getInstance();
         }
-        handler.sendMessage("READY");
+        handler.sendMessage(String.format(Locale.US, "READY|%s|%.0f|%.0f|%.0f", playerName, color.getRed()*255, color.getBlue()*255, color.getGreen()*255));
     }
 
     @Override
@@ -63,19 +62,6 @@ public class Online extends Client {
             return;
         }
 
-        /*
-        System.out.println(String.format(Locale.US, "%s,%s,%.2f,%.2f,%.2f,%.0f,%.0f,%.0f|",
-                player.getClass().getSimpleName(),
-                player.getEntityId(),
-                player.getPosition()[0],
-                player.getPosition()[1],
-                player.getMasse(),
-                player.getColor().getRed()*255,
-                player.getColor().getBlue()*255,
-                player.getColor().getGreen()*255));
-*/
-        // handler.sendMessage(String.format(Locale.US, "MOVE|%.2f|%.2f", getMousePosition()[0], getMousePosition()[1]));
-
         player.setInputPosition(getMousePosition());
         handler.sendMessage(String.format(Locale.US, "MOVE|%.2f|%.2f", player.getPosition()[0], player.getPosition()[1]));
 
@@ -84,17 +70,6 @@ public class Online extends Client {
         if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
             DebugWindow.getInstance().update(gameEngine, playerId);
         }
-    }
-
-    public void handleAppClosed(Stage stage) {
-        stage.setOnHiding(event -> {
-            try {
-                socket.close();
-                DebugWindow.getInstance().getController().getStage().close();
-            } catch (IOException e) {
-                // throw new RuntimeException(e);
-            }
-        });
     }
 
     class ThreadDeFond implements Runnable {
@@ -134,7 +109,6 @@ public class Online extends Client {
                 case "GAMESTATE", "CREATE" -> createEntityUsingSocketData(Arrays.copyOfRange(parts, 1, parts.length));
                 case "MOVE" -> movePlayerUsingSocketData(parts);
                 case "DELETE" -> {
-                    // System.out.println(input);
                     deleteEntityUsingSocketData(Arrays.copyOfRange(parts, 1, parts.length));
                 }
             }
@@ -150,11 +124,13 @@ public class Online extends Client {
                         double x = Double.parseDouble(infos[2]);
                         double y = Double.parseDouble(infos[3]);
                         double masse = Double.parseDouble(infos[4]);
+                        int r = Integer.parseInt(infos[5]);
+                        int g = Integer.parseInt(infos[6]);
+                        int b = Integer.parseInt(infos[7]);
+                        String playerName = infos[8];
                         if (!id.equals(clientId)) {
-                            // System.out.println(part);
                             Platform.runLater(() -> {
-                                // Player player = new Player(root, id, x, y, masse, Color.BLUE, false);
-                                Player player = EntityFactory.createPlayer(id, x, y, masse, "a", Color.GREEN);
+                                Player player = EntityFactory.createPlayer(id, x, y, masse, playerName, Color.rgb(r, g, b));
                                 gameEngine.addPlayer(player);
                             });
                         }
@@ -235,7 +211,7 @@ public class Online extends Client {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if (DebugWindow.getInstance() != null) {
+        if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
             DebugWindow.getInstance().getController().getStage().close();
         }
         gameTimer.stop();

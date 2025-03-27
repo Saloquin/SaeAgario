@@ -3,9 +3,7 @@ package com.example.sae.core.entity;
 import com.example.sae.client.controller.SoloController;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -79,6 +77,22 @@ public class EntityFactory {
      */
     public static Player createPlayer(double mass, String playerName, Color color) {
         return new Player(root, mass, color, playerName);
+    }
+
+    /**
+     * create a moving object for a player
+     *
+     * @see Entity
+     * @see MoveableBody
+     * @see Player
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param id entity id
+     * @param playerName name of the player's moving object
+     * @param color player color
+     */
+    public static Player createPlayer(String id, double mass, String playerName, Color color) {
+        return new Player(root, id, mass, color, playerName);
     }
 
     /**
