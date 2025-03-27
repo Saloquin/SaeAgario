@@ -1,5 +1,6 @@
 package com.example.sae.core.entity;
 
+import com.example.sae.client.controller.GameController;
 import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.entity.powerUp.PowerUp;
 import com.example.sae.core.entity.powerUp.PowerUpType;
@@ -9,22 +10,13 @@ import javafx.scene.paint.Color;
 import java.util.List;
 
 /**
- * entity factory: create entities
+ * Factory creating entities
  *
  * @see Entity
- * @see MoveableBody
- * @see Player
- * @see Enemy
- * @see Food
- *
- * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
  */
 public class EntityFactory {
-    private static Group root = SoloController.getRoot();
 
-    /**
-     * name list for IA, or default
-     */
+    /// default names list
     private static final List<String> ENEMY_NAMES = List.of(
             "Michel", "Roberto", "Camou", "Bricoti", "Skibidi",
             "Boom", "YouAreDead", "ez", "DimitriDu14", "LePafDeCamou",
@@ -33,104 +25,82 @@ public class EntityFactory {
             "Split=Enemy", "Me+YourMom=You"
     );
 
+    ///
+    private static Group root = GameController.getRoot();
+
     /**
-     * constructor
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param root Group
+     * @param root the plan on which the factory creates entities
      */
     public EntityFactory(Group root) {
         EntityFactory.root = root;
     }
 
     /**
-     * changes root
+     * set a new plan for the creation of the entities
      *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param root new root
+     * @param root the new group for the game
      */
     public static void setRoot(Group root) {
         EntityFactory.root = root;
     }
 
     /**
-     * creates a static entity, food
+     * creates a food entity
      *
-     * @see Entity
+     * @param size the food's size
      * @see Food
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param size food's size
      */
     public static Food createFood(double size) {
         return new Food(root, size);
     }
 
     /**
-     * create a moving object for a player
+     * create a player entity
      *
-     * @see Entity
-     * @see MoveableBody
+     * @param mass       the initial mass of the created player
+     * @param playerName the name of the created player
+     * @param color      the color of the created player
      * @see Player
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param playerName name of the player's moving object
-     * @param color Boolean that determines whether the player's mobile object is in the local or online game
      */
-    public static Player createPlayer(double mass,String playerName, Color color) {
-        return new Player(root, mass, color,playerName);
+    public static Player createPlayer(double mass, String playerName, Color color) {
+        return new Player(root, mass, color, playerName);
     }
 
     /**
-     * create a moving object for a player
+     * create a player entity
      *
-     * @see MoveableBody
-     *
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param mass mass of the player's moving object
-     * @param color name of the player's moving object
+     * @param mass       the initial mass of the created player
+     * @param color      the color of the created player
+     * @see Player
      */
     public static Player createPlayer(double mass, Color color) {
         return new Player(root, mass, color);
     }
 
     /**
-     * create an AI mobile object
+     * create an enemy entity
      *
-     * @see Entity
-     * @see MoveableBody
+     * @param mass the initial mass of the created enemy
      * @see Enemy
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param mass masse of IA
      */
     public static Enemy createEnemy(double mass) {
         return new Enemy(root, mass, getRandomName());
     }
 
     /**
-     * gives a random name from a list of fixed names
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @return random name
+     * return a random name from the list
+     * @return a random name
      */
     private static String getRandomName() {
         return ENEMY_NAMES.get((int) (Math.random() * ENEMY_NAMES.size()));
     }
 
-    public static PowerUp createIncreaseSpeedPowerUp() {
-        return new PowerUp(root,PowerUpType.SPEED_BOOST);
-    }
-    public static PowerUp createDecreaseSpeedPowerUp() {
-        return new PowerUp(root,PowerUpType.SPEED_DECREASE );
-    }
-    public static PowerUp createSplitPowerUp() {
-        return new PowerUp(root,PowerUpType.SPLIT);
-    }
-
+    /**
+     * create a random power up
+     * @return the created power up
+     */
     public static PowerUp createRandomPowerUp() {
-        return new PowerUp(root,PowerUpType.getRandomPowerUpType());
+        return new PowerUp(root, PowerUpType.getRandomPowerUpType());
     }
 
 }

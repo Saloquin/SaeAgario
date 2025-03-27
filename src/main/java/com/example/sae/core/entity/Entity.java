@@ -1,118 +1,85 @@
 package com.example.sae.core.entity;
 
-import java.util.Random;
-
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import java.util.UUID;
-
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import java.util.Random;
+import java.util.UUID;
+
 /**
- * entity: a physical body representing food, an AI/enemy or a player
+ * An abstract class for physical representation of an entity on a plan
  *
+ * @see EntityFactory
  * @see MoveableBody
- * @see Player
- * @see Enemy
  * @see Food
- * @see Circle
- *
- * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
  */
-public abstract class Entity extends Group{
-    /**
-     * entity's physical body
-     */
-    protected Circle sprite; // the entity's sprite
-    /**
-     * entity mass: used to determine its size and speed
-     */
-    private DoubleProperty masse;
+public abstract class Entity extends Group {
 
+    /// the entity's sprite
+    protected Circle sprite;
+    /// the entity's id
     protected String entityId;
+    /// the entity's mass
+    private final DoubleProperty mass;
 
     /**
-     * constructor
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param group Group
-     * @param initialMasse size of entity
+     * @param group       the group on which the entity is displayed
+     * @param initialMass the entity's initial mass
      */
-    Entity(Group group, double initialMasse) {
+    Entity(Group group, double initialMass) {
         super();
         this.entityId = UUID.randomUUID().toString();
-        this.masse = new SimpleDoubleProperty(initialMasse);
+        this.mass = new SimpleDoubleProperty(initialMass);
         Random rand = new Random();
 
-        sprite = new Circle();
-        sprite.setFill(Color.rgb(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), 0.99));
-
-        // Bind le rayon à la masse avec conversion explicite
-        sprite.radiusProperty().bind(masse.multiply(10)
-                .map(number -> Math.sqrt(number.doubleValue())));
-
-        // Bind le viewOrder au rayon
-        viewOrderProperty().bind(sprite.radiusProperty().negate());
-
-        getChildren().add(sprite);
-        if (group != null) {
-            group.getChildren().add(this);
-        }
+        setSprite(group, Color.rgb(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), 0.99));
     }
 
     /**
-     * constructor
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param group Group
-     * @param initialMasse size of entity
-     * @param color color of entity
+     * @param group       the group on which the entity is displayed
+     * @param initialMass the entity's initial mass
+     * @param color       the entity's color
      */
-    protected Entity(Group group, double initialMasse, Color color) {
+    protected Entity(Group group, double initialMass, Color color) {
         super();
         this.entityId = UUID.randomUUID().toString();
-        this.masse = new SimpleDoubleProperty(initialMasse);
+        this.mass = new SimpleDoubleProperty(initialMass);
 
-        sprite = new Circle();
-        sprite.setFill(color);
-
-        // Bind le rayon à la masse avec conversion explicite
-        sprite.radiusProperty().bind(masse.multiply(10)
-                .map(number -> Math.sqrt(number.doubleValue())));
-
-        // Bind le viewOrder au rayon
-        viewOrderProperty().bind(sprite.radiusProperty().negate());
-
-        getChildren().add(sprite);
-        if (group != null) {
-            group.getChildren().add(this);
-        }
+        setSprite(group, color);
     }
 
     /**
-     * constructor
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param group Group
-     * @param id id of entity
-     * @param initialMasse size of entity
-     * @param color color of entity
+     * @param group       the group on which the entity is displayed
+     * @param id          the entity's id
+     * @param initialMass the entity's initial mass
+     * @param color       the entity's color
      */
-    Entity(Group group, String id, double initialMasse, Color color) {
+    Entity(Group group, String id, double initialMass, Color color) {
         super();
         this.entityId = id;
-        this.masse = new SimpleDoubleProperty(initialMasse);
+        this.mass = new SimpleDoubleProperty(initialMass);
 
+        setSprite(group, color);
+    }
+
+    /**
+     * set the sprite of the entity on the group plan
+     *
+     * @param group the plan on which the entity is created
+     * @param color the color of the entity's sprite
+     */
+    private void setSprite(Group group, Color color) {
         sprite = new Circle();
         sprite.setFill(color);
 
-        // Bind le rayon à la masse avec conversion explicite
-        sprite.radiusProperty().bind(masse.multiply(10)
+        // Bind the sprite radius to the entity's mass
+        sprite.radiusProperty().bind(mass.multiply(10)
                 .map(number -> Math.sqrt(number.doubleValue())));
 
-        // Bind le viewOrder au rayon
+        // Bind the viewOrder to the sprite's radius
         viewOrderProperty().bind(sprite.radiusProperty().negate());
 
         getChildren().add(sprite);
@@ -122,102 +89,67 @@ public abstract class Entity extends Group{
     }
 
     /**
-     * returns the entity's mass
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @return returns the entity's mass
+     * {@return the double value of the entity's mass property}
      */
     public double getMasse() {
-        return masse.get();
+        return mass.get();
     }
 
     /**
-     * changes the entity's mass
+     * change the entity's mass property's value
      *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param value new entity's mass
+     * @param value the new mass
      */
     public void setMasse(double value) {
-        masse.set(value);
-    }
-
-    public DoubleProperty masseProperty() {
-        return masse;
+        mass.set(value);
     }
 
     /**
-     * changes the entity's position
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param x new entity coordinates
-     * @param y new entity coordinates
-     */
-    public void setPosition(double x, double y){
-        sprite.setCenterX(x);
-        sprite.setCenterY(y);
-    }
-
-    /**
-     * returns the entity's position
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @return returns the entity's position
+     * {@return the current coordinates of the center of the entity's sprite}
      */
     public double[] getPosition() {
-        //returns current position of the sprite
         return new double[]{sprite.getCenterX(), sprite.getCenterY()};
     }
 
     public abstract void Update();
 
     /**
-     * returns the entity's physical body
-     *
      * @see Circle
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @return returns the entity's position
+     * {@return the circle representing the sprite}
      */
     public Circle getSprite() {
         return sprite;
     }
 
-    public double getX(){
+    /**
+     * {@return the X coordinate of the center of the sprite}
+     */
+    public double getX() {
         return sprite.getCenterX();
     }
 
-    public double getY(){
+    public double getY() {
         return sprite.getCenterY();
     }
 
 
-
     /**
-     * returns the entity's color
-     *
      * @see Color
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @return returns the entity's color
+     * {@return the entity's sprite's color}
      */
     public Color getColor() {
         return (Color) sprite.getFill();
     }
 
     /**
-     * returns entity id
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @return returns entity id
+     * {@return the entity's id}
      */
     public String getEntityId() {
         return this.entityId;
     }
 
     /**
-     * removes the entity that is eaten
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * remove the entity from the existence plan
      */
     public void onDeletion() {
         // Remove from JavaFX scene graph if necessary
