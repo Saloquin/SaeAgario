@@ -9,8 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -25,38 +24,12 @@ public class AgarioApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/menu.fxml"));
-        VBox menuRoot = loader.load();
-        MenuController menuController = loader.getController();
-        menuController.setStage(stage);
 
-        scene = new Scene(menuRoot, 1280, 720);
-        stage.setTitle("Agar.io");
+        scene = new Scene(loader.load(), 250, 500);
+        stage.setTitle("agarIO - Menu");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
-    }
-
-    public static void startGame(Stage stage, boolean solo) throws IOException {
-        if (solo) {
-            client = new Solo(root);
-        } else {
-            try {
-                client = new Online(root);
-                ((Online)client).handleAppClosed(stage);
-            } catch (IOException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Aucun serveur trouvé", ButtonType.OK);
-                alert.showAndWait();
-                return;
-            }
-        }
-        client.init();
-        scene = client.createGameScene(1280, 720);
-        Camera camera = new Camera();
-        client.getGameEngine().getPlayer(client.playerId).setCamera(camera);
-        stage.setScene(scene);
-    }
-
-    public static Client getClient() {
-        return client;
     }
 
     public static void main(String[] args) {

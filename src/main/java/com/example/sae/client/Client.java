@@ -1,19 +1,25 @@
 package com.example.sae.client;
 
+import com.example.sae.client.factory.GamePaneFactory;
 import com.example.sae.client.factory.GameSceneFactory;
 import com.example.sae.core.Camera;
 import com.example.sae.core.GameEngine;
 import javafx.scene.Group;
-import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 public abstract class Client {
     protected GameEngine gameEngine;
     public int playerId;
     protected Group root;
     protected boolean gameStarted = false;
+    protected String playerName;
+    protected Color color;
 
-    public Client(Group root) {
+    public Client(Group root, String playerName, Color color) {
         this.root = root;
+        this.playerName = playerName;
+        this.color = color;
     }
 
 
@@ -24,10 +30,15 @@ public abstract class Client {
     public abstract void init();
     public abstract void update();
 
-    public Scene createGameScene(double width, double height) {
-        return GameSceneFactory.createGameScene(root, gameEngine, playerId, width, height);
+
+    public Pane createGamePane(double width, double height) {
+        return GamePaneFactory.createGamePane(root, gameEngine, playerId, camera, mouseHandler, width, height);
     }
 
+
+    public int getPlayerId() {
+        return playerId;
+    }
 
     public GameEngine getGameEngine() {
         return gameEngine;

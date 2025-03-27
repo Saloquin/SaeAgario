@@ -19,8 +19,8 @@ module com.example.sae {
     opens com.example.sae.client.controller to javafx.fxml;
     exports com.example.sae.client.factory;
     opens com.example.sae.client.factory to javafx.fxml;
-    exports com.example.sae.client.timer;
-    opens com.example.sae.client.timer to javafx.fxml;
-    exports com.example.sae.client.debug;
-    opens com.example.sae.client.debug to javafx.fxml; // Add this line
+    exports com.example.sae.client.utils.timer;
+    opens com.example.sae.client.utils.timer to javafx.fxml;
+    exports com.example.sae.client.utils.debug;
+    opens com.example.sae.client.utils.debug to javafx.fxml; // Add this line
 }

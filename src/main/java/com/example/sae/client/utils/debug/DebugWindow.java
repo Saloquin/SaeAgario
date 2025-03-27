@@ -1,4 +1,4 @@
-package com.example.sae.client.debug;
+package com.example.sae.client.utils.debug;
 
 import com.example.sae.client.AgarioApplication;
 import com.example.sae.core.GameEngine;
@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 
 
 public class DebugWindow {
-    public static final boolean DEBUG_MODE = true;
+    public static final boolean DEBUG_MODE = false;
     private static DebugWindow instance;
     private DebugWindowController controller;
 

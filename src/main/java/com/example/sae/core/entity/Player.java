@@ -2,6 +2,7 @@ package com.example.sae.core.entity;
 
 import com.example.sae.client.AgarioApplication;
 import com.example.sae.core.Camera;
+import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import com.example.sae.client.Solo;
@@ -19,6 +20,12 @@ public class Player extends MoveableBody{
 
 
 
+    /**
+     * Boolean that determines whether the player's mobile object is in the local or online game
+     *
+     * @see Online
+     * @see Solo
+     */
     private boolean isLocal = false; // Pour identifier si c'est un joueur local ou distant
 
     /**
@@ -31,12 +38,13 @@ public class Player extends MoveableBody{
      * @param masse mass of the player's moving object
      * @param color name of the player's moving object
      */
-    public Player(Group group, double masse, Color color) {
+    public Player(Group group, double masse, Color color){
         super(group, masse, color);
         sprite.setCenterX(0);
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());
     }
+
     /**
      * constructor
      *
@@ -54,6 +62,16 @@ public class Player extends MoveableBody{
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());
     }
+
+
+
+    public Player(Group group, double masse, Color color,String playerName){
+        super(group, masse, color, playerName);
+        sprite.setCenterX(0);
+        sprite.setCenterY(0);
+        sprite.setViewOrder(-sprite.getRadius());
+    }
+
 
     /**
      * constructor
@@ -143,5 +161,13 @@ public class Player extends MoveableBody{
     @Override
     public void moveToward(double[] mousePosition) {
         super.moveToward(mousePosition);
+    }
+
+    public DoubleProperty getCenterXProperty() {
+        return sprite.centerXProperty();
+    }
+
+    public DoubleProperty getCenterYProperty() {
+        return sprite.centerYProperty();
     }
 }

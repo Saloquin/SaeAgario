@@ -1,9 +1,9 @@
 package com.example.sae.core.entity.enemyStrategy;
 
+import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Entity;
-import com.example.sae.client.AgarioApplication;
 
 /**
  * AI strategy: seek out and attempt to devour the closest entity
@@ -28,7 +28,7 @@ public class ChaseClosestEntityStrategy implements EnemyStrategy {
      */
     @Override
     public boolean execute(Enemy enemy) {
-        GameEngine gameEngine = AgarioApplication.getClient().getGameEngine();
+        GameEngine gameEngine = SoloController.getClient().getGameEngine();
         if (gameEngine == null) return false;
 
         Entity closestEntity = null;

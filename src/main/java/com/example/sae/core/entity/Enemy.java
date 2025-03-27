@@ -1,7 +1,6 @@
 package com.example.sae.core.entity;
 
-import com.example.sae.client.AgarioApplication;
-import com.example.sae.client.debug.DebugWindowController;
+import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.enemyStrategy.ChaseClosestEntityStrategy;
 import com.example.sae.core.entity.enemyStrategy.EnemyStrategy;
@@ -184,7 +183,7 @@ public class Enemy extends MoveableBody {
      * @return returns the most optimal strategy based on the situation
      */
     private EnemyStrategy chooseOptimalStrategy() {
-        GameEngine gameEngine = AgarioApplication.getClient().getGameEngine();
+        GameEngine gameEngine = SoloController.getClient().getGameEngine();
         if (gameEngine == null) return new RandomMoveStrategy();
 
         var nearbyEntities = gameEngine.getNearbyEntities(this, 600);
