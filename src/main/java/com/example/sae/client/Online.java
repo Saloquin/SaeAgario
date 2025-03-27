@@ -154,7 +154,7 @@ public class Online extends Client {
                             // System.out.println(part);
                             Platform.runLater(() -> {
                                 // Player player = new Player(root, id, x, y, masse, Color.BLUE, false);
-                                Player player = new Player(root, id, x, y, masse, Color.GREEN);
+                                Player player = EntityFactory.createPlayer(id, x, y, masse, "a", Color.GREEN);
                                 gameEngine.addPlayer(player);
                             });
                         }
@@ -200,36 +200,12 @@ public class Online extends Client {
                     }
                     */
                     Player movingPlayer = (Player)entity;
-                    // movingPlayer.setInputPosition(new double[]{ x, y });
-                    movingPlayer.getSprite().setCenterX(x);
-                    movingPlayer.getSprite().setCenterY(y);
-                });
-            });
-
-            /*
-            Stream<Entity> allPd = gameEngine.getEntitiesOfType(Player.class).stream().filter(p -> movingPlayerId.equals(p.getEntityId()));
-
-            if (!movingPlayerId.equals(clientId)) {
-                // System.out.println(movingPlayerId + " /// " + allPlayers.findFirst().get().getEntityId());
-                System.out.println(movingPlayerId + " /// " + allPd.findFirst().get().getEntityId());
-                System.out.println(x + ", " + y);
-            }
-
-            /*
-            List<Entity> movingPlayers = allPlayers.filter(p -> movingPlayerId.equals(p.getEntityId())).toList();
-            Player movingPlayer = (Player)movingPlayers.get(0);
-
-            Platform.runLater(() -> {
-                movingPlayer.setInputPosition(new double[]{ x, y });
-            });
-
-            allPlayers.filter(p -> movingPlayerId.equals(p.getEntityId())).findFirst().ifPresent(entity -> {
-                Platform.runLater(() -> {
-                    Player movingPlayer = (Player)entity;
                     movingPlayer.setInputPosition(new double[]{ x, y });
+                    movingPlayer.moveToward(new double[]{ x, y });
+                    // movingPlayer.getSprite().setCenterX(x);
+                    // movingPlayer.getSprite().setCenterY(y);
                 });
             });
-            */
         }
 
         public void deleteEntityUsingSocketData(String[] entitiesId) {
@@ -259,7 +235,9 @@ public class Online extends Client {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        DebugWindow.getInstance().getController().getStage().close();
+        if (DebugWindow.getInstance() != null) {
+            DebugWindow.getInstance().getController().getStage().close();
+        }
         gameTimer.stop();
     }
 }

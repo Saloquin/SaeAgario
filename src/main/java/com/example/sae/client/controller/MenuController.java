@@ -128,7 +128,8 @@ public class MenuController implements Initializable {
             currentStage.hide();
 
             stage.showAndWait();
-            // currentStage.show();
+            controller.stopGame();
+            currentStage.show();
         } catch (LoadException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Server not found", ButtonType.OK);
             alert.showAndWait();

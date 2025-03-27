@@ -107,9 +107,7 @@ public class OnlineController  implements Initializable {
         minimapGC = minimap.getGraphicsContext2D();
         setupMinimap();
 
-
         client.getGameIsEndedProperty().addListener((observable, oldValue, newValue) -> {
-            stopGame();
             Stage stage = (Stage) gameContainer.getScene().getWindow();
             stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
         });
@@ -247,7 +245,6 @@ public class OnlineController  implements Initializable {
         });
     }
 
-    @FXML
     public void sendMessage() {
         String message = chatInput.getText().trim();
         if (!message.isEmpty()) {
@@ -273,7 +270,6 @@ public class OnlineController  implements Initializable {
     }
 
     public void stopGame() {
-        System.out.println("ok");
         if (client != null) {
             client.stopOnlineGame();
         }

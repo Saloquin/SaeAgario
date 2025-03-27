@@ -75,10 +75,29 @@ public class EntityFactory {
      *
      * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
      * @param playerName name of the player's moving object
-     * @param color Boolean that determines whether the player's mobile object is in the local or online game
+     * @param color player color
      */
-    public static Player createPlayer(double mass,String playerName, Color color) {
-        return new Player(root, mass, color,playerName);
+    public static Player createPlayer(double mass, String playerName, Color color) {
+        return new Player(root, mass, color, playerName);
+    }
+
+    /**
+     * create a moving object for a player
+     *
+     * @see Entity
+     * @see MoveableBody
+     * @see Player
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param id entity id
+     * @param x coordinate of moving object
+     * @param y coordinate of moving object
+     * @param mass mass of the player's moving object
+     * @param playerName name of the player's moving object
+     * @param color player color
+     */
+    public static Player createPlayer(String id, double x, double y, double mass, String playerName, Color color) {
+        return new Player(root, id, x, y, mass, color, playerName);
     }
 
     /**
@@ -89,7 +108,7 @@ public class EntityFactory {
      *
      * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
      * @param mass mass of the player's moving object
-     * @param color name of the player's moving object
+     * @param color player color
      */
     public static Player createPlayer(double mass, Color color) {
         return new Player(root, mass, color);

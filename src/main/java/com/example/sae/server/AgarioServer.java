@@ -14,11 +14,11 @@ import java.util.concurrent.*;
 
 public class AgarioServer {
     // actuellement : le serveur est mis à jour quand qlqn rej, leave, ou qu'il mange qlqch
-    //                les clients semblent être sync quand qlqn rej ou se déplace
-    //                si qlqn leave ou mange qlqch, les clients ne sont PAS sync
+    //                les clients sont sync quand qlqn rej ou se déplace
+    //                si qlqn leave ou mange qlqch, le serveur n'est PAS sync
     // à faire : sync parfaitement le serv et les joueurs lorsqu'un joueur mange qlqch
     //           mettre les clients à jour quand qlqn leave
-    // note : les settings sympas pour MoveableBody.java = 10 2 1 (default = 20 4 1.5)
+    //           sync les couleurs et les noms des joueurs
     private static final int PORT = 12345;
     private static final int TARGET_FPS = 30;
     private static final long FRAME_TIME = 1000000000 / TARGET_FPS; // 33ms en nanos
@@ -184,7 +184,6 @@ public class AgarioServer {
                         double x = Double.parseDouble(parts[1]);
                         double y = Double.parseDouble(parts[2]);
 
-                        // player.moveToward(new double[]{ x, y });
                         player.getSprite().setCenterX(x);
                         player.getSprite().setCenterY(y);
 
