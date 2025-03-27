@@ -79,7 +79,7 @@ public class GameEngine {
 
 
     private void handleCollisions() {
-        for (Entity entity1 : entitiesMovable) {
+        for (MoveableBody entity1 : entitiesMovable) {
 
             double detectionRange = entity1.getSprite().getRadius()+  10;
 
@@ -88,7 +88,7 @@ public class GameEngine {
             for (Entity entity2 : nearbyEntities) {
                 if (checkCollision(entity1, entity2)) {
                     //DebugWindowController.addLog("Collision detected between: " + entity1 + " and " + entity2);
-                    handleCollision((MoveableBody) entity1, entity2);
+                    handleCollision(entity1, entity2);
                 }
             }
         }

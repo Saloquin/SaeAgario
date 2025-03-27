@@ -31,7 +31,7 @@ public class Solo extends Client {
     @Override
     public void init() {
         gameStarted = true;
-        player = EntityFactory.createPlayer(10, playerName, color);
+        player = EntityFactory.createPlayer(10,  playerName,color);
         playerId = gameEngine.addPlayer(player);
         if(DebugWindow.DEBUG_MODE) {
             DebugWindow.getInstance();
@@ -46,7 +46,6 @@ public class Solo extends Client {
             gameIsEnded.set(true);
         }
         else if (!gameIsEnded.get()) {
-            player.setInputPosition(getMousePosition());
             if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
                 gameEngine.addEntity(EntityFactory.createFood(4));
             }
@@ -60,8 +59,6 @@ public class Solo extends Client {
                 DebugWindow.getInstance().update(gameEngine, playerId);
             }
         }
-
-
     }
 
     public BooleanProperty getGameIsEndedProperty() {

@@ -1,8 +1,7 @@
 package com.example.sae.client;
 
 import com.example.sae.client.factory.GamePaneFactory;
-import com.example.sae.client.utils.handler.MouseEventHandler;
-import com.example.sae.client.utils.handler.MouseHandler;
+import com.example.sae.client.factory.GameSceneFactory;
 import com.example.sae.core.Camera;
 import com.example.sae.core.GameEngine;
 import javafx.scene.Group;
@@ -13,9 +12,8 @@ public abstract class Client {
     protected GameEngine gameEngine;
     public int playerId;
     protected Group root;
-    protected Camera camera;
+    private Camera camera;
     protected boolean gameStarted = false;
-    protected MouseEventHandler mouseHandler;
     protected String playerName;
     protected Color color;
 
@@ -23,12 +21,9 @@ public abstract class Client {
         this.root = root;
         this.playerName = playerName;
         this.color = color;
-        this.camera = new Camera();
+        camera = new Camera();
     }
 
-    public Camera getCamera() {
-        return camera;
-    }
 
     public boolean getGameStarted(){
         return gameStarted;
@@ -37,13 +32,13 @@ public abstract class Client {
     public abstract void init();
     public abstract void update();
 
-    public Pane createGamePane() {
-        mouseHandler = new MouseHandler(root, gameEngine, playerId);
-        return GamePaneFactory.createGamePane(root, gameEngine, playerId, mouseHandler);
+
+    public Pane createGamePane(double width, double height) {
+        return GamePaneFactory.createGamePane(root, gameEngine, playerId, width, height);
     }
 
-    public double[] getMousePosition() {
-        return mouseHandler.getMousePosition();
+    public Camera getCamera() {
+        return camera;
     }
 
     public int getPlayerId() {
