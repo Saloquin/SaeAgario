@@ -1,4 +1,4 @@
-package com.example.sae.client.timer;
+package com.example.sae.client.utils.timer;
 
 import com.example.sae.client.Client;
 import javafx.animation.AnimationTimer;

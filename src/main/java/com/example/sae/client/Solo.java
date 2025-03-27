@@ -1,7 +1,7 @@
 package com.example.sae.client;
 
-import com.example.sae.client.debug.DebugWindow;
-import com.example.sae.client.timer.GameTimer;
+import com.example.sae.client.utils.debug.DebugWindow;
+import com.example.sae.client.utils.timer.GameTimer;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.EntityFactory;
@@ -21,8 +21,8 @@ public class Solo extends Client {
 
     private final BooleanProperty gameIsEnded = new SimpleBooleanProperty(false);
 
-    public Solo(Group root) {
-        super(root);
+    public Solo(Group root, String playerName, Color color) {
+        super(root, playerName, color);
         this.gameTimer = new GameTimer(this);
         this.gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, false);
 
@@ -31,7 +31,7 @@ public class Solo extends Client {
     @Override
     public void init() {
         gameStarted = true;
-        player = EntityFactory.createPlayer(3, Color.BISQUE, true);
+        player = EntityFactory.createPlayer(10, playerName, color);
         playerId = gameEngine.addPlayer(player);
         if(DebugWindow.DEBUG_MODE) {
             DebugWindow.getInstance();
@@ -48,7 +48,7 @@ public class Solo extends Client {
         else{
             player.setInputPosition(getMousePosition());
             if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
-                gameEngine.addEntity(EntityFactory.createFood(2));
+                gameEngine.addEntity(EntityFactory.createFood(4));
             }
 
             if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {

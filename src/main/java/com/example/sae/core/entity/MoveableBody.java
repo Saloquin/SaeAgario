@@ -2,6 +2,8 @@ package com.example.sae.core.entity;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -22,8 +24,8 @@ public abstract class MoveableBody extends Entity{
     /**
      * name of moving object
      */
-    public String name= "°-°";
 
+    private final StringProperty name = new SimpleStringProperty(this, "name", "°-°");
     private Text nameText;
 
     public static final double BASE_MAX_SPEED = 20; // Vitesse de base maximum
@@ -42,26 +44,14 @@ public abstract class MoveableBody extends Entity{
      * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
      * @param group Group
      * @param initialSize size of moving object
-     */
-    MoveableBody(Group group, double initialSize) {
-        super(group, initialSize);
-        initializeNameText(group);
-    }
-
-    /**
-     * constructor
-     *
-     * @see Entity
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param group Group
-     * @param initialSize size of moving object
      * @param color color of moving object
      */
     MoveableBody(Group group, double initialSize, Color color) {
         super(group, initialSize, color);
         initializeNameText(group);
     }
+
+
 
     /**
      * constructor
@@ -79,6 +69,12 @@ public abstract class MoveableBody extends Entity{
         initializeNameText(group);
     }
 
+    MoveableBody(Group group, String id, double initialSize, Color color, String playerName) {
+        super(group, id, initialSize, color);
+        this.name.set(playerName);
+        initializeNameText(group);
+    }
+
     /**
      * constructor
      *
@@ -92,7 +88,7 @@ public abstract class MoveableBody extends Entity{
      */
     MoveableBody(Group group, double initialSize, Color color, String name) {
         super(group, initialSize);
-        this.name = name;
+        this.name.set(name);
         sprite.setFill(color);
         initializeNameText(group);
     }
@@ -109,7 +105,7 @@ public abstract class MoveableBody extends Entity{
      */
     MoveableBody(Group group, double initialSize, String name) {
         super(group, initialSize);
-        this.name = name;
+        this.name.set(name);
         initializeNameText(group);
     }
 
@@ -124,7 +120,8 @@ public abstract class MoveableBody extends Entity{
      * @param group the moving object that is eaten
      */
     private void initializeNameText(Group group) {
-        nameText = new Text(name);
+        nameText = new Text();
+        nameText.textProperty().bind(name);
         nameText.setFill(Color.BLACK);
         nameText.setStyle("-fx-font-size: 14;");
         // Place le texte au-dessus du sprite dans l'ordre de rendu
@@ -134,10 +131,9 @@ public abstract class MoveableBody extends Entity{
         nameText.setX(sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
         nameText.setY(sprite.getCenterY());
 
-        if (group != null) {
-            group.getChildren().add(nameText);
-        }
+        group.getChildren().add(nameText);
     }
+
 
     /**
      * increases the size of the moving object that has eaten food
@@ -288,6 +284,19 @@ public abstract class MoveableBody extends Entity{
         if (nameText.getParent() != null) {
             ((Group) nameText.getParent()).getChildren().remove(nameText);
         }
+    }
+
+
+    public String getNom() {
+        return name.get();
+    }
+
+    public void setNom(String nom) {
+        this.name.set(nom);
+    }
+
+    public StringProperty nameProperty() {
+        return name;
     }
 
 

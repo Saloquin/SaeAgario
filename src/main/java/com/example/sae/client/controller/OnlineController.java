@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -38,7 +39,7 @@ public class OnlineController  implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Group root = new Group();
-        client = new Solo(root);
+        client = new Solo(root, "Player", Color.BEIGE);
         client.init();
         Pane scene = client.createGamePane(1280,720);
         gameContainer.getChildren().add(scene);

@@ -1,4 +1,4 @@
-package com.example.sae.client.handler;
+package com.example.sae.client.utils.handler;
 
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Player;

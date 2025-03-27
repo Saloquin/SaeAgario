@@ -1,6 +1,6 @@
 package com.example.sae.client.factory;
 
-import com.example.sae.client.handler.MouseEventHandler;
+import com.example.sae.client.utils.handler.MouseEventHandler;
 import com.example.sae.core.Camera;
 import com.example.sae.core.GameEngine;
 import javafx.scene.Group;
