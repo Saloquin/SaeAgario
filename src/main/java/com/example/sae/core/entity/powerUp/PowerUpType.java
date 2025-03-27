@@ -27,7 +27,7 @@ public enum PowerUpType {
         }
     },
 
-    SPLIT(Color.GREEN, 10,100) {
+    SPLIT(Color.GREEN, 0,100) {
         @Override
         public void applyEffect(MoveableBody body) {
             body.splitSprite();
