@@ -38,6 +38,7 @@ public class SoloController implements Initializable {
     public static Group root;
     private static Solo client;
 
+    private MinimapController minimapController;
 
     private String playerName;
     private Color playerColor;
@@ -76,7 +77,7 @@ public class SoloController implements Initializable {
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/minimap.fxml"));
             AnchorPane minimapNode = loader.load();
-            MinimapController minimapController = loader.getController();
+            minimapController = loader.getController();
 
             System.out.println("MinimapController chargé : " + minimapController);
 
@@ -94,6 +95,7 @@ public class SoloController implements Initializable {
 
     public void stopGame() {
         if (client != null) {
+            minimapController.stop();
             client.stopSoloGame();
             leaderboardController.stop();
         }
