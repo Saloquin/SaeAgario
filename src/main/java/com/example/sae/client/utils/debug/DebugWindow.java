@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 
 
 public class DebugWindow {
-    public static final boolean DEBUG_MODE = true;
+    public static final boolean DEBUG_MODE = false;
     private static DebugWindow instance;
     private DebugWindowController controller;
 
