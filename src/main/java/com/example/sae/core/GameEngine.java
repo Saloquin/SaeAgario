@@ -204,6 +204,10 @@ public class GameEngine {
         return entities;
     }
 
+    public HashSet<Entity> getEntitiesToAdd() {
+        return entitiesToAdd;
+    }
+
     public HashSet<Entity> getEntitiesOfType(Class<?> type) {
         return
             entities.stream()

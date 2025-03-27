@@ -3,11 +3,14 @@ package com.example.sae.client;
 
 import com.example.sae.client.controller.MenuController;
 import com.example.sae.core.Camera;
+import com.example.sae.server.AgarioServer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -32,8 +35,19 @@ public class AgarioApplication extends Application {
         stage.show();
     }
 
-    public static void startGame(Stage stage) throws IOException {
-        client = new Solo(root);
+    public static void startGame(Stage stage, boolean solo) throws IOException {
+        if (solo) {
+            client = new Solo(root);
+        } else {
+            try {
+                client = new Online(root);
+                ((Online)client).handleAppClosed(stage);
+            } catch (IOException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Aucun serveur trouvé", ButtonType.OK);
+                alert.showAndWait();
+                return;
+            }
+        }
         client.init();
         scene = client.createGameScene(1280, 720);
         Camera camera = new Camera();

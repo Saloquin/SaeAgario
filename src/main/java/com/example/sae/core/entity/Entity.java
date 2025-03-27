@@ -4,6 +4,8 @@ import java.util.Random;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import java.util.UUID;
+
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -12,9 +14,11 @@ import javafx.scene.shape.Circle;
 public abstract class Entity extends Group{
     protected Circle sprite; // the entity's sprite
     private DoubleProperty masse;
+    protected String entityId;
 
     Entity(Group group, double initialMasse) {
         super();
+        this.entityId = UUID.randomUUID().toString();
         this.masse = new SimpleDoubleProperty(initialMasse);
         Random rand = new Random();
 
@@ -29,11 +33,14 @@ public abstract class Entity extends Group{
         viewOrderProperty().bind(sprite.radiusProperty().negate());
 
         getChildren().add(sprite);
-        group.getChildren().add(this);
+        if (group != null) {
+            group.getChildren().add(this);
+        }
     }
 
     Entity(Group group, double initialMasse, Color color) {
         super();
+        this.entityId = UUID.randomUUID().toString();
         this.masse = new SimpleDoubleProperty(initialMasse);
 
         sprite = new Circle();
@@ -47,7 +54,30 @@ public abstract class Entity extends Group{
         viewOrderProperty().bind(sprite.radiusProperty().negate());
 
         getChildren().add(sprite);
-        group.getChildren().add(this);
+        if (group != null) {
+            group.getChildren().add(this);
+        }
+    }
+
+    Entity(Group group, String id, double initialMasse, Color color) {
+        super();
+        this.entityId = id;
+        this.masse = new SimpleDoubleProperty(initialMasse);
+
+        sprite = new Circle();
+        sprite.setFill(color);
+
+        // Bind le rayon à la masse avec conversion explicite
+        sprite.radiusProperty().bind(masse.multiply(10)
+                .map(number -> Math.sqrt(number.doubleValue())));
+
+        // Bind le viewOrder au rayon
+        viewOrderProperty().bind(sprite.radiusProperty().negate());
+
+        getChildren().add(sprite);
+        if (group != null) {
+            group.getChildren().add(this);
+        }
     }
 
     public double getMasse() {
@@ -79,6 +109,13 @@ public abstract class Entity extends Group{
         return sprite;
     }
 
+    public Color getColor() {
+        return (Color) sprite.getFill();
+    }
+
+    public String getEntityId() {
+        return this.entityId;
+    }
 
     public void onDeletion() {
         // Remove from JavaFX scene graph if necessary

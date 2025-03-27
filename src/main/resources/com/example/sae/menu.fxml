@@ -12,7 +12,8 @@
             <Font name="Arial" size="60"/>
         </font>
     </Label>
-    <Button fx:id="startButton" text="Start" onAction="#handleStartButton"/>
+    <Button fx:id="startSoloButton" text="Start solo" onAction="#handleStartSoloButton"/>
+    <Button fx:id="startOnlineButton" text="Start online" onAction="#handleStartOnlineButton"/>
     <Button fx:id="changeSkinButton" text="Change Skin" onAction="#handleChangeSkinButton"/>
     <Button fx:id="changeNameButton" text="Change Name" onAction="#handleChangeNameButton"/>
     <Button fx:id="exitButton" text="Exit" onAction="#handleExitButton"/>
