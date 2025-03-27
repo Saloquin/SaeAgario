@@ -67,8 +67,10 @@ public class Online extends Client {
             return;
         }
 
-        // player.setInputPosition(getMousePosition());
-        handler.sendMessage(String.format(Locale.US, "MOVE|%.2f|%.2f", getMousePosition()[0], getMousePosition()[1]));
+        // handler.sendMessage(String.format(Locale.US, "MOVE|%.2f|%.2f", getMousePosition()[0], getMousePosition()[1]));
+
+        player.setInputPosition(getMousePosition());
+        handler.sendMessage(String.format(Locale.US, "MOVE|%.2f|%.2f", player.getPosition()[0], player.getPosition()[1]));
 
         gameEngine.update();
 
@@ -170,12 +172,10 @@ public class Online extends Client {
         public void movePlayerUsingSocketData(String[] parts) {
             String movingPlayerId = parts[1];
 
-            /*
             if (movingPlayerId.equals(clientId)) {
-                // return;
+                return;
                 // System.out.println(clientId);
             }
-            */
 
             double x = Double.parseDouble(parts[2]);
             double y = Double.parseDouble(parts[3]);
@@ -193,7 +193,9 @@ public class Online extends Client {
                     }
                     */
                     Player movingPlayer = (Player)entity;
-                    movingPlayer.setInputPosition(new double[]{ x, y });
+                    // movingPlayer.setInputPosition(new double[]{ x, y });
+                    movingPlayer.getSprite().setCenterX(x);
+                    movingPlayer.getSprite().setCenterY(y);
                 });
             });
 

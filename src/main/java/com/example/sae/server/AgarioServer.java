@@ -183,7 +183,10 @@ public class AgarioServer {
                     if (parts.length == 3) {
                         double x = Double.parseDouble(parts[1]);
                         double y = Double.parseDouble(parts[2]);
-                        player.moveToward(new double[]{ x, y });
+
+                        // player.moveToward(new double[]{ x, y });
+                        player.getSprite().setCenterX(x);
+                        player.getSprite().setCenterY(y);
 
                         clientHandlers.values().forEach(handler -> handler.sendMessage(String.format(Locale.US, "MOVE|%s|%f|%f", player.getEntityId(), x, y)));
                     }
