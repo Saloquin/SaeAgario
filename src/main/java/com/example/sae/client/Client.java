@@ -5,6 +5,9 @@ import com.example.sae.client.utils.handler.MouseEventHandler;
 import com.example.sae.client.utils.handler.MouseHandler;
 import com.example.sae.core.Camera;
 import com.example.sae.core.GameEngine;
+import com.example.sae.core.entity.Enemy;
+import com.example.sae.core.entity.EntityFactory;
+import com.example.sae.core.entity.Food;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -24,6 +27,7 @@ public abstract class Client {
         this.playerName = playerName;
         this.color = color;
         this.camera = new Camera();
+        this.gameEngine = new GameEngine(GameEngine.MAP_LIMIT_WIDTH, GameEngine.MAP_LIMIT_HEIGHT, false);
     }
 
     public Camera getCamera() {
@@ -52,5 +56,15 @@ public abstract class Client {
 
     public GameEngine getGameEngine() {
         return gameEngine;
+    }
+
+    protected void manageEntities() {
+        if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
+            gameEngine.addEntity(EntityFactory.createFood(4));
+        }
+
+        if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
+            gameEngine.addEntity(EntityFactory.createEnemy(10));
+        }
     }
 }
