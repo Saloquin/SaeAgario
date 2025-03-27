@@ -3,8 +3,11 @@ package com.example.sae.client.factory;
 import com.example.sae.core.Camera;
 import com.example.sae.core.GameEngine;
 import javafx.scene.Group;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+
+import java.util.Objects;
 
 public class GamePaneFactory {
     public static Pane createGamePane(Group root, GameEngine gameEngine, int playerId) {

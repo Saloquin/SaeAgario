@@ -57,7 +57,9 @@ public class ChaseClosestEntityStrategy implements EnemyStrategy {
             enemy.moveToward(closestEntity.getPosition());
             return true;
         }
-        new SeekFoodStrategy().execute(enemy);
-        return false;
+        else {
+            new SeekFoodStrategy().execute(enemy);
+            return false;
+        }
     }
 }
