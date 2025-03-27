@@ -4,17 +4,18 @@ import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Player;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
 
 public class MouseHandler implements MouseEventHandler {
     private Point2D mousePosition = new Point2D(0, 0);
     private Point2D lastValidMousePosition = new Point2D(0, 0);
     private double[] direction = new double[]{0, 0};
-    private Group root;
+    private Parent root;
     private GameEngine gameEngine;
     private int playerId;
 
-    public MouseHandler(Group root, GameEngine gameEngine, int playerId) {
+    public MouseHandler(Parent root, GameEngine gameEngine, int playerId) {
         this.root = root;
         this.gameEngine = gameEngine;
         this.playerId = playerId;
