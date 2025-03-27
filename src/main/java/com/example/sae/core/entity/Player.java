@@ -31,8 +31,8 @@ public class Player extends MoveableBody{
      * @param masse mass of the player's moving object
      * @param color name of the player's moving object
      */
-    public Player(Group group, double masse, Color color){
-        super(group, masse,color);
+    public Player(Group group, double masse, Color color) {
+        super(group, masse, color);
         sprite.setCenterX(0);
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());

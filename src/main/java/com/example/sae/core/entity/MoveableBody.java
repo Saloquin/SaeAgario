@@ -197,7 +197,6 @@ public abstract class MoveableBody extends Entity{
         double speedFactorX = Math.min(distanceFromCenter / (maxDistanceW), 1.0);
         double speedFactorY = Math.min(distanceFromCenter / (maxDistanceH), 1.0);
 
-        DebugWindowController.addLog(distanceFromCenter + " " + maxDistanceW );
 
 
         // Application de la vitesse
@@ -300,5 +299,11 @@ public abstract class MoveableBody extends Entity{
     }
 
 
+    public double getActualSpeedX() {
+        return actualSpeedX;
+    }
 
+    public double getActualSpeedY() {
+        return actualSpeedY;
+    }
 }
