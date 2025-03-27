@@ -3,7 +3,6 @@ package com.example.sae.core.entity;
 import com.example.sae.client.AgarioApplication;
 import com.example.sae.client.Client;
 import com.example.sae.client.controller.SoloController;
-import com.example.sae.client.debug.DebugWindowController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.enemyStrategy.ChaseClosestEntityStrategy;
 import com.example.sae.core.entity.enemyStrategy.EnemyStrategy;
@@ -73,6 +72,12 @@ public class Enemy extends MoveableBody {
         double spreadFactor = 0.7; // Réduire la dispersion
         sprite.setCenterX((Math.random() * MAP_LIMIT_WIDTH * 2 -MAP_LIMIT_WIDTH) * spreadFactor);
         sprite.setCenterY((Math.random() * MAP_LIMIT_HEIGHT * 2 - MAP_LIMIT_HEIGHT) * spreadFactor);
+    }
+
+    @Override
+    protected void calculateSpeeds(double distanceFromCenter) {
+        actualSpeedX = getMaxSpeed() * ENEMY_SPEED_MULTIPLIER * speedMultiplier;
+        actualSpeedY = getMaxSpeed() * ENEMY_SPEED_MULTIPLIER * speedMultiplier;
     }
 
     /**

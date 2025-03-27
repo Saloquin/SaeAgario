@@ -1,4 +1,4 @@
-package com.example.sae.client.timer;
+package com.example.sae.client.utils.timer;
 
 import com.example.sae.client.Client;
 import javafx.animation.AnimationTimer;
@@ -17,6 +17,7 @@ public class GameTimer extends AnimationTimer {
 
     @Override
     public void stop(){
+        super.stop();
         stopped = true;
     }
 

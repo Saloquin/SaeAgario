@@ -182,6 +182,16 @@ public abstract class Entity extends Group{
         return sprite;
     }
 
+    public double getX(){
+        return sprite.getCenterX();
+    }
+
+    public double getY(){
+        return sprite.getCenterY();
+    }
+
+
+
     /**
      * returns the entity's color
      *

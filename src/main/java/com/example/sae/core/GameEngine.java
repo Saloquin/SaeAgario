@@ -1,21 +1,15 @@
 package com.example.sae.core;
 
-import com.example.sae.client.debug.DebugWindowController;
 import com.example.sae.core.entity.*;
 import com.example.sae.core.entity.powerUp.PowerUp;
 import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -24,10 +18,13 @@ public class GameEngine {
     private final HashSet<Entity> entities;
     private final HashSet<Entity> entitiesToAdd;
     private final HashSet<Entity> entitiesToRemove;
-    public final HashSet<Entity> entitiesMovable;
+    public final HashSet<MoveableBody> entitiesMovable;
     public final  static double NB_FOOD_MAX = 1000;
     public final  static double NB_POWERUP_MAX = 10;
-    public final  static double NB_ENEMY_MAX = 10;
+    public final  static double NB_ENEMY_MAX = 15;
+    public final  static double MASSE_INIT_PLAYER = 15;
+    public final  static double MASSE_INIT_FOOD = 4;
+    public static final double MASSE_INIT_ENEMY = 15;
     private static final int QUAD_TREE_MAX_DEPTH = 6;
     private static QuadTree quadTree;
     private boolean gameStarted = false;
@@ -58,6 +55,10 @@ public class GameEngine {
         handleCollisions();
 
         cleanupEntities();
+    }
+
+    public List<MoveableBody> getEntitiesMovable() {
+        return entitiesMovable.stream().toList();
     }
 
     private void updateEntityInQuadTree(Entity entity) {
@@ -175,7 +176,7 @@ public class GameEngine {
         entities.add(entity);
         quadTree.insert(entity);
         if(entity instanceof MoveableBody) {
-            entitiesMovable.add(entity);
+            entitiesMovable.add((MoveableBody)entity);
         }
     }
 
@@ -183,7 +184,7 @@ public class GameEngine {
     public void removeEntity(Entity entity) {
         entitiesToRemove.add(entity);
         entities.remove(entity);
-        entity.setPosition(-999999, -999999); //TODO Move entity off screen before removing
+        quadTree.remove(entity);
 
     }
 
@@ -236,10 +237,19 @@ public class GameEngine {
 
 
         HashSet<Entity> nearbyEntities = new HashSet<>(quadTree.query(searchBoundary));
+
         // Exclure l'entité elle-même
         nearbyEntities.remove(entity);
 
         return nearbyEntities;
+    }
+
+    public List<MoveableBody> getSortedMovableEntities() {
+        return entitiesMovable.stream()
+                .map(entity -> (MoveableBody) entity)
+                .sorted(Comparator.comparingDouble(MoveableBody::getMasse).reversed())
+                .limit(10)
+                .collect(Collectors.toList());
     }
 
 

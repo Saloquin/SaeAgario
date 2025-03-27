@@ -1,6 +1,6 @@
 package com.example.sae.client;
 
-import com.example.sae.client.timer.GameTimer;
+import com.example.sae.client.utils.timer.GameTimer;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Entity;
 import com.example.sae.core.entity.EntityFactory;
@@ -17,9 +17,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.example.sae.client.controller.SoloController.getMousePosition;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
@@ -29,8 +29,8 @@ public class Online extends Client {
     private final ThreadDeFond handler;
     private final Socket socket;
 
-    public Online(Group root) throws IOException {
-        super(root);
+    public Online(Group root, String playerName, Color color) throws IOException {
+        super(root,  playerName,  color);
         this.gameTimer = new GameTimer(this);
         this.gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, false);
         this.socket = new Socket("localhost", 12345);
@@ -42,7 +42,7 @@ public class Online extends Client {
     @Override
     public void init() {
         gameStarted = true;
-        Player player = EntityFactory.createPlayer(3, Color.RED, true);
+        Player player = EntityFactory.createPlayer(3, "Player", Color.RED);
         player.setCamera(camera);
         camera.focusOn(player);
         gameEngine.addPlayer(player);
@@ -63,7 +63,6 @@ public class Online extends Client {
             return;
         }
 
-        player.setInputPosition(getMousePosition());
         handler.sendMessage(String.format(Locale.US, "MOVE|%f|%f", getMousePosition()[0], getMousePosition()[1]));
 
         gameEngine.update();

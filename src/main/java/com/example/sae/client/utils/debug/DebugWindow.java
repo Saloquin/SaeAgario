@@ -1,5 +1,7 @@
 package com.example.sae.client.debug;
 
+import com.example.sae.client.AgarioApplication;
+import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Food;
@@ -7,8 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import static com.example.sae.core.entity.MoveableBody.BASE_MAX_SPEED;
-import static com.example.sae.core.entity.MoveableBody.MIN_MAX_SPEED;
+
 
 public class DebugWindow {
     public static final boolean DEBUG_MODE = true;
@@ -47,8 +48,14 @@ public class DebugWindow {
             controller.playerXProperty().set(player.getSprite().getCenterX());
             controller.playerYProperty().set(player.getSprite().getCenterY());
             controller.playerMassProperty().set(player.getMasse());
-            controller.playerSpeedProperty().set(player.getActualSpeed());
+            controller.playerSpeedXProperty().set(player.getActualSpeedX());
+            controller.playerSpeedYProperty().set(player.getActualSpeedY());
+            controller.playerMaxSpeedProperty().set(player.getMaxSpeed());
         }
+
+        // Utilise les méthodes statiques de MouseHandler pour mettre à jour la position
+        controller.mouseXProperty().set(SoloController.getMousePosition()[0]);
+        controller.mouseYProperty().set(SoloController.getMousePosition()[1]);
 
         controller.foodCountProperty().set(gameEngine.getEntitiesOfType(Food.class).size());
         controller.enemyCountProperty().set(gameEngine.getEntitiesOfType(Enemy.class).size());
