@@ -1,6 +1,7 @@
 package com.example.sae.core.entity;
 
 import com.example.sae.client.controller.SoloController;
+import com.example.sae.client.utils.config.Constants;
 import com.example.sae.core.Camera;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
@@ -31,8 +32,8 @@ public abstract class MoveableBody extends Entity {
     private Text nameText;
     protected double actualSpeedX = 0;
     protected double actualSpeedY = 0;
-    public static final double BASE_MAX_SPEED = 15;
-    public static final double ENEMY_SPEED_MULTIPLIER = 0.7;
+    public static final double BASE_MAX_SPEED = Constants.getBaseMaxSpeed();
+    public static final double ENEMY_SPEED_MULTIPLIER = Constants.getEnemySpeedMultiplier();
     protected double speedMultiplier = 1.0;
 
 

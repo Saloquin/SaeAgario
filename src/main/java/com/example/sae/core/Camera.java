@@ -1,5 +1,6 @@
 package com.example.sae.core;
 
+import com.example.sae.client.utils.config.Constants;
 import com.example.sae.core.entity.Entity;
 import com.example.sae.core.quadtree.Boundary;
 
@@ -9,8 +10,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 
 public class Camera extends Boundary {
-    public static final double ZOOM_FACTOR = 6; // Increased to reduce zoom intensity
-    public static final double DEZOOM_FACTOR = 1.5;
+    public static final double ZOOM_FACTOR = Constants.getCameraZoomFactor();
+    public static final double DEZOOM_FACTOR = Constants.getCameraDezoomFactor();
+
 
 
     public Camera() {

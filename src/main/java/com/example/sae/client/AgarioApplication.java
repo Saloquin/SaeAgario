@@ -2,6 +2,7 @@ package com.example.sae.client;
 
 
 import com.example.sae.client.controller.MenuController;
+import com.example.sae.client.utils.config.ConfigLoader;
 import com.example.sae.core.Camera;
 import com.example.sae.server.AgarioServer;
 import javafx.application.Application;
@@ -22,6 +23,7 @@ public class AgarioApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        ConfigLoader.loadConfig();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/menu.fxml"));
 
         scene = new Scene(loader.load(), 250, 500);

@@ -21,6 +21,7 @@ import java.util.List;
  */
 public class EntityFactory {
     private static Group root = SoloController.getRoot();
+    private static int idDebug = 0;
 
     /**
      * name list for IA, or default
@@ -106,7 +107,7 @@ public class EntityFactory {
      * @param mass masse of IA
      */
     public static Enemy createEnemy(double mass) {
-        return new Enemy(root, mass, getRandomName());
+        return new Enemy(root, mass, (idDebug++)+" ");
     }
 
     /**

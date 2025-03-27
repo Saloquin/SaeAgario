@@ -66,7 +66,7 @@ public class Enemy extends MoveableBody {
      */
     public Enemy(Group group, double masse, String name) {
         super(group, masse, name);
-        this.strategy = chooseOptimalStrategy();
+        this.strategy =chooseOptimalStrategy();
 
         // Position initiale plus proche du centre
         double spreadFactor = 0.7; // Réduire la dispersion
@@ -200,7 +200,7 @@ public class Enemy extends MoveableBody {
                         && (entity instanceof Enemy || entity instanceof Player));
 
         boolean hasFoodNearby = nearbyEntities.stream()
-                .anyMatch(entity ->entity.getMasse()*1.33 < this.getMasse()
+                .anyMatch(entity -> entity.getMasse()*1.33 < this.getMasse()
                         && (entity instanceof Food || entity instanceof PowerUp));
         if (hasValidPrey) {
             return new ChaseClosestEntityStrategy();
