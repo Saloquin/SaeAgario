@@ -71,6 +71,12 @@ public class Enemy extends MoveableBody {
         sprite.setCenterY((Math.random() * MAP_LIMIT_HEIGHT * 2 - MAP_LIMIT_HEIGHT) * spreadFactor);
     }
 
+    @Override
+    protected void calculateSpeeds(double distanceFromCenter) {
+        actualSpeedX = getMaxSpeed() * ENEMY_SPEED_MULTIPLIER;
+        actualSpeedY = getMaxSpeed() * ENEMY_SPEED_MULTIPLIER;
+    }
+
     /**
      * update IA strategy
      *

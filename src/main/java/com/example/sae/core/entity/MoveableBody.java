@@ -1,5 +1,7 @@
 package com.example.sae.core.entity;
 
+import com.example.sae.client.controller.SoloController;
+import com.example.sae.core.Camera;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleStringProperty;
@@ -27,13 +29,9 @@ public abstract class MoveableBody extends Entity{
 
     private final StringProperty name = new SimpleStringProperty(this, "name", "°-°");
     private Text nameText;
-
-    public static final double BASE_MAX_SPEED = 20; // Vitesse de base maximum
-
-    public static final double MIN_MAX_SPEED = 4;  // Vitesse maximum minimale
-
-    public static final double SPEED_FACTOR = 1.5;
-
+    protected double actualSpeedX = 0;
+    protected double actualSpeedY = 0;
+    public static final double BASE_MAX_SPEED = 15;
     public static final double ENEMY_SPEED_MULTIPLIER = 0.7;
 
     /**
@@ -127,10 +125,21 @@ public abstract class MoveableBody extends Entity{
         // Place le texte au-dessus du sprite dans l'ordre de rendu
         nameText.setViewOrder(-1000);
 
-        // Position initiale au centre du cercle
-        nameText.setX(sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
-        nameText.setY(sprite.getCenterY());
+        nameText.styleProperty().bind(Bindings.createStringBinding(
+                () -> String.format("-fx-font-size: %.1f;", sprite.getRadius()),
+                sprite.radiusProperty()
+        ));
 
+        nameText.layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
+            nameText.setX(sprite.getCenterX() - newBounds.getWidth() / 2);
+        });
+        // Binding simple pour Y
+        nameText.yProperty().bind(sprite.centerYProperty());
+
+        // Binding pour X avec le centre du sprite
+        sprite.centerXProperty().addListener((obs, oldX, newX) -> {
+            nameText.setX(newX.doubleValue() - nameText.getLayoutBounds().getWidth() / 2);
+        });
         group.getChildren().add(nameText);
     }
 
@@ -146,70 +155,59 @@ public abstract class MoveableBody extends Entity{
      */
     public void increaseSize(double foodValue) {
         setMasse(getMasse() + foodValue);
-        // Suppression de setViewOrder car déjà lié au rayon
-        nameText.setX(sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
-        nameText.setY(sprite.getCenterY());
     }
 
     /**
      * moves the moving object according to the position of the mouse on the screen
      *
      * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param mousePosition the position of the mouse on the screen as a double array
+     * @param velocity the position of the mouse on the screen as a double array
      */
-    public void moveToward(double[] mousePosition) {
-        DoubleBinding speedBinding = Bindings.createDoubleBinding(
-                () -> {
-                    double baseSpeed = Math.max(BASE_MAX_SPEED / (1 + Math.log10(getMasse())), MIN_MAX_SPEED);
-                    // Applique le multiplicateur si c'est un ennemi
-                    return (this instanceof Enemy) ? baseSpeed * ENEMY_SPEED_MULTIPLIER : baseSpeed;
-                },
-                sprite.radiusProperty()
-        );
+    public void moveToward(double[] velocity) {
+        double maxSpeed = getMaxSpeed();
 
-        double maxSpeed = speedBinding.get();
-
-        // Vecteur direction vers la souris
-        double[] velocity = new double[]{
-                mousePosition[0] - sprite.getCenterX(),
-                mousePosition[1] - sprite.getCenterY()
+        // Vecteur de direction (souris - position du joueur)
+        double[] direction = new double[]{
+                velocity[0] - sprite.getCenterX(),
+                velocity[1] - sprite.getCenterY()
         };
 
-        // Distance du curseur au centre du joueur
-        double distance = Math.sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1]);
+        // Distance du curseur par rapport au centre
+        double distanceFromCenter = Math.sqrt(
+                direction[0] * direction[0] +
+                        direction[1] * direction[1]
+        );
 
-        // Si la souris est au même endroit que le joueur, pas de mouvement
-        if (distance < 1) {
+        // Normalisation du vecteur de direction
+        double[] normalizedDirection = normalizeDouble(direction);
+
+        // Zone morte au centre (10 pixels)
+        if (distanceFromCenter <= 10) {
+            actualSpeedX = 0;
+            actualSpeedY = 0;
             return;
         }
 
-        // Normalisation du vecteur de direction
-        velocity[0] /= distance;
-        velocity[1] /= distance;
+        calculateSpeeds(distanceFromCenter);
 
-        // Le facteur de vitesse est proportionnel à la distance
-        // Distance maximale considérée pour la vitesse (rayon d'influence)
-        double maxDistance = 200.0;
-        double speedFactor = Math.min(distance / maxDistance, 1.0);
-        double currentSpeed = maxSpeed * speedFactor * SPEED_FACTOR;
+        double dx = normalizedDirection[0] * actualSpeedX;
+        double dy = normalizedDirection[1] * actualSpeedY;
 
-        // Application de la vitesse
-        velocity[0] *= currentSpeed;
-        velocity[1] *= currentSpeed;
-
-        // Mise à jour de la position avec les limites de la carte
-        double newX = sprite.getCenterX() + velocity[0];
-        double newY = sprite.getCenterY() + velocity[1];
-
-        if (newX < MAP_LIMIT_WIDTH && newX > -MAP_LIMIT_WIDTH) {
-            sprite.setCenterX(newX);
-            nameText.setX(newX - nameText.getLayoutBounds().getWidth() / 2);
+        // Mise à jour de la position avec vérification des limites
+        if (sprite.getCenterX() + dx < MAP_LIMIT_WIDTH && sprite.getCenterX() + dx > -MAP_LIMIT_WIDTH) {
+            sprite.setCenterX(sprite.getCenterX() + dx);
         }
-        if (newY < MAP_LIMIT_HEIGHT && newY > -MAP_LIMIT_HEIGHT) {
-            sprite.setCenterY(newY);
-            nameText.setY(newY);
+        if (sprite.getCenterY() + dy < MAP_LIMIT_HEIGHT && sprite.getCenterY() + dy > -MAP_LIMIT_HEIGHT) {
+            sprite.setCenterY(sprite.getCenterY() + dy);
         }
     }
+
+    protected abstract void calculateSpeeds(double distanceFromCenter);
+
+    public double getMaxSpeed() {
+        return BASE_MAX_SPEED / (1+Math.log10(getMasse()));
+    }
+
 
     /**
      * splits the moving object by clicking on the keyboard space bar
@@ -218,7 +216,7 @@ public abstract class MoveableBody extends Entity{
      */
     //TODO: Implement the splitSprite method without using AgarioApplication.root
     public void splitSprite(){
-        Player newBody = EntityFactory.createPlayer(sprite.getRadius() / 2, Color.RED);
+        Player newBody = EntityFactory.createPlayer(sprite.getRadius() / 2, (Color) sprite.getFill());
         newBody.sprite.setCenterX(sprite.getCenterX() + 30);
         newBody.sprite.setCenterY(sprite.getCenterY() + 30);
 
@@ -299,6 +297,13 @@ public abstract class MoveableBody extends Entity{
         return name;
     }
 
+    public double getActualSpeedX() {
+        return actualSpeedX;
+    }
+
+    public double getActualSpeedY() {
+        return actualSpeedY;
+    }
 
 
 }

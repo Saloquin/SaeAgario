@@ -1,11 +1,15 @@
 package com.example.sae.core.entity;
 
+import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.Camera;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import com.example.sae.client.Solo;
 import com.example.sae.client.Online;
+
+import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
+import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 /**
  * moving object used by the player during a game
@@ -27,12 +31,6 @@ public class Player extends MoveableBody{
      */
     private boolean isLocal = false; // Pour identifier si c'est un joueur local ou distant
 
-    /**
-     * player's mouse position (direction):
-     * local: send by mouse
-     * online: send by server
-     */
-    private double[] inputPosition; // Position cible (souris pour le joueur local, position reçue du serveur pour les autres)
 
     /**
      * constructor
@@ -78,6 +76,19 @@ public class Player extends MoveableBody{
         sprite.setViewOrder(-sprite.getRadius());
     }
 
+    @Override
+    protected void calculateSpeeds(double distanceFromCenter) {
+        double currentScale = SoloController.getPane().getScaleX();
+        double maxDistanceH = (SoloController.getPane().getScene().getHeight()/2) / currentScale;
+        double maxDistanceW = (SoloController.getPane().getScene().getWidth()/2) / currentScale;
+
+        double speedFactorX = Math.min(distanceFromCenter / maxDistanceW, 1.0);
+        double speedFactorY = Math.min(distanceFromCenter / maxDistanceH, 1.0);
+
+        actualSpeedX = getMaxSpeed() * speedFactorX;
+        actualSpeedY = getMaxSpeed() * speedFactorY;
+    }
+
 
     /**
      * constructor
@@ -98,7 +109,6 @@ public class Player extends MoveableBody{
         sprite.setCenterX(0);
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());
-        inputPosition = new double[]{0, 0};
     }
 
     /**
@@ -123,7 +133,6 @@ public class Player extends MoveableBody{
         sprite.setCenterX(x);
         sprite.setCenterY(y);
         sprite.setViewOrder(-sprite.getRadius());
-        inputPosition = new double[] { x, y };
     }
 
     /**
@@ -135,7 +144,7 @@ public class Player extends MoveableBody{
      */
     @Override
     public void Update() {
-        moveToward(inputPosition);
+        moveToward(SoloController.getMousePosition());
     }
 
     /**
@@ -152,19 +161,6 @@ public class Player extends MoveableBody{
         return isLocal;
     }
 
-    /**
-     * changes the direction of the player's moving object :
-     * local: sent by mouse
-     * online: sent by server
-     *
-     * @see MoveableBody
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param position new direction in the form of an array of doubles
-     */
-    public void setInputPosition(double[] position) {
-        this.inputPosition = position;
-    }
 
 
 
