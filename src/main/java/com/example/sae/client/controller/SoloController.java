@@ -6,25 +6,20 @@ import com.example.sae.client.Client;
 import com.example.sae.client.Solo;
 import com.example.sae.core.Camera;
 import com.example.sae.core.entity.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import javafx.scene.input.KeyEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -67,12 +62,6 @@ public class SoloController implements Initializable {
         initializeManagers();
         initializeChat();
         setCamera();
-
-        client.getGameIsEndedProperty().addListener((observable, oldValue, newValue) -> {
-            stopGame();
-            Stage stage = (Stage) gameContainer.getScene().getWindow();
-            stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
-        });
     }
 
     private void initializeGame() {
@@ -80,7 +69,7 @@ public class SoloController implements Initializable {
         client = new Solo(root, playerName, playerColor);
         client.init();
 
-        pane = client.createGamePane(1280, 720);
+        pane = client.createGamePane();
         pane.prefWidthProperty().bind(rootStack.widthProperty());
         pane.prefHeightProperty().bind(rootStack.heightProperty());
         gameContainer.getChildren().add(pane);
@@ -89,7 +78,6 @@ public class SoloController implements Initializable {
     }
 
     private void initializeManagers() {
-
         minimapManager = new MinimapManager(minimap, player,
                 () -> client.getGameEngine().getEntitiesMovable());
 
@@ -100,15 +88,28 @@ public class SoloController implements Initializable {
     }
 
     private void initializeChat() {
-        chatClient = new ChatClient(player.getNom(), message ->
-                javafx.application.Platform.runLater(() ->
-                        chatListView.getItems().add(message))
-        );
+        // Limite à 6 messages maximum
+        chatListView.setItems(FXCollections.observableArrayList());
+
+        chatClient = new ChatClient(player.getNom(), message -> {
+            javafx.application.Platform.runLater(() -> {
+                ObservableList<String> messages = chatListView.getItems();
+                messages.add(message);
+
+                // Garder seulement les 6 derniers messages
+                while (messages.size() > 6) {
+                    messages.remove(0);
+                }
+
+                // Faire défiler automatiquement vers le bas
+                chatListView.scrollTo(messages.size() - 1);
+            });
+        });
+
         chatClient.start();
 
-        // Ajoutez cet écouteur pour la touche Entrée
         chatInput.setOnKeyPressed(event -> {
-            if (event.getCode().toString().equals("ENTER")) {
+            if (event.getCode() == KeyCode.ENTER) {
                 sendMessage();
             }
         });
@@ -139,6 +140,5 @@ public class SoloController implements Initializable {
     private void setCamera() {
         Camera camera = client.getCamera();
         camera.focusPaneOn(pane, player);
-
     }
 }

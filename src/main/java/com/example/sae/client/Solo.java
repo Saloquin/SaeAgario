@@ -43,7 +43,7 @@ public class Solo extends Client {
         if (player == null) {
             gameIsEnded.set(true);
         }
-        else{
+        else if (!gameIsEnded.get()) {
             player.setInputPosition(getMousePosition());
             manageEntities();
 
@@ -60,5 +60,9 @@ public class Solo extends Client {
 
     public void stopSoloGame() {
         gameTimer.stop();
+        if(!gameIsEnded.get()) {
+            gameIsEnded.set(true);
+        }
+        gameEngine = null;
     }
 }

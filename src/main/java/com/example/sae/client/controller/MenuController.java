@@ -24,7 +24,7 @@ public class MenuController implements Initializable {
     @FXML private TextField nameField;
     @FXML private ColorPicker colorPicker;
 
-    private String playerName = "Player";
+    private String playerName = "";
     private Color playerColor = Color.BLUE;
 
     static Stage mainStage;
@@ -104,12 +104,4 @@ public class MenuController implements Initializable {
         }
     }
 
-    // Getters pour récupérer les valeurs dans d'autres contrôleurs
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    public Color getPlayerColor() {
-        return playerColor;
-    }
 }

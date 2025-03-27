@@ -41,9 +41,9 @@ public abstract class Client {
     public abstract void init();
     public abstract void update();
 
-    public Pane createGamePane(double width, double height) {
+    public Pane createGamePane() {
         mouseHandler = new MouseHandler(root, gameEngine, playerId);
-        return GamePaneFactory.createGamePane(root, gameEngine, playerId, camera, mouseHandler, width, height);
+        return GamePaneFactory.createGamePane(root, gameEngine, playerId, mouseHandler);
     }
 
     public double[] getMousePosition() {
