@@ -85,8 +85,8 @@ public class Player extends MoveableBody{
         double speedFactorX = Math.min(distanceFromCenter / maxDistanceW, 1.0);
         double speedFactorY = Math.min(distanceFromCenter / maxDistanceH, 1.0);
 
-        actualSpeedX = getMaxSpeed() * speedFactorX;
-        actualSpeedY = getMaxSpeed() * speedFactorY;
+        actualSpeedX = getMaxSpeed() * speedFactorX ;
+        actualSpeedY = getMaxSpeed() * speedFactorY ;
     }
 
 

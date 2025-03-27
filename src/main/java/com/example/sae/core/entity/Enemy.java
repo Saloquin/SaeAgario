@@ -1,11 +1,14 @@
 package com.example.sae.core.entity;
 
+import com.example.sae.client.AgarioApplication;
+import com.example.sae.client.Client;
 import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.enemyStrategy.ChaseClosestEntityStrategy;
 import com.example.sae.core.entity.enemyStrategy.EnemyStrategy;
 import com.example.sae.core.entity.enemyStrategy.RandomMoveStrategy;
 import com.example.sae.core.entity.enemyStrategy.SeekFoodStrategy;
+import com.example.sae.core.entity.powerUp.PowerUp;
 import javafx.scene.Group;
 
 import java.util.Random;
@@ -91,9 +94,7 @@ public class Enemy extends MoveableBody {
     @Override
     public void Update() {
         strategy = chooseOptimalStrategy();
-        if (strategy != null) {
-            strategy.execute(this);
-        }
+        strategy.execute(this);
     }
 
     /**
@@ -189,18 +190,18 @@ public class Enemy extends MoveableBody {
      * @return returns the most optimal strategy based on the situation
      */
     private EnemyStrategy chooseOptimalStrategy() {
-        GameEngine gameEngine = SoloController.getClient().getGameEngine();
+        GameEngine gameEngine = Client.getGameEngine();
         if (gameEngine == null) return new RandomMoveStrategy();
 
-        var nearbyEntities = gameEngine.getNearbyEntities(this, 400);
+        var nearbyEntities = gameEngine.getNearbyEntities(this, GameEngine.ENEMY_RANGE);
 
         boolean hasValidPrey = nearbyEntities.stream()
-                .anyMatch(entity -> entity.getMasse() <= this.getMasse() * 1.33
-                        && entity.getParent() != null);
+                .anyMatch(entity -> entity.getMasse()*1.33 < this.getMasse()
+                        && (entity instanceof Enemy || entity instanceof Player));
 
         boolean hasFoodNearby = nearbyEntities.stream()
-                .anyMatch(entity -> entity instanceof Food);
-
+                .anyMatch(entity ->entity.getMasse()*1.33 < this.getMasse()
+                        && (entity instanceof Food || entity instanceof PowerUp));
         if (hasValidPrey) {
             return new ChaseClosestEntityStrategy();
         } else if (hasFoodNearby) {

@@ -6,6 +6,8 @@ import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
+import com.example.sae.core.entity.powerUp.EffectManager;
+import com.example.sae.core.entity.powerUp.PowerUp;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
@@ -15,11 +17,13 @@ public class Solo extends Client {
     private GameTimer gameTimer;
     private Player player;
 
+    private EffectManager effectManager;
     private final BooleanProperty gameIsEnded = new SimpleBooleanProperty(false);
 
     public Solo(Group root, String playerName, Color color) {
         super(root, playerName, color);
         this.gameTimer = new GameTimer(this);
+        this.effectManager = new EffectManager();
     }
 
     @Override
@@ -31,9 +35,9 @@ public class Solo extends Client {
             DebugWindow.getInstance();
         }
 
-        while (gameEngine.getEntitiesOfType(Food.class).size() < 100) {
-            gameEngine.addEntity(EntityFactory.createFood(GameEngine.MASSE_INIT_FOOD));
-        }
+//        while (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
+//            gameEngine.addEntity(EntityFactory.createFood(GameEngine.MASSE_INIT_FOOD));
+//        }
 
         gameTimer.start();
     }
@@ -46,7 +50,7 @@ public class Solo extends Client {
         }
         else if (!gameIsEnded.get()) {
             manageEntities();
-
+            effectManager.update();
             gameEngine.update();
             if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
                 DebugWindow.getInstance().update(gameEngine, playerId);

@@ -1,11 +1,11 @@
 package com.example.sae.core.entity;
 
 import com.example.sae.client.controller.SoloController;
+import com.example.sae.core.entity.powerUp.PowerUp;
+import com.example.sae.core.entity.powerUp.PowerUpType;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -118,4 +118,19 @@ public class EntityFactory {
     private static String getRandomName() {
         return ENEMY_NAMES.get((int) (Math.random() * ENEMY_NAMES.size()));
     }
+
+    public static PowerUp createIncreaseSpeedPowerUp() {
+        return new PowerUp(root,PowerUpType.SPEED_BOOST);
+    }
+    public static PowerUp createDecreaseSpeedPowerUp() {
+        return new PowerUp(root,PowerUpType.SPEED_DECREASE );
+    }
+    public static PowerUp createSplitPowerUp() {
+        return new PowerUp(root,PowerUpType.SPLIT);
+    }
+
+    public static PowerUp createRandomPowerUp() {
+        return new PowerUp(root,PowerUpType.getRandomPowerUpType());
+    }
+
 }

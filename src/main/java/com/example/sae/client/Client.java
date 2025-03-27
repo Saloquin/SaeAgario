@@ -6,12 +6,13 @@ import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.Food;
+import com.example.sae.core.entity.powerUp.PowerUp;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 public abstract class Client {
-    protected GameEngine gameEngine;
+    protected static GameEngine gameEngine;
     public int playerId;
     protected Group root;
     protected Camera camera;
@@ -47,17 +48,20 @@ public abstract class Client {
         return playerId;
     }
 
-    public GameEngine getGameEngine() {
+    public static GameEngine getGameEngine() {
         return gameEngine;
     }
 
     protected void manageEntities() {
-        if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
-            gameEngine.addEntity(EntityFactory.createFood(GameEngine.MASSE_INIT_FOOD));
-        }
-
         if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
             gameEngine.addEntity(EntityFactory.createEnemy(GameEngine.MASSE_INIT_ENEMY));
         }
+        if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
+            gameEngine.addEntity(EntityFactory.createFood(GameEngine.MASSE_INIT_FOOD));
+        }
+        if (gameEngine.getEntitiesOfType(PowerUp.class).size() < GameEngine.NB_POWERUP_MAX) {
+            gameEngine.addEntity(EntityFactory.createRandomPowerUp());
+        }
+
     }
 }
