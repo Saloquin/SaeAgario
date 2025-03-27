@@ -35,9 +35,9 @@ public class Solo extends Client {
             DebugWindow.getInstance();
         }
 
-        while (gameEngine.getEntitiesOfType(Food.class).size() < 100) {
-            gameEngine.addEntity(EntityFactory.createFood(GameEngine.MASSE_INIT_FOOD));
-        }
+//        while (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
+//            gameEngine.addEntity(EntityFactory.createFood(GameEngine.MASSE_INIT_FOOD));
+//        }
 
         gameTimer.start();
     }

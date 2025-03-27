@@ -53,14 +53,15 @@ public abstract class Client {
     }
 
     protected void manageEntities() {
+        if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
+            gameEngine.addEntity(EntityFactory.createEnemy(GameEngine.MASSE_INIT_ENEMY));
+        }
         if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
             gameEngine.addEntity(EntityFactory.createFood(GameEngine.MASSE_INIT_FOOD));
         }
         if (gameEngine.getEntitiesOfType(PowerUp.class).size() < GameEngine.NB_POWERUP_MAX) {
             gameEngine.addEntity(EntityFactory.createRandomPowerUp());
         }
-        if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
-            gameEngine.addEntity(EntityFactory.createEnemy(GameEngine.MASSE_INIT_ENEMY));
-        }
+
     }
 }

@@ -2,7 +2,6 @@ package com.example.sae.core.entity.enemyStrategy;
 
 import com.example.sae.client.Client;
 import com.example.sae.client.controller.SoloController;
-import com.example.sae.client.debug.DebugWindowController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Entity;
@@ -41,13 +40,10 @@ public class ChaseClosestEntityStrategy implements EnemyStrategy {
         Entity closestEntity = null;
         double closestDistance = Double.MAX_VALUE;
 
-        HashSet<Entity> nearbyEntities = gameEngine.getNearbyEntities(enemy, 400);
+        HashSet<Entity> nearbyEntities = gameEngine.getNearbyEntities(enemy, GameEngine.ENEMY_RANGE);
         for (Entity entity : nearbyEntities) {
             if (entity instanceof Enemy || entity instanceof Player) {
-                // Debug pour voir les masses
-
                 if (enemy.getMasse() > entity.getMasse() * 1.33) {
-                    DebugWindowController.addLog("I can eat this entity");
                     double distance = enemy.distanceTo(entity.getPosition());
                     if (distance < closestDistance) {
                         closestDistance = distance;

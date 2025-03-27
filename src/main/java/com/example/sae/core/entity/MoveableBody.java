@@ -33,7 +33,7 @@ public abstract class MoveableBody extends Entity {
     protected double actualSpeedY = 0;
     public static final double BASE_MAX_SPEED = 15;
     public static final double ENEMY_SPEED_MULTIPLIER = 0.7;
-    private double speedMultiplier = 1.0;
+    protected double speedMultiplier = 1.0;
 
 
     /**
@@ -200,7 +200,7 @@ public abstract class MoveableBody extends Entity {
     protected abstract void calculateSpeeds(double distanceFromCenter);
 
     public double getMaxSpeed() {
-        return BASE_MAX_SPEED / (1 + Math.log10(getMasse()));
+        return BASE_MAX_SPEED / (1 + Math.log10(getMasse()))*speedMultiplier;
     }
 
 
@@ -253,9 +253,6 @@ public abstract class MoveableBody extends Entity {
         this.speedMultiplier = multiplier;
     }
 
-    public double getActualSpeed() {
-        return actualSpeed;
-    }
 
     /**
      * removes the moving object that is eaten

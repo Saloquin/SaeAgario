@@ -1,4 +1,4 @@
-package com.example.sae.client.debug;
+package com.example.sae.client.utils.debug;
 
 import com.example.sae.client.AgarioApplication;
 import com.example.sae.client.controller.SoloController;

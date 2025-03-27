@@ -76,8 +76,8 @@ public class Enemy extends MoveableBody {
 
     @Override
     protected void calculateSpeeds(double distanceFromCenter) {
-        actualSpeedX = getMaxSpeed() * ENEMY_SPEED_MULTIPLIER * speedMultiplier;
-        actualSpeedY = getMaxSpeed() * ENEMY_SPEED_MULTIPLIER * speedMultiplier;
+        actualSpeedX = getMaxSpeed() * ENEMY_SPEED_MULTIPLIER;
+        actualSpeedY = getMaxSpeed() * ENEMY_SPEED_MULTIPLIER;
     }
 
     /**
@@ -193,7 +193,7 @@ public class Enemy extends MoveableBody {
         GameEngine gameEngine = Client.getGameEngine();
         if (gameEngine == null) return new RandomMoveStrategy();
 
-        var nearbyEntities = gameEngine.getNearbyEntities(this, 500);
+        var nearbyEntities = gameEngine.getNearbyEntities(this, GameEngine.ENEMY_RANGE);
 
         boolean hasValidPrey = nearbyEntities.stream()
                 .anyMatch(entity -> entity.getMasse()*1.33 < this.getMasse()
@@ -202,9 +202,6 @@ public class Enemy extends MoveableBody {
         boolean hasFoodNearby = nearbyEntities.stream()
                 .anyMatch(entity ->entity.getMasse()*1.33 < this.getMasse()
                         && (entity instanceof Food || entity instanceof PowerUp));
-        DebugWindowController.addLog(hasValidPrey?"hasValidPrey":"");
-        DebugWindowController.addLog(hasFoodNearby?"hasFoodNearby":"");
-        DebugWindowController.addLog(!(hasValidPrey && hasFoodNearby)?"random":"");
         if (hasValidPrey) {
             return new ChaseClosestEntityStrategy();
         } else if (hasFoodNearby) {

@@ -38,7 +38,7 @@ public class SeekFoodStrategy implements EnemyStrategy {
         double closestFoodDistance = Double.MAX_VALUE;
         Entity closestFood = null;
 
-        for (Entity entity : gameEngine.getNearbyEntities(enemy,500)) {
+        for (Entity entity : gameEngine.getNearbyEntities(enemy,GameEngine.ENEMY_RANGE)) {
             if((entity instanceof Food) || (entity instanceof PowerUp)) {
                 if(entity.getMasse()*1.33<enemy.getMasse()) {
                     double distance = enemy.distanceTo(entity.getPosition());
