@@ -2,7 +2,6 @@ package com.example.sae.client.controller;
 
 import com.example.sae.client.controller.template.Dialog;
 import com.example.sae.client.utils.PreferencesManager;
-import com.example.sae.client.utils.debug.DebugWindowController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,13 +21,10 @@ import java.util.ResourceBundle;
 
 public class MenuController implements Initializable {
 
-    @FXML public Button localPlay;
-    @FXML public Button onlinePlay;
-    @FXML public Button exit;
     @FXML private TextField nameField;
     @FXML private ColorPicker colorPicker;
 
-    private String playerName = "Player";
+    private String playerName = "";
     private Color playerColor = Color.BLUE;
 
     static Stage mainStage;
@@ -81,7 +77,6 @@ public class MenuController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/solo.fxml"));
             SoloController controller = new SoloController();
-            DebugWindowController.addLog(playerName);
             controller.setPlayerName(playerName);
             controller.setPlayerColor(playerColor);
             loader.setController(controller);
@@ -109,12 +104,4 @@ public class MenuController implements Initializable {
         }
     }
 
-    // Getters pour récupérer les valeurs dans d'autres contrôleurs
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    public Color getPlayerColor() {
-        return playerColor;
-    }
 }

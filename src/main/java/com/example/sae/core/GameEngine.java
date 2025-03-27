@@ -1,6 +1,7 @@
 package com.example.sae.core;
 
 import com.example.sae.core.entity.*;
+import com.example.sae.core.entity.powerUp.PowerUp;
 import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
 import javafx.animation.ScaleTransition;
@@ -19,7 +20,12 @@ public class GameEngine {
     private final HashSet<Entity> entitiesToRemove;
     public final HashSet<MoveableBody> entitiesMovable;
     public final  static double NB_FOOD_MAX = 1000;
+    public final  static double NB_POWERUP_MAX = 10;
     public final  static double NB_ENEMY_MAX = 20;
+    public final  static double MASSE_INIT_PLAYER = 30;
+    public final  static double MASSE_INIT_FOOD = 4;
+    public static final double MASSE_INIT_ENEMY = 15;
+    public static final int ENEMY_RANGE = 500;
     private static final int QUAD_TREE_MAX_DEPTH = 6;
     private static QuadTree quadTree;
     private boolean gameStarted = false;
@@ -64,7 +70,6 @@ public class GameEngine {
         quadTree.insert(entity);
     }
 
-
     private void updateEntities() {
         for (Entity entity : entitiesMovable) {
             updateEntityInQuadTree(entity);
@@ -79,7 +84,7 @@ public class GameEngine {
 
 
     private void handleCollisions() {
-        for (MoveableBody entity1 : entitiesMovable) {
+        for (Entity entity1 : entitiesMovable) {
 
             double detectionRange = entity1.getSprite().getRadius()+  10;
 
@@ -88,7 +93,7 @@ public class GameEngine {
             for (Entity entity2 : nearbyEntities) {
                 if (checkCollision(entity1, entity2)) {
                     //DebugWindowController.addLog("Collision detected between: " + entity1 + " and " + entity2);
-                    handleCollision(entity1, entity2);
+                    handleCollision((MoveableBody) entity1, entity2);
                 }
             }
         }
@@ -111,6 +116,7 @@ public class GameEngine {
         if (!entities.contains(prey)) {
             return;
         }
+
         if (checkCollision(predator, prey) && canEat(predator, prey)) {
             entities.remove(prey);
 
@@ -128,6 +134,14 @@ public class GameEngine {
 
 
             predator.increaseSize(prey.getMasse());
+            if (prey instanceof PowerUp powerUp) {
+                try{
+                    powerUp.applyEffect(predator);
+                }catch (Exception e)
+                {
+                    System.out.println("boule verte mangé");
+                }
+            }
             transition.setOnFinished(e -> {
                 if (prey instanceof Player) {
                     int playerId = getPlayerId((Player) prey);

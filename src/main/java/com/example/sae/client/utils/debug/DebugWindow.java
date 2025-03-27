@@ -2,7 +2,6 @@ package com.example.sae.client.utils.debug;
 
 import com.example.sae.client.AgarioApplication;
 import com.example.sae.client.controller.SoloController;
-import com.example.sae.client.factory.GamePaneFactory;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Food;

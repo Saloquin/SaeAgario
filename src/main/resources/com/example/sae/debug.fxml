@@ -17,6 +17,7 @@
 
     <Label text="Game Constants" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
     <VBox fx:id="constantsBox" spacing="2" style="-fx-text-fill: white;"/>
+
     <Label fx:id="mousePositionLabel" style="-fx-text-fill: white;"/>
     <Label text="Entity Information" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
     <Label fx:id="foodCountLabel" style="-fx-text-fill: white;"/>
