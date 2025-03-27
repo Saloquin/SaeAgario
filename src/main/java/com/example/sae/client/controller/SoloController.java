@@ -88,13 +88,6 @@ public class SoloController implements Initializable {
     private void setCamera(){
         Camera camera = client.getCamera();
         camera.focusPaneOn(pane, player);
-        // Ajouter des listeners pour afficher les positions du joueur
-        player.getCenterXProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("Player X: " + newValue);
-        });
 
-        player.getCenterYProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("Player Y: " + newValue);
-        });
     }
 }
