@@ -87,7 +87,7 @@ public class AgarioServer {
     private void synchronizeEntities() {
         // Synchronisation des entités entre le serveur et les clients
         for (Entity entity : gameEngine.getEntitiesToAdd()) {
-            broadcastEntityCreation(entity);
+            // broadcastEntityCreation(entity);
         }
 
         // Nettoyage manuel des entités
@@ -95,6 +95,11 @@ public class AgarioServer {
     }
 
     private void broadcastEntityCreation(Entity entity) {
+        // pour éviter que les joueurs soient créés en double
+        if (entity instanceof MoveableBody) {
+            return;
+        }
+
         // Sérialisation de l'entité
         String entityData = serializeEntity(entity);
         // Envoyer l'entité à tous les clients
@@ -116,7 +121,7 @@ public class AgarioServer {
     }
 
     private void broadcastEntityMasse(Player player) {
-        // System.out.println("update mass broadcast: " +  player.getEntityId());
+        System.out.println("update mass broadcast: " +  player.getEntityId());
         clientHandlers.values().forEach(handler -> handler.sendMessage("UPDATEMASSE|" + player.getEntityId() + "|" + player.getMasse()));
     }
 
@@ -216,7 +221,7 @@ public class AgarioServer {
                 case "DELETE" -> {
                     // System.out.println("Delete prey serveur : " + parts[1]);
                     Entity entity = gameEngine.getEntityById(parts[1]);
-                    if(entity == null){
+                    if (entity == null){
                         // System.out.println("Entity not found");
                         return;
                     }

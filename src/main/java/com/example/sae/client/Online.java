@@ -68,10 +68,11 @@ public class Online extends Client {
         gameEngine.update();
 
         // if eat entity in client side, send to server
-        for(Entity entity : gameEngine.getEntitiesToRemove()) {
+        for (Entity entity : gameEngine.getEntitiesToRemove()) {
             // System.out.println("Delete prey local : " + entity.getEntityId());
             removePrey(entity);
         }
+
         gameEngine.cleanupEntities();
 
         if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
@@ -81,7 +82,7 @@ public class Online extends Client {
 
 
     private void removePrey(Entity prey) {
-        if(prey == null) return;
+        if (prey == null) return;
         handler.sendMessage("DELETE|" + prey.getEntityId());
         // System.out.println("update mass local: " +  player.getEntityId());
         handler.sendMessage("UPDATEMASSE|" + player.getEntityId() + "|" + player.getMasse());
@@ -135,7 +136,10 @@ public class Online extends Client {
                     Player player = (Player)gameEngine.getEntityById(id);
                     // System.out.println("player: " + player);
                     if (player != null) {
+                        System.out.println("nouvelle masse de " + player.getNom() + " : " + masse);
                         player.setMasse(masse);
+                    } else {
+                        System.out.println("le gros nul");
                     }
                 }
             }
@@ -157,8 +161,11 @@ public class Online extends Client {
                         String playerName = infos[8];
                         if (!id.equals(clientId)) {
                             Platform.runLater(() -> {
+                                // System.out.println(playerName);
                                 Player player = EntityFactory.createPlayer(id, x, y, masse, playerName, Color.rgb(r, g, b));
                                 gameEngine.addPlayer(player);
+                                player.setInputPosition(new double[]{ x, y });
+                                player.moveToward(new double[]{ x, y });
                             });
                         }
                     }
@@ -215,9 +222,10 @@ public class Online extends Client {
             // System.out.println("Delete prey local broadcast: " + entitiesId);
             Entity entity = gameEngine.getEntityById(entitiesId);
 
-            if(entity != null) {
+            if (entity != null) {
                 Platform.runLater(() -> {
                     gameEngine.removeEntity(entity);
+                    entity.onDeletion();
                 });
             }
         }

@@ -79,12 +79,10 @@ public class GameEngine {
         entitiesToAdd.clear();
         entitiesToRemove.clear();
     }
-
-
+    
     private void handleCollisions() {
         for (Entity entity1 : entitiesMovable) {
-
-            double detectionRange = entity1.getSprite().getRadius()+  10;
+            double detectionRange = entity1.getSprite().getRadius() + 10;
 
             HashSet<Entity> nearbyEntities = getNearbyEntities(entity1, detectionRange);
 
