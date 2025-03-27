@@ -1,6 +1,8 @@
 package com.example.sae.client.utils.debug;
 
 import com.example.sae.client.AgarioApplication;
+import com.example.sae.client.controller.SoloController;
+import com.example.sae.client.factory.GamePaneFactory;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Food;
@@ -11,7 +13,7 @@ import javafx.stage.Stage;
 
 
 public class DebugWindow {
-    public static final boolean DEBUG_MODE = false;
+    public static final boolean DEBUG_MODE = true;
     private static DebugWindow instance;
     private DebugWindowController controller;
 
@@ -53,8 +55,8 @@ public class DebugWindow {
         }
 
         // Utilise les méthodes statiques de MouseHandler pour mettre à jour la position
-        controller.mouseXProperty().set(AgarioApplication.getMousePosition()[0]);
-        controller.mouseYProperty().set(AgarioApplication.getMousePosition()[1]);
+        controller.mouseXProperty().set(SoloController.getMousePosition()[0]);
+        controller.mouseYProperty().set(SoloController.getMousePosition()[1]);
 
         controller.foodCountProperty().set(gameEngine.getEntitiesOfType(Food.class).size());
         controller.enemyCountProperty().set(gameEngine.getEntitiesOfType(Enemy.class).size());

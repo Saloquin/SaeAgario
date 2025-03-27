@@ -12,6 +12,7 @@ public abstract class Client {
     protected GameEngine gameEngine;
     public int playerId;
     protected Group root;
+    private Camera camera;
     protected boolean gameStarted = false;
     protected String playerName;
     protected Color color;
@@ -20,6 +21,7 @@ public abstract class Client {
         this.root = root;
         this.playerName = playerName;
         this.color = color;
+        camera = new Camera();
     }
 
 
@@ -32,9 +34,12 @@ public abstract class Client {
 
 
     public Pane createGamePane(double width, double height) {
-        return GamePaneFactory.createGamePane(root, gameEngine, playerId, camera, mouseHandler, width, height);
+        return GamePaneFactory.createGamePane(root, gameEngine, playerId, width, height);
     }
 
+    public Camera getCamera() {
+        return camera;
+    }
 
     public int getPlayerId() {
         return playerId;

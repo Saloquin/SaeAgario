@@ -1,6 +1,8 @@
 package com.example.sae.core.entity;
 
 import com.example.sae.client.AgarioApplication;
+import com.example.sae.client.controller.SoloController;
+import com.example.sae.client.factory.GamePaneFactory;
 import com.example.sae.core.Camera;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
@@ -127,7 +129,7 @@ public class Player extends MoveableBody{
      */
     @Override
     public void Update() {
-        moveToward(AgarioApplication.getMousePosition());
+        moveToward(SoloController.getMousePosition());
     }
 
     /**

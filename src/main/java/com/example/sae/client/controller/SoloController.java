@@ -15,6 +15,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -60,7 +61,7 @@ public class SoloController implements Initializable {
     private static Solo client;
     private ChatClient chatClient;
 
-    private Pane pane;
+    private static Pane pane;
     private Player player;
     private Timeline updateTimeline;
     private Supplier<List<MoveableBody>> entitiesSupplier;
@@ -281,6 +282,15 @@ public class SoloController implements Initializable {
     private void setCamera() {
         Camera camera = client.getCamera();
         camera.focusPaneOn(pane, player);
+    }
 
+    static public double[] getMousePosition(){
+        java.awt.Point mouse = java.awt.MouseInfo.getPointerInfo().getLocation();
+        Point2D mousePos = root.screenToLocal(mouse.x, mouse.y);
+        return new double[]{mousePos.getX(), mousePos.getY()};
+    }
+
+    public static Pane getPane() {
+        return pane;
     }
 }
