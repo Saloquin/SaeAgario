@@ -44,7 +44,7 @@ public class SoloController implements Initializable {
 
     @FXML private Canvas minimap;
     private GraphicsContext minimapGC;
-    private double minimapScale = 0.1; // Échelle de la minimap
+    private double minimapScale = 0.1; // Scale od the minimap
 
     // Éléments du chat
     @FXML
@@ -96,7 +96,7 @@ public class SoloController implements Initializable {
         gameContainer.getChildren().add(pane);
         player = client.getGameEngine().getPlayer(client.getPlayerId());
 
-        // Initialisation du chat
+        // Initialize chat
         initializeChat();
 
         setCamera();
@@ -119,7 +119,7 @@ public class SoloController implements Initializable {
         minimapGC.setFill(Color.LIGHTGRAY);
         minimapGC.fillRect(0, 0, minimap.getWidth(), minimap.getHeight());
 
-        // Timer pour rafraîchir la minimap
+        // Timer to refresh the minimap
         Timeline minimapUpdater = new Timeline(
                 new KeyFrame(Duration.millis(100), e -> {
                     if(client.getGameEngine() != null) {
@@ -131,11 +131,11 @@ public class SoloController implements Initializable {
     }
 
     private void updateMinimap() {
-        // Effacer la minimap
+        // Delete the minimap
         minimapGC.setFill(Color.LIGHTGRAY);
         minimapGC.fillRect(0, 0, minimap.getWidth(), minimap.getHeight());
 
-        // Dessiner les éléments
+        // Draw Elements
         drawWorldOnMinimap();
         drawPlayerOnMinimap();
         drawMinimapCenter();
@@ -171,7 +171,7 @@ public class SoloController implements Initializable {
         minimapGC.setStroke(Color.WHITE);
         minimapGC.setLineWidth(0.5);
 
-        // Croix au centre
+        // Crosse in center
         double centerX = minimap.getWidth()/2;
         double centerY = minimap.getHeight()/2;
         double crossSize = 5;
@@ -196,15 +196,15 @@ public class SoloController implements Initializable {
 
         double scale = calculateOptimalScale();
 
-        // Sauvegarde l'état actuel
+        // Save Actual State
         minimapGC.save();
 
-        // Centre la vue sur (0,0) qui est le milieu de la map
+        // Center the view on (0,0) middle of the map
         double translateX = minimap.getWidth()/2;
         double translateY = minimap.getHeight()/2;
         minimapGC.translate(translateX, translateY);
 
-        // Dessin des entités
+        // Draw entities
         for (MoveableBody entity : client.getGameEngine().getEntitiesMovable()) {
             double x = (entity.getX() * scale);
             double y = (entity.getY() * scale);
@@ -224,14 +224,14 @@ public class SoloController implements Initializable {
             minimapGC.fillOval(x - scaleRadius/2, y - scaleRadius/2, scaleRadius, scaleRadius);
         }
 
-        // Restaure l'état
+        // Restore state
         minimapGC.restore();
     }
 
     private void drawPlayerOnMinimap() {
         double scale = calculateOptimalScale();
 
-        // Position du joueur centrée
+        // Position of player center
         double playerX = minimap.getWidth()/2 + player.getX() * scale;
         double playerY = minimap.getHeight()/2 + player.getY() * scale;
 
@@ -240,32 +240,33 @@ public class SoloController implements Initializable {
         double scaleRadius = Math.max(3,radius * scale * 2);
 
 
-        // Dessiner le joueur
+        // Draw the player
         minimapGC.setFill(Color.YELLOW);
         minimapGC.fillOval(playerX - scaleRadius/2, playerY - scaleRadius/2, scaleRadius, scaleRadius);
     }
 
     private void drawPlayerCamera(Pane pane) {
         double scale = calculateOptimalScale();
-        double zoom = pane.getScaleX(); // ou getScaleY()
+        double zoom = pane.getScaleX();
 
-        // Taille de la vue visible en unités du monde
+        // Camera view consideration of the zoom
         double cameraWidth = pane.getWidth() / zoom;
         double cameraHeight = pane.getHeight() / zoom;
 
-        // Position du joueur sur la minimap
+        // Position of player on the minimap
         double centerX = minimap.getWidth() / 2;
         double centerY = minimap.getHeight() / 2;
 
         double playerMinimapX = centerX + (player.getX() * scale);
         double playerMinimapY = centerY + (player.getY() * scale);
 
-        // Position du coin haut-gauche du rectangle caméra
+        // Position top-left corner of rectangle caméra
         double rectX = playerMinimapX - (cameraWidth * scale / 2);
         double rectY = playerMinimapY - (cameraHeight * scale / 2);
         double rectWidth = cameraWidth * scale;
         double rectHeight = cameraHeight * scale;
 
+        // Draw rectangle
         minimapGC.setStroke(Color.RED);
         minimapGC.setLineWidth(1);
         minimapGC.strokeRect(rectX, rectY, rectWidth, rectHeight);
