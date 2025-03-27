@@ -24,7 +24,7 @@ public class Solo extends Client {
     @Override
     public void init() {
         gameStarted = true;
-        player = EntityFactory.createPlayer(10, playerName, color);
+        player = EntityFactory.createPlayer(10, color);
         playerId = gameEngine.addPlayer(player);
         if(DebugWindow.DEBUG_MODE) {
             DebugWindow.getInstance();

@@ -1,5 +1,6 @@
 package com.example.sae.core.entity;
 
+import com.example.sae.client.AgarioApplication;
 import com.example.sae.core.Camera;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
@@ -12,12 +13,12 @@ import com.example.sae.client.Online;
  *
  * @see MoveableBody
  * @see Camera
- * @see Online
- * @see Solo
  *
  * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
  */
 public class Player extends MoveableBody{
+
+
 
     /**
      * Boolean that determines whether the player's mobile object is in the local or online game
@@ -26,13 +27,6 @@ public class Player extends MoveableBody{
      * @see Solo
      */
     private boolean isLocal = false; // Pour identifier si c'est un joueur local ou distant
-
-    /**
-     * player's mouse position (direction):
-     * local: send by mouse
-     * online: send by server
-     */
-    private double[] inputPosition; // Position cible (souris pour le joueur local, position reçue du serveur pour les autres)
 
     /**
      * constructor
@@ -98,7 +92,6 @@ public class Player extends MoveableBody{
         sprite.setCenterX(0);
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());
-        inputPosition = new double[]{0, 0};
     }
 
     /**
@@ -123,7 +116,6 @@ public class Player extends MoveableBody{
         sprite.setCenterX(x);
         sprite.setCenterY(y);
         sprite.setViewOrder(-sprite.getRadius());
-        inputPosition = new double[] { x, y };
     }
 
     /**
@@ -135,7 +127,7 @@ public class Player extends MoveableBody{
      */
     @Override
     public void Update() {
-        moveToward(inputPosition);
+        moveToward(AgarioApplication.getMousePosition());
     }
 
     /**
@@ -152,21 +144,6 @@ public class Player extends MoveableBody{
         return isLocal;
     }
 
-    /**
-     * changes the direction of the player's moving object :
-     * local: sent by mouse
-     * online: sent by server
-     *
-     * @see MoveableBody
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param position new direction in the form of an array of doubles
-     */
-    public void setInputPosition(double[] position) {
-        this.inputPosition = position;
-    }
-
-
 
     /**
      * changes the camera of the player's moving object
@@ -179,6 +156,11 @@ public class Player extends MoveableBody{
      */
     public void setCamera(Camera cam) {
         cam.focusOn(this);
+    }
+
+    @Override
+    public void moveToward(double[] mousePosition) {
+        super.moveToward(mousePosition);
     }
 
     public DoubleProperty getCenterXProperty() {

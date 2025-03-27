@@ -6,6 +6,7 @@ import com.example.sae.core.Camera;
 import com.example.sae.server.AgarioServer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -33,5 +34,15 @@ public class AgarioApplication extends Application {
 
     public static void main(String[] args) {
         launch();
+    }
+
+    static public double[] getMousePosition(){
+        java.awt.Point mouse = java.awt.MouseInfo.getPointerInfo().getLocation();
+        Point2D mousePos = root.screenToLocal(mouse.x, mouse.y);
+        return new double[]{mousePos.getX(), mousePos.getY()};
+    }
+
+    public static Scene getScene() {
+        return scene;
     }
 }
