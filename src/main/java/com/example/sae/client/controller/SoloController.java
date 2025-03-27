@@ -176,6 +176,9 @@ public class SoloController implements Initializable {
 
         double scaleX = minimap.getWidth() / worldWidth;
         double scaleY = minimap.getHeight() / worldHeight;
+        System.out.println("scaleX: " + scaleX);
+        System.out.println("scaleY: " + scaleY);
+
 
         return Math.min(scaleX, scaleY) * 0.9; // 10% de marge
     }
@@ -193,9 +196,12 @@ public class SoloController implements Initializable {
 
         // Dessin des entités
         for (MoveableBody entity : client.getGameEngine().getEntitiesMovable()) {
-            double x = entity.getX() * scale;
-            double y = entity.getY() * scale;
-            double size = Math.max(3, entity.getMasse() * scale);
+            double x = (entity.getX() * scale);
+            double y = (entity.getY() * scale);
+
+
+            double radius = entity.getSprite().getRadius();
+            double scaleRadius = Math.max(3, radius * scale * 2);
 
             if (entity instanceof Player) {
                 minimapGC.setFill(Color.BLUE);
@@ -205,7 +211,7 @@ public class SoloController implements Initializable {
                 minimapGC.setFill(Color.GREEN);
             }
 
-            minimapGC.fillOval(x - size/2, y - size/2, size, size);
+            minimapGC.fillOval(x - scaleRadius/2, y - scaleRadius/2, scaleRadius, scaleRadius);
         }
 
         // Restaure l'état
@@ -218,11 +224,15 @@ public class SoloController implements Initializable {
         // Position du joueur centrée
         double playerX = minimap.getWidth()/2 + player.getX() * scale;
         double playerY = minimap.getHeight()/2 + player.getY() * scale;
-        double playerSize = Math.max(5, player.getMasse() * scale);
+
+
+        double radius = player.getSprite().getRadius();
+        double scaleRadius = Math.max(3,radius * scale * 2);
+        System.out.println("scaleRadius: " + scaleRadius);
 
         // Dessiner le joueur
         minimapGC.setFill(Color.YELLOW);
-        minimapGC.fillOval(playerX - playerSize/2, playerY - playerSize/2, playerSize, playerSize);
+        minimapGC.fillOval(playerX - scaleRadius/2, playerY - scaleRadius/2, scaleRadius, scaleRadius);
     }
 
     private void initializeChat() {
