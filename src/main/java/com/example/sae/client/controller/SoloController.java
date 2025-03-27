@@ -26,7 +26,6 @@ public class SoloController implements Initializable {
     @FXML private Pane gameContainer;
     @FXML private ListView<String> leaderboard;
     @FXML private Canvas minimap;
-    private GraphicsContext minimapGC;
     @FXML private Label scoreLabel;
     @FXML private Label positionLabel;
 
@@ -34,7 +33,6 @@ public class SoloController implements Initializable {
     private static Group root;
 
     private Player player;
-    private ChatClient chatClient;
 
     private MinimapManager minimapManager;
     private PlayerInfoManager playerInfoManager;
@@ -79,7 +77,6 @@ public class SoloController implements Initializable {
         gameContainer.getChildren().add(pane);
 
         player = Client.getGameEngine().getPlayer(client.getPlayerId());
-        minimapGC = minimap.getGraphicsContext2D();
 
         client.getGameIsEndedProperty().addListener((observable, oldValue, newValue) -> {
             stopGame();
@@ -98,6 +95,7 @@ public class SoloController implements Initializable {
 
         leaderboardManager = new LeaderboardManager(leaderboard,
                 () -> Client.getGameEngine().getSortedMovableEntities());
+
     }
 
     public void stopGame() {
