@@ -1,6 +1,9 @@
 package com.example.sae.core.entity;
 
 
+import com.example.sae.client.AgarioApplication;
+import com.example.sae.client.controller.SoloController;
+import com.example.sae.client.utils.debug.DebugWindowController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleStringProperty;
@@ -26,7 +29,7 @@ public abstract class MoveableBody extends Entity{
      * name of moving object
      */
 
-    private final StringProperty name = new SimpleStringProperty(this, "name", "°-°");
+    private final StringProperty name = new SimpleStringProperty(this,"name","°-°");
     private Text nameText;
     private double actualSpeedX = 0;
     private double actualSpeedY = 0;
@@ -118,7 +121,6 @@ public abstract class MoveableBody extends Entity{
         nameText.textProperty().bind(name);
         nameText.setFill(Color.BLACK);
         nameText.setStyle("-fx-font-size: 14;");
-        // Place le texte au-dessus du sprite dans l'ordre de rendu
         nameText.setViewOrder(-1000);
 
         nameText.styleProperty().bind(Bindings.createStringBinding(
@@ -126,17 +128,25 @@ public abstract class MoveableBody extends Entity{
                 sprite.radiusProperty()
         ));
 
-        nameText.layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
-            nameText.setX(sprite.getCenterX() - newBounds.getWidth() / 2);
-        });
-        // Binding simple pour Y
-        nameText.yProperty().bind(sprite.centerYProperty());
+        DoubleBinding xBinding = Bindings.createDoubleBinding(
+                () -> sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2,
+                sprite.centerXProperty(),
+                nameText.layoutBoundsProperty()
+        );
 
-        // Binding pour X avec le centre du sprite
-        sprite.centerXProperty().addListener((obs, oldX, newX) -> {
-            nameText.setX(newX.doubleValue() - nameText.getLayoutBounds().getWidth() / 2);
-        });
+        DoubleBinding yBinding = Bindings.createDoubleBinding(
+                () -> sprite.getCenterY() + sprite.getRadius() / 4,
+                sprite.centerYProperty(),
+                sprite.radiusProperty()
+        );
+
+        nameText.layoutXProperty().bind(xBinding);
+        nameText.layoutYProperty().bind(yBinding);
+
         group.getChildren().add(nameText);
+
+
+
     }
 
     /**
@@ -150,17 +160,10 @@ public abstract class MoveableBody extends Entity{
      */
     public void increaseSize(double foodValue) {
         setMasse(getMasse() + foodValue);
-        // Suppression de setViewOrder car déjà lié au rayon
-        nameText.setX(sprite.getCenterX() - nameText.getLayoutBounds().getWidth() / 2);
-        nameText.setY(sprite.getCenterY());
     }
 
     public void moveToward(double[] velocity) {
         double maxSpeed = getMaxSpeed();
-
-        if (this instanceof Enemy) {
-            maxSpeed *= ENEMY_SPEED_MULTIPLIER;
-        }
 
         // Vecteur de direction (souris - position du joueur)
         double[] direction = new double[]{
@@ -185,16 +188,23 @@ public abstract class MoveableBody extends Entity{
         }
 
 
-        double maxDistanceH = 200;
-        double maxDistanceW = 300;
+        double maxDistanceH = SoloController.getPane().getScene().getHeight()/2;
+        double maxDistanceW = SoloController.getPane().getScene().getWidth()/2;
         double speedFactorX = Math.min(distanceFromCenter / (maxDistanceW), 1.0);
         double speedFactorY = Math.min(distanceFromCenter / (maxDistanceH), 1.0);
 
 
 
         // Application de la vitesse
-        actualSpeedX = maxSpeed * speedFactorX;
-        actualSpeedY = maxSpeed * speedFactorY;
+        if (this instanceof Player) {
+            actualSpeedX = maxSpeed * speedFactorX;
+            actualSpeedY = maxSpeed * speedFactorY;
+        }
+        else {
+            actualSpeedX = maxSpeed * ENEMY_SPEED_MULTIPLIER;
+            actualSpeedY = maxSpeed * ENEMY_SPEED_MULTIPLIER;
+        }
+
         double dx = normalizedDirection[0] * actualSpeedX;
         double dy = normalizedDirection[1] * actualSpeedY;
 

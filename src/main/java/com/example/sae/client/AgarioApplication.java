@@ -36,11 +36,7 @@ public class AgarioApplication extends Application {
         launch();
     }
 
-    static public double[] getMousePosition(){
-        java.awt.Point mouse = java.awt.MouseInfo.getPointerInfo().getLocation();
-        Point2D mousePos = root.screenToLocal(mouse.x, mouse.y);
-        return new double[]{mousePos.getX(), mousePos.getY()};
-    }
+
 
     public static Scene getScene() {
         return scene;
