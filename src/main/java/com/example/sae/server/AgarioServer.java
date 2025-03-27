@@ -11,10 +11,9 @@ import java.util.concurrent.*;
 
 public class AgarioServer {
     // actuellement : le serveur est mis à jour quand qlqn rej, leave, ou qu'il mange qlqch
-    //                les clients sont sync quand qlqn rej ou se déplace
-    //                si qlqn leave ou mange qlqch, le serveur n'est PAS sync
+    //                les clients sont sync quand qlqn rej, se déplace et leave
+    //                si qlqn mange qlqch, le serveur n'est PAS sync
     // à faire : sync parfaitement le serv et les joueurs lorsqu'un joueur mange qlqch
-    //           mettre les clients à jour quand qlqn leave
     private static final int PORT = 12345;
     private static final int TARGET_FPS = 30;
     private static final long FRAME_TIME = 1000000000 / TARGET_FPS; // 33ms en nanos
@@ -77,18 +76,8 @@ public class AgarioServer {
 
             // à retirer
             if (now - groscaca >= 5000000000L) {
-                // System.out.println(serializeGameState());
-                clientHandlers.values().stream().findFirst().ifPresent(clientHandler -> {
-                    // System.out.println(serializeEntity(clientHandler.player));
-                });
                 groscaca = now;
-                StringBuilder state = new StringBuilder("DELETE|");
 
-                for (Entity entity : gameEngine.getEntitiesOfType(Food.class)) {
-                    state.append(entity.getEntityId()).append("|");
-                }
-
-                // clientHandlers.values().forEach(handler -> handler.sendMessage(state.toString()));
                 System.out.println("---------------");
                 clientHandlers.values().forEach(handler -> System.out.println(serializeEntity(handler.player)));
             }
@@ -207,10 +196,11 @@ public class AgarioServer {
 
         private void disconnect() {
             try {
-                System.out.println("LOG TEMPORAIRE : client déconnecté");
                 gameEngine.removeEntity(player);
                 clientHandlers.remove(clientId);
                 socket.close();
+
+                clientHandlers.values().forEach(handler -> handler.sendMessage("DELETE|" + clientId));
             } catch (IOException e) {
                 e.printStackTrace();
             }

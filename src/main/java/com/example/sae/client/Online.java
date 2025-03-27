@@ -192,6 +192,8 @@ public class Online extends Client {
                 Platform.runLater(() -> {
                     gameEngine.removeEntity(entity);
                     entity.onDeletion();
+
+                    // delete le joueur du leaderboard et de la minimap
                 });
             });
         }
