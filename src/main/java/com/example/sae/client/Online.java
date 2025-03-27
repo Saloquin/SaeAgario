@@ -22,7 +22,7 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 public class Online extends Client {
-    private static final String HOST = "localhost";
+    private String host; // Remplace HOST
     private static final int PORT = 12345;
     private String clientId;
     private final GameTimer gameTimer;
@@ -32,12 +32,14 @@ public class Online extends Client {
 
     private final BooleanProperty gameIsEnded = new SimpleBooleanProperty(false);
 
-    public Online(Group root, String playerName, Color color) throws IOException {
+    public Online(Group root, String playerName, Color color,String host) throws IOException {
         super(root, playerName, color);
         EntityFactory.setRoot(root);
+        this.host = host;
+        System.out.println("Connecting to " + host + " on port " + PORT);
         this.gameTimer = new GameTimer(this);
         this.gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, true);
-        this.socket = new Socket(HOST, PORT);
+        this.socket = new Socket(host, PORT);
         handler = new ThreadDeFond(this, socket);
         new Thread(handler).start();
     }

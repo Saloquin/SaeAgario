@@ -68,6 +68,11 @@ public class OnlineController  implements Initializable {
 
     private String playerName;
     private Color playerColor;
+    private String serverIP;
+
+    public void setServerIP(String serverIP) {
+        this.serverIP = serverIP;
+    }
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
@@ -81,7 +86,7 @@ public class OnlineController  implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         root = new Group();
         try {
-            client = new Online(root, playerName, playerColor);
+            client = new Online(root, playerName, playerColor,serverIP);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
