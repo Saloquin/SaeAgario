@@ -2,6 +2,7 @@ package com.example.sae.server;
 
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.*;
+import com.example.sae.server.debug.ServerDebugWindow;
 import javafx.scene.paint.Color;
 
 import java.io.*;
@@ -18,7 +19,7 @@ public class AgarioServer {
     private static final int PORT = 12345;
     private static final int TARGET_FPS = 30;
     private static final long FRAME_TIME = 1000000000 / TARGET_FPS; // 33ms en nanos
-
+    private static final boolean DEBUG_MAP = true;
     private final GameEngine gameEngine;
     private final Map<String, ClientHandler> clientHandlers;
     private final ServerSocket serverSocket;
@@ -29,16 +30,18 @@ public class AgarioServer {
         this.clientHandlers = new ConcurrentHashMap<>();
         this.serverSocket = new ServerSocket(PORT);
         this.running = true;
-
+        if (DEBUG_MAP) {
+            ServerDebugWindow.startDebugWindow(gameEngine);  // Add this line
+        }
         initializeWorld();
     }
 
     private void initializeWorld() {
         // Initialiser la nourriture
-        for (int i = 0; i < 100; i++) {
+        /*for (int i = 0; i < 100; i++) {
             Food food = new Food(null, 2); // null car pas besoin de Group côté serveur
             gameEngine.addEntity(food);
-        }
+        }*/
     }
 
     public void start() {
@@ -71,7 +74,7 @@ public class AgarioServer {
             long now = System.nanoTime();
             if (now - lastUpdate >= FRAME_TIME) {
                 gameEngine.update();
-                // broadcastGameState();
+
                 lastUpdate = now;
             }
 
