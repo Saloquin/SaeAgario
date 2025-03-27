@@ -1,5 +1,8 @@
 package com.example.sae.core.quadtree;
 
+/**
+ *
+ */
 public class Boundary {
     // Position coordinates
     protected double x;
@@ -32,9 +35,20 @@ public class Boundary {
     }
 
     // Getters and setters
-    public double getX() { return x; }
-    public double getY() { return y; }
-    public double getWidth() { return w; }
-    public double getHeight() { return h; }
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getWidth() {
+        return w;
+    }
+
+    public double getHeight() {
+        return h;
+    }
 
 }

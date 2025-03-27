@@ -22,10 +22,10 @@ public class EntityFactory {
             "Boom", "YouAreDead", "ez", "DimitriDu14", "LePafDeCamou",
             "RouxQuiRoule", "ViveLaPizzAnanas", "LeBurgerDuRU", "KiriGouter",
             "LeFouDuMétro", "Hank", "CoucouLesCopains", "Split=Friend",
-            "Split=Enemy", "Me+YourMom=You"
+            "Split=Enemy", "Me+YourMom=You", "BRR BRR PATAPIM"
     );
 
-    ///
+    /// the plan of the factory
     private static Group root = GameController.getRoot();
 
     /**

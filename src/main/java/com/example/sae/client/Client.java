@@ -7,11 +7,17 @@ import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.powerUp.PowerUp;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+/**
+ *
+ */
 public abstract class Client {
+    protected final BooleanProperty gameIsEnded = new SimpleBooleanProperty(false);
     protected static GameEngine gameEngine;
     public int playerId;
     protected Group root;
@@ -25,31 +31,35 @@ public abstract class Client {
         this.playerName = playerName;
         this.color = color;
         this.camera = new Camera();
-        this.gameEngine = new GameEngine(GameEngine.MAP_LIMIT_WIDTH, GameEngine.MAP_LIMIT_HEIGHT, false);
+        gameEngine = new GameEngine(GameEngine.MAP_LIMIT_WIDTH, GameEngine.MAP_LIMIT_HEIGHT, false);
+    }
+
+    public static GameEngine getGameEngine() {
+        return gameEngine;
     }
 
     public Camera getCamera() {
         return camera;
     }
 
-    public boolean getGameStarted(){
+    public boolean getGameStarted() {
         return gameStarted;
     }
 
     public abstract void init();
+
     public abstract void update();
 
     public Pane createGamePane() {
         return GamePaneFactory.createGamePane(root, gameEngine, playerId);
     }
 
-
     public int getPlayerId() {
         return playerId;
     }
 
-    public static GameEngine getGameEngine() {
-        return gameEngine;
+    public BooleanProperty getGameIsEndedProperty() {
+        return gameIsEnded;
     }
 
     protected void manageEntities() {
@@ -62,6 +72,7 @@ public abstract class Client {
         if (gameEngine.getEntitiesOfType(PowerUp.class).size() < GameEngine.NB_POWERUP_MAX) {
             gameEngine.addEntity(EntityFactory.createRandomPowerUp());
         }
-
     }
+
+    public abstract void stopGame();
 }

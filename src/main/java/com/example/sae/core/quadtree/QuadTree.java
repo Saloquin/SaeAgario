@@ -1,14 +1,18 @@
 package com.example.sae.core.quadtree;
 
 import com.example.sae.core.entity.Entity;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ *
+ */
 public class QuadTree {
-    private Boundary boundary;
+    private final Boundary boundary;
     private int capacity;
-    private HashSet<Entity> entities;
+    private final HashSet<Entity> entities;
     private boolean divided;
 
     private QuadTree northwest;
@@ -16,10 +20,10 @@ public class QuadTree {
     private QuadTree southwest;
     private QuadTree southeast;
 
-    private int maxDepth;
+    private final int maxDepth;
     private int currentDepth;
 
-    public QuadTree(Boundary boundary,  int maxDepth) {
+    public QuadTree(Boundary boundary, int maxDepth) {
         this.boundary = boundary;
         this.entities = new HashSet<>();
         this.divided = false;
@@ -33,23 +37,22 @@ public class QuadTree {
     }
 
 
-
     public void subdivide() {
         double x = boundary.getX();
         double y = boundary.getY();
         double w = boundary.getWidth();
         double h = boundary.getHeight();
 
-        Boundary nw = new Boundary(x - w / 2, y - h / 2, w /2, h /2);
+        Boundary nw = new Boundary(x - w / 2, y - h / 2, w / 2, h / 2);
         northwest = new QuadTree(nw, maxDepth, currentDepth + 1);
 
-        Boundary ne = new Boundary(x + w / 2, y - h / 2, w/2, h/2);
+        Boundary ne = new Boundary(x + w / 2, y - h / 2, w / 2, h / 2);
         northeast = new QuadTree(ne, maxDepth, currentDepth + 1);
 
-        Boundary sw = new Boundary(x - w / 2, y + h / 2, w/2, h/2);
+        Boundary sw = new Boundary(x - w / 2, y + h / 2, w / 2, h / 2);
         southwest = new QuadTree(sw, maxDepth, currentDepth + 1);
 
-        Boundary se = new Boundary(x + w / 2, y + h / 2, w/2, h/2);
+        Boundary se = new Boundary(x + w / 2, y + h / 2, w / 2, h / 2);
         southeast = new QuadTree(se, maxDepth, currentDepth + 1);
 
         divided = true;
@@ -108,9 +111,9 @@ public class QuadTree {
 
 
     private boolean insertIntoChildren(Entity entity) {
-        if(northwest.insert(entity)) return true;
-        else if(northeast.insert(entity)) return true;
-        else if(southwest.insert(entity)) return true;
+        if (northwest.insert(entity)) return true;
+        else if (northeast.insert(entity)) return true;
+        else if (southwest.insert(entity)) return true;
         else return southeast.insert(entity);
     }
 

@@ -1,11 +1,14 @@
 package com.example.sae.core;
 
-import com.example.sae.core.entity.*;
+import com.example.sae.core.entity.Entity;
+import com.example.sae.core.entity.MoveableBody;
+import com.example.sae.core.entity.Player;
 import com.example.sae.core.entity.powerUp.PowerUp;
 import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
@@ -14,31 +17,33 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+/**
+ *
+ */
 public class GameEngine {
+    public final static double NB_FOOD_MAX = 1000;
+    public final static double NB_POWERUP_MAX = 10;
+    public final static double NB_ENEMY_MAX = 20;
+    public final static double MASSE_INIT_PLAYER = 30;
+    public final static double MASSE_INIT_FOOD = 4;
+    public static final double MASSE_INIT_ENEMY = 30;
+    public static final int ENEMY_RANGE = 1000;
+    public static final double MAP_LIMIT_WIDTH = 2000;
+    public static final double MAP_LIMIT_HEIGHT = 2000;
+    private static final int QUAD_TREE_MAX_DEPTH = 6;
+    private static QuadTree quadTree;
+    public final HashSet<MoveableBody> entitiesMovable;
     private final HashSet<Entity> entities;
     private final HashSet<Entity> entitiesToAdd;
     private final HashSet<Entity> entitiesToRemove;
-    public final HashSet<MoveableBody> entitiesMovable;
-    public final  static double NB_FOOD_MAX = 1000;
-    public final  static double NB_POWERUP_MAX = 10;
-    public final  static double NB_ENEMY_MAX = 20;
-    public final  static double MASSE_INIT_PLAYER = 30;
-    public final  static double MASSE_INIT_FOOD = 4;
-    public static final double MASSE_INIT_ENEMY = 30;
-    public static final int ENEMY_RANGE = 1000;
-    private static final int QUAD_TREE_MAX_DEPTH = 6;
-    private static QuadTree quadTree;
-    private boolean gameStarted = false;
-
-    public static final double MAP_LIMIT_WIDTH = 2000;
-    public static final double MAP_LIMIT_HEIGHT = 2000;
-
     private final boolean isServer;
-
     private final Map<Integer, Player> players = new ConcurrentHashMap<>();
     private final AtomicInteger nextPlayerId = new AtomicInteger(0);
+    private final boolean gameStarted = false;
+    private static Pane root;
 
     public GameEngine(double worldWidth, double worldHeight, boolean isServer) {
+        clearRoot();
         this.entitiesMovable = new HashSet<>();
         this.entities = new HashSet<>();
         this.entitiesToAdd = new HashSet<>();
@@ -48,6 +53,14 @@ public class GameEngine {
         Boundary mapBoundary = new Boundary(0, 0, MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT);
         quadTree = new QuadTree(mapBoundary, QUAD_TREE_MAX_DEPTH);
 
+    }
+
+    public static void clearRoot() {
+        root = new Pane();
+    }
+
+    public static Pane getRoot() {
+        return root;
     }
 
     public void update() {
@@ -63,10 +76,10 @@ public class GameEngine {
     }
 
     private void updateEntityInQuadTree(Entity entity) {
-        // Supprimer l'entité de sa position actuelle dans le QuadTree
+        // Delete the entity from it current position in the QuadTree
         quadTree.remove(entity);
 
-        // Réinsérer l'entité à sa nouvelle position dans le QuadTree
+        // Insert the entity to it new position in the Quad Tree
         quadTree.insert(entity);
     }
 
@@ -86,7 +99,7 @@ public class GameEngine {
     private void handleCollisions() {
         for (Entity entity1 : entitiesMovable) {
 
-            double detectionRange = entity1.getSprite().getRadius()+  10;
+            double detectionRange = entity1.getSprite().getRadius() + 10;
 
             HashSet<Entity> nearbyEntities = getNearbyEntities(entity1, detectionRange);
 
@@ -120,7 +133,7 @@ public class GameEngine {
         if (checkCollision(predator, prey) && canEat(predator, prey)) {
             entities.remove(prey);
 
-            TranslateTransition transition = new TranslateTransition(Duration.millis(200 ), prey.getSprite());
+            TranslateTransition transition = new TranslateTransition(Duration.millis(200), prey.getSprite());
 
             double targetX = predator.getSprite().getCenterX() - prey.getSprite().getCenterX();
             double targetY = predator.getSprite().getCenterY() - prey.getSprite().getCenterY();
@@ -135,10 +148,9 @@ public class GameEngine {
 
             predator.increaseSize(prey.getMasse());
             if (prey instanceof PowerUp powerUp) {
-                try{
+                try {
                     powerUp.applyEffect(predator);
-                }catch (Exception e)
-                {
+                } catch (Exception e) {
                     System.out.println("boule verte mangé");
                 }
             }
@@ -153,11 +165,11 @@ public class GameEngine {
 
                 prey.onDeletion();
             });
-            if(prey instanceof MoveableBody){
+            if (prey instanceof MoveableBody) {
                 ((MoveableBody) prey).deleteText();
             }
-                transition.play();
-                scaleTransition.play();
+            transition.play();
+            scaleTransition.play();
 
         }
     }
@@ -175,14 +187,12 @@ public class GameEngine {
     }
 
 
-
-
     public void addEntity(Entity entity) {
         entitiesToAdd.add(entity);
         entities.add(entity);
         quadTree.insert(entity);
-        if(entity instanceof MoveableBody) {
-            entitiesMovable.add((MoveableBody)entity);
+        if (entity instanceof MoveableBody) {
+            entitiesMovable.add((MoveableBody) entity);
         }
     }
 
@@ -192,8 +202,8 @@ public class GameEngine {
         entities.remove(entity);
         quadTree.remove(entity);
 
-        if(entity instanceof MoveableBody) {
-            entitiesMovable.remove((MoveableBody)entity);
+        if (entity instanceof MoveableBody) {
+            entitiesMovable.remove((MoveableBody) entity);
         }
     }
 
@@ -230,9 +240,9 @@ public class GameEngine {
 
     public HashSet<Entity> getEntitiesOfType(Class<?> type) {
         return
-            entities.stream()
-                .filter(e -> type.isAssignableFrom(e.getClass()))
-                .collect(Collectors.toCollection(HashSet::new));
+                entities.stream()
+                        .filter(e -> type.isAssignableFrom(e.getClass()))
+                        .collect(Collectors.toCollection(HashSet::new));
     }
 
     public HashSet<Entity> getNearbyEntities(Entity entity, double range) {
@@ -255,12 +265,11 @@ public class GameEngine {
 
     public List<MoveableBody> getSortedMovableEntities() {
         return entitiesMovable.stream()
-                .map(entity -> (MoveableBody) entity)
+                .map(entity -> entity)
                 .sorted(Comparator.comparingDouble(MoveableBody::getMasse).reversed())
                 .limit(10)
                 .collect(Collectors.toList());
     }
-
 
 
 }

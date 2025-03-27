@@ -5,7 +5,6 @@ import com.example.sae.client.Solo;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -17,8 +16,12 @@ import javafx.scene.paint.Color;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class OnlineController  implements Initializable {
+/**
+ *
+ */
+public class OnlineController extends GameController implements Initializable {
 
+    private static Client client;
     @FXML
     private StackPane rootStack;
     @FXML
@@ -34,7 +37,9 @@ public class OnlineController  implements Initializable {
     @FXML
     private TextField message;
 
-    private static Client client;
+    public static Client getClient() {
+        return client;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -43,9 +48,5 @@ public class OnlineController  implements Initializable {
         client.init();
         Pane scene = client.createGamePane();
         gameContainer.getChildren().add(scene);
-    }
-
-    public static Client getClient() {
-        return client;
     }
 }

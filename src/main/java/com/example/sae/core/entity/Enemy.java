@@ -1,8 +1,6 @@
 package com.example.sae.core.entity;
 
-import com.example.sae.client.AgarioApplication;
 import com.example.sae.client.Client;
-import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.enemyStrategy.ChaseClosestEntityStrategy;
 import com.example.sae.core.entity.enemyStrategy.EnemyStrategy;
@@ -17,63 +15,37 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 /**
- * AI on local gaming
+ * Entities controlled by enemy during local games
  *
  * @see MoveableBody
  * @see EnemyStrategy
- * @see RandomMoveStrategy
- * @see ChaseClosestEntityStrategy
- * @see SeekFoodStrategy
- *
- * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
  */
 public class Enemy extends MoveableBody {
-    /**
-     * AI strategy
-     */
-    private EnemyStrategy strategy;
-
-    /**
-     * function to generate random numbers
-     */
+    /// random generator
     private static final Random random = new Random();
-
+    /// Enemy current strategy
+    private EnemyStrategy strategy;
+    /// Enemy strategy's target position
     private double[] targetPosition;
 
     /**
-     * last time strategy was updated in seconds
+     * @param group the group on which the enemy is created
+     * @param mass the enemy's initial mass
+     * @param name the enemy's name
      */
-    private double strategyUpdateTimer = 0;
-
-    /**
-     * number of seconds before updating AI strategy
-     */
-    private static final double STRATEGY_UPDATE_INTERVAL = 10.0; // Secondes
-
-    /**
-     * constructor
-     *
-     * @see MoveableBody
-     * @see EnemyStrategy
-     * @see RandomMoveStrategy
-     * @see ChaseClosestEntityStrategy
-     * @see SeekFoodStrategy
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param group Group
-     * @param masse masse of IA
-     * @param name name of IA
-     */
-    public Enemy(Group group, double masse, String name) {
-        super(group, masse, name);
+    public Enemy(Group group, double mass, String name) {
+        super(group, mass, name);
         this.strategy = chooseOptimalStrategy();
 
-        // Position initiale plus proche du centre
-        double spreadFactor = 0.7; // Réduire la dispersion
-        sprite.setCenterX((Math.random() * MAP_LIMIT_WIDTH * 2 -MAP_LIMIT_WIDTH) * spreadFactor);
+        double spreadFactor = 0.7;
+        // initial position as close as possible to the center
+        sprite.setCenterX((Math.random() * MAP_LIMIT_WIDTH * 2 - MAP_LIMIT_WIDTH) * spreadFactor);
         sprite.setCenterY((Math.random() * MAP_LIMIT_HEIGHT * 2 - MAP_LIMIT_HEIGHT) * spreadFactor);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void calculateSpeeds(double distanceFromCenter) {
         actualSpeedX = getMaxSpeed() * ENEMY_SPEED_MULTIPLIER;
@@ -81,15 +53,9 @@ public class Enemy extends MoveableBody {
     }
 
     /**
-     * update IA strategy
+     * update the enemy's strategy
      *
-     * @see MoveableBody
      * @see EnemyStrategy
-     * @see RandomMoveStrategy
-     * @see ChaseClosestEntityStrategy
-     * @see SeekFoodStrategy
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
      */
     @Override
     public void Update() {
@@ -98,25 +64,9 @@ public class Enemy extends MoveableBody {
     }
 
     /**
-     * change IA strategy
+     * check if the enemy has reached its target
      *
-     * @see EnemyStrategy
-     * @see RandomMoveStrategy
-     * @see ChaseClosestEntityStrategy
-     * @see SeekFoodStrategy
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param strategy new strategy
-     */
-    public void setStrategy(EnemyStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    /**
-     * indicates whether the AI has reached the target
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @return returns true if the distance between the target and the AI are small enough to be reached
+     * @return true if the target is close enough, false otherwise
      */
     public boolean hasReachedTarget() {
         double distance = Math.sqrt(Math.pow(targetPosition[0] - sprite.getCenterX(), 2) + Math.pow(targetPosition[1] - sprite.getCenterY(), 2));
@@ -124,70 +74,26 @@ public class Enemy extends MoveableBody {
     }
 
     /**
-     * returns to AI strategy
-     *
-     * @see EnemyStrategy
-     * @see RandomMoveStrategy
-     * @see ChaseClosestEntityStrategy
-     * @see SeekFoodStrategy
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @return returns to AI strategy
-     */
-    public EnemyStrategy getStrategy() {
-        return strategy;
-    }
-
-    /**
-     * returns target position
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @return returns target position
+     * {@return the enemy's target position}
      */
     public double[] getTargetPosition() {
         return targetPosition;
     }
 
     /**
-     * changes the target
+     * changes the enemy's target position
      *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param targetPosition new position of the target
+     * @param targetPosition the new target's position
      */
     public void setTargetPosition(double[] targetPosition) {
         this.targetPosition = targetPosition;
     }
 
     /**
-     * returns a random strategy for the AI
+     * choose the current most optimal strategy for the enemy
      *
+     * @return returns the chosen strategy
      * @see EnemyStrategy
-     * @see RandomMoveStrategy
-     * @see ChaseClosestEntityStrategy
-     * @see SeekFoodStrategy
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @return returns a random strategy for the AI
-     */
-    private static EnemyStrategy getRandomStrategy() {
-        int choice = random.nextInt(3); // 3 stratégies disponibles
-        return switch (choice) {
-            case 1 -> new ChaseClosestEntityStrategy();
-            case 2 -> new SeekFoodStrategy();
-            default -> new RandomMoveStrategy();
-        };
-    }
-
-    /**
-     * chosen and gives the most optimal strategy for the AI
-     *
-     * @see EnemyStrategy
-     * @see RandomMoveStrategy
-     * @see ChaseClosestEntityStrategy
-     * @see SeekFoodStrategy
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @return returns the most optimal strategy based on the situation
      */
     private EnemyStrategy chooseOptimalStrategy() {
         GameEngine gameEngine = Client.getGameEngine();
@@ -196,11 +102,11 @@ public class Enemy extends MoveableBody {
         var nearbyEntities = gameEngine.getNearbyEntities(this, GameEngine.ENEMY_RANGE);
 
         boolean hasValidPrey = nearbyEntities.stream()
-                .anyMatch(entity -> entity.getMasse()*1.33 < this.getMasse()
+                .anyMatch(entity -> entity.getMasse() * 1.33 < this.getMasse()
                         && (entity instanceof Enemy || entity instanceof Player));
 
         boolean hasFoodNearby = nearbyEntities.stream()
-                .anyMatch(entity ->entity.getMasse()*1.33 < this.getMasse()
+                .anyMatch(entity -> entity.getMasse() * 1.33 < this.getMasse()
                         && (entity instanceof Food || entity instanceof PowerUp));
         if (hasValidPrey) {
             return new ChaseClosestEntityStrategy();

@@ -9,25 +9,27 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ *
+ */
 public class MenuController implements Initializable {
 
-    @FXML private TextField nameField;
-    @FXML private ColorPicker colorPicker;
-
+    static Stage mainStage;
+    @FXML
+    private TextField nameField;
+    @FXML
+    private ColorPicker colorPicker;
     private String playerName = "";
     private Color playerColor = Color.BLUE;
-
-    static Stage mainStage;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -83,8 +85,8 @@ public class MenuController implements Initializable {
 
             Node currentNode = (Node) (event.getSource());
             Scene scene = new Scene(loader.load(),
-                    Screen.getPrimary().getBounds().getWidth()*0.9,
-                    Screen.getPrimary().getBounds().getHeight()*0.9);
+                    Screen.getPrimary().getBounds().getWidth() * 0.9,
+                    Screen.getPrimary().getBounds().getHeight() * 0.9);
 
             Stage stage = new Stage();
             mainStage = stage;
@@ -98,8 +100,7 @@ public class MenuController implements Initializable {
 
             stage.showAndWait();
             currentStage.show();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             Dialog.alertWindow("Error", "Failed to start game", e.getMessage());
         }
     }

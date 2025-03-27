@@ -1,9 +1,13 @@
 package com.example.sae.core.entity.powerUp;
+
 import com.example.sae.core.entity.MoveableBody;
 import javafx.scene.paint.Color;
 
+/**
+ *
+ */
 public enum PowerUpType {
-    SPEED_BOOST(Color.BLUE, 5,2) {
+    SPEED_BOOST(Color.BLUE, 5, 2) {
         @Override
         public void applyEffect(MoveableBody body) {
             body.setSpeedMultiplier(1.5);
@@ -15,7 +19,7 @@ public enum PowerUpType {
         }
     },
 
-    SPEED_DECREASE(Color.RED, 5,2) {
+    SPEED_DECREASE(Color.RED, 5, 2) {
         @Override
         public void applyEffect(MoveableBody body) {
             body.setSpeedMultiplier(0.5);
@@ -27,7 +31,7 @@ public enum PowerUpType {
         }
     },
 
-    SPLIT(Color.GREEN, 0,100) {
+    SPLIT(Color.GREEN, 0, 100) {
         @Override
         public void applyEffect(MoveableBody body) {
             body.splitSprite();
@@ -61,10 +65,12 @@ public enum PowerUpType {
     public int getDuration() {
         return duration;
     }
+
     public double getMasse() {
         return masse;
     }
 
     public abstract void applyEffect(MoveableBody body);
+
     public abstract void removeEffect(MoveableBody body);
 }

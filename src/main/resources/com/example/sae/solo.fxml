@@ -39,16 +39,6 @@
                   AnchorPane.leftAnchor="0.0"
                   AnchorPane.topAnchor="0.0"/>
 
-        <!-- Chat at bottom left -->
-        <VBox spacing="5" prefWidth="250" AnchorPane.leftAnchor="0.0" AnchorPane.bottomAnchor="0.0">
-            <ListView fx:id="chatListView" styleClass="styled-list"
-                      prefHeight="200"/>
-            <HBox spacing="5">
-                <TextField fx:id="chatInput" HBox.hgrow="ALWAYS" styleClass="chat-input"/>
-                <Button text="Send" styleClass="chat-button"/>
-            </HBox>
-        </VBox>
-
         <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <Canvas fx:id="minimap" height="250" width="250" styleClass="minimap-content"/>
         </StackPane>

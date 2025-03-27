@@ -16,23 +16,28 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import static com.example.sae.client.controller.SoloController.getMousePosition;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
+/**
+ *
+ */
 public class Online extends Client {
-    private String clientId;
     private final GameTimer gameTimer;
     private final ThreadDeFond handler;
     private final Socket socket;
+    private String clientId;
 
     public Online(Group root, String playerName, Color color) throws IOException {
-        super(root,  playerName,  color);
+        super(root, playerName, color);
         this.gameTimer = new GameTimer(this);
-        this.gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, false);
+        gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, false);
         this.socket = new Socket("localhost", 12345);
         handler = new ThreadDeFond(this, socket);
         new Thread(handler).start();
@@ -43,7 +48,6 @@ public class Online extends Client {
     public void init() {
         gameStarted = true;
         Player player = EntityFactory.createPlayer(3, "Player", Color.RED);
-        player.setCamera(camera);
         camera.focusOn(player);
         gameEngine.addPlayer(player);
         gameTimer.start();
@@ -68,6 +72,11 @@ public class Online extends Client {
         gameEngine.update();
     }
 
+    @Override
+    public void stopGame() {
+
+    }
+
     public void handleAppClosed(Stage stage) {
         stage.setOnHiding(event -> {
             try {
@@ -76,6 +85,10 @@ public class Online extends Client {
                 // throw new RuntimeException(e);
             }
         });
+    }
+
+    private void returnToMenu() {
+        Platform.exit();
     }
 
     class ThreadDeFond implements Runnable {
@@ -111,8 +124,10 @@ public class Online extends Client {
                     setupWithSocketData(Arrays.copyOfRange(parts, 1, parts.length));
                     // System.out.println(input);
                 }
-                case "CREATE" -> {}
-                case "UPDATE" -> {}
+                case "CREATE" -> {
+                }
+                case "UPDATE" -> {
+                }
                 case "DELETE" -> {
                     System.out.println(input);
                     deleteWithSocketData(Arrays.copyOfRange(parts, 1, parts.length));
@@ -133,7 +148,6 @@ public class Online extends Client {
                             /*
                             Platform.runLater(() -> {
                                 Player player = new Player(root, id, x, y, 5, Color.RED, true);
-                                player.setCamera(camera);
                                 camera.focusOn(player);
                                 gameEngine.addPlayer(player);
                             });
@@ -194,7 +208,6 @@ public class Online extends Client {
                         double y = Double.parseDouble(infos[3]);
                         Platform.runLater(() -> {
                             Player player = new Player(root, infos[1], x, y, 5, Color.RED, false);
-                            player.setCamera(camera);
                             camera.focusOn(player);
                             gameEngine.addPlayer(player);
                         });
@@ -235,9 +248,5 @@ public class Online extends Client {
         public void sendMessage(String message) {
             out.println(message);
         }
-    }
-
-    private void returnToMenu() {
-        Platform.exit();
     }
 }

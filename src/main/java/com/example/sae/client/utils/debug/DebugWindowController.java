@@ -1,9 +1,11 @@
 package com.example.sae.client.utils.debug;
 
 import com.example.sae.core.GameEngine;
-import com.example.sae.core.entity.MoveableBody;
 import javafx.application.Platform;
-import javafx.beans.property.*;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,25 +17,13 @@ import javafx.stage.StageStyle;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
+/**
+ *
+ */
 public class DebugWindowController {
-    @FXML private Label playerMaxSpeedLabel;
-    @FXML private VBox constantsBox;
-    @FXML private Label foodCountLabel;
-    @FXML private Label enemyCountLabel;
-    @FXML private Label playerPositionLabel;
-    @FXML private Label playerMassLabel;
-    @FXML private ListView<String> logsListView;
-    @FXML private Label playerSpeedLabel;
-    @FXML private Label mousePositionLabel;
-
-
-    private static ObservableList<String> logs = FXCollections.observableArrayList();
     private static final int MAX_LOGS = 10;
-
-    private Stage stage;
-
+    private static final ObservableList<String> logs = FXCollections.observableArrayList();
     private final DoubleProperty playerMaxSpeed = new SimpleDoubleProperty(0);
     private final DoubleProperty playerSpeedX = new SimpleDoubleProperty(0);
     private final DoubleProperty playerSpeedY = new SimpleDoubleProperty(0);
@@ -46,6 +36,36 @@ public class DebugWindowController {
     private final DoubleProperty playerMass = new SimpleDoubleProperty(0);
     private final DoubleProperty mouseX = new SimpleDoubleProperty(0);
     private final DoubleProperty mouseY = new SimpleDoubleProperty(0);
+    @FXML
+    private Label playerMaxSpeedLabel;
+    @FXML
+    private VBox constantsBox;
+    @FXML
+    private Label foodCountLabel;
+    @FXML
+    private Label enemyCountLabel;
+    @FXML
+    private Label playerPositionLabel;
+    @FXML
+    private Label playerMassLabel;
+    @FXML
+    private ListView<String> logsListView;
+    @FXML
+    private Label playerSpeedLabel;
+    @FXML
+    private Label mousePositionLabel;
+    private Stage stage;
+
+    public static void addLog(String message) {
+        if (message != null) {
+            Platform.runLater(() -> {
+                if (logs.size() >= MAX_LOGS) {
+                    logs.remove(0);
+                }
+                logs.add("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "] " + message);
+            });
+        }
+    }
 
     public void initialize() {
         stage = new Stage(StageStyle.TRANSPARENT);
@@ -78,32 +98,58 @@ public class DebugWindowController {
         constantsBox.getChildren().add(label);
     }
 
-    public static void addLog(String message) {
-        if (message != null) {
-            Platform.runLater(() -> {
-                if (logs.size() >= MAX_LOGS) {
-                    logs.remove(0);
-                }
-                logs.add("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "] " + message);
-            });
-        }
+    // Getters pour les properties
+    public IntegerProperty foodCountProperty() {
+        return foodCount;
     }
 
+    public DoubleProperty maxFoodProperty() {
+        return maxFood;
+    }
 
-    // Getters pour les properties
-    public IntegerProperty foodCountProperty() { return foodCount; }
-    public DoubleProperty maxFoodProperty() { return maxFood; }
-    public IntegerProperty enemyCountProperty() { return enemyCount; }
-    public DoubleProperty maxEnemyProperty() { return maxEnemy; }
-    public DoubleProperty playerXProperty() { return playerX; }
-    public DoubleProperty playerYProperty() { return playerY; }
-    public DoubleProperty playerMassProperty() { return playerMass; }
-    public DoubleProperty playerSpeedXProperty() { return playerSpeedX; }
-    public DoubleProperty playerSpeedYProperty() { return playerSpeedY; }
-    public Stage getStage() { return stage; }
-    public DoubleProperty mouseXProperty() { return mouseX; }
-    public DoubleProperty mouseYProperty() { return mouseY; }
-    public DoubleProperty playerMaxSpeedProperty() { return playerMaxSpeed; }
+    public IntegerProperty enemyCountProperty() {
+        return enemyCount;
+    }
+
+    public DoubleProperty maxEnemyProperty() {
+        return maxEnemy;
+    }
+
+    public DoubleProperty playerXProperty() {
+        return playerX;
+    }
+
+    public DoubleProperty playerYProperty() {
+        return playerY;
+    }
+
+    public DoubleProperty playerMassProperty() {
+        return playerMass;
+    }
+
+    public DoubleProperty playerSpeedXProperty() {
+        return playerSpeedX;
+    }
+
+    public DoubleProperty playerSpeedYProperty() {
+        return playerSpeedY;
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public DoubleProperty mouseXProperty() {
+        return mouseX;
+    }
+
+    public DoubleProperty mouseYProperty() {
+        return mouseY;
+    }
+
+    public DoubleProperty playerMaxSpeedProperty() {
+        return playerMaxSpeed;
+    }
 
 
 }

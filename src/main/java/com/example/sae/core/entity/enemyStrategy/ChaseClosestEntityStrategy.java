@@ -1,13 +1,10 @@
 package com.example.sae.core.entity.enemyStrategy;
 
 import com.example.sae.client.Client;
-import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Entity;
-import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
-import com.example.sae.core.entity.powerUp.PowerUp;
 
 import java.util.HashSet;
 
@@ -17,20 +14,16 @@ import java.util.HashSet;
  * @see Enemy
  * @see RandomMoveStrategy
  * @see SeekFoodStrategy
- *
- * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
  */
 public class ChaseClosestEntityStrategy implements EnemyStrategy {
     /**
      * Executes the AI's strategy of seeking out and attempting to devour the closest entity
      *
+     * @param enemy Strategy executed on this AI
+     * @return will return true if execution was successful
      * @see Enemy
      * @see RandomMoveStrategy
      * @see SeekFoodStrategy
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param enemy Strategy executed on this AI
-     * @return will return true if execution was successful
      */
     @Override
     public boolean execute(Enemy enemy) {
@@ -56,8 +49,7 @@ public class ChaseClosestEntityStrategy implements EnemyStrategy {
         if (closestEntity != null) {
             enemy.moveToward(closestEntity.getPosition());
             return true;
-        }
-        else {
+        } else {
             new SeekFoodStrategy().execute(enemy);
             return false;
         }

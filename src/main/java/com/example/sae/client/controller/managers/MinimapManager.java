@@ -14,6 +14,9 @@ import javafx.util.Duration;
 import java.util.List;
 import java.util.function.Supplier;
 
+/**
+ *
+ */
 public class MinimapManager {
     private static final double WORLD_SIZE = 4000;
     private static final double MAX_MASS = 160000;
@@ -67,8 +70,8 @@ public class MinimapManager {
         gc.setStroke(Color.rgb(100, 100, 120));
         gc.setLineWidth(1);
         gc.strokeRect(
-                centerX - (WORLD_SIZE/2 * scale),
-                centerY - (WORLD_SIZE/2 * scale),
+                centerX - (WORLD_SIZE / 2 * scale),
+                centerY - (WORLD_SIZE / 2 * scale),
                 WORLD_SIZE * scale,
                 WORLD_SIZE * scale
         );
@@ -87,7 +90,7 @@ public class MinimapManager {
 
             gc.setFill(entity instanceof Player ? Color.CYAN :
                     entity instanceof Enemy ? Color.RED : Color.GREEN);
-            gc.fillOval(x - scaleRadius/2, y - scaleRadius/2, scaleRadius, scaleRadius);
+            gc.fillOval(x - scaleRadius / 2, y - scaleRadius / 2, scaleRadius, scaleRadius);
         }
 
         gc.restore();
@@ -101,12 +104,11 @@ public class MinimapManager {
         double x = centerX + (player.getX() * scale);
         double y = centerY + (player.getY() * scale);
         double radius = player.getSprite().getRadius();
-        double scaleRadius = Math.max(3,radius * scale * 2);
-
+        double scaleRadius = Math.max(3, radius * scale * 2);
 
 
         gc.setFill(Color.YELLOW);
-        gc.fillOval(x - scaleRadius/2, y - scaleRadius/2, scaleRadius, scaleRadius);
+        gc.fillOval(x - scaleRadius / 2, y - scaleRadius / 2, scaleRadius, scaleRadius);
 
     }
 
@@ -126,6 +128,7 @@ public class MinimapManager {
         double scaleY = canvas.getHeight() / (WORLD_SIZE * (1 + MARGIN));
         return Math.min(scaleX, scaleY);
     }
+
     private void drawPlayerCamera(Pane pane) {
         double scale = calculateScale();
         double zoom = pane.getScaleX();
@@ -153,7 +156,7 @@ public class MinimapManager {
         gc.strokeRect(rectX, rectY, rectWidth, rectHeight);
     }
 
-    public void stop(){
-        if(updater != null) updater.stop();
+    public void stop() {
+        if (updater != null) updater.stop();
     }
 }

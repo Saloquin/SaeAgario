@@ -1,7 +1,6 @@
 package com.example.sae.core.entity;
 
 
-
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
@@ -9,25 +8,17 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 /**
- * static object/entity, food that helps a moving object/entity gain mass
+ * unmovable entity on the game
  *
  * @see Entity
- * @see MoveableBody
- *
- * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
  */
-public class Food extends Entity{
+public class Food extends Entity {
 
     /**
-     * constructor
-     *
-     * @see Entity
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param group Group
-     * @param size food size
+     * @param group the plan on which the food is created
+     * @param size  the food's size
      */
-    public Food(Group group, double size){
+    public Food(Group group, double size) {
         super(group, size);
         sprite.setCenterX(Math.random() * (MAP_LIMIT_WIDTH * 2) - MAP_LIMIT_WIDTH);
         sprite.setCenterY(Math.random() * (MAP_LIMIT_HEIGHT * 2) - MAP_LIMIT_HEIGHT);
@@ -35,29 +26,21 @@ public class Food extends Entity{
     }
 
     /**
-     * constructor
-     *
-     * @see Entity
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param group Group
-     * @param id entity id
-     * @param x food coordinate
-     * @param y food coordinate
-     * @param size food size
-     * @param color food color
+     * @param group the plan on which the food is created
+     * @param id    the food's entity id
+     * @param x     the food's X coordinate
+     * @param y     the food's Y coordinate
+     * @param size  the food's size
+     * @param color the food's color
      */
     public Food(Group group, String id, double x, double y, double size, Color color) {
         super(group, id, size, color);
         sprite.setCenterX(x);
         sprite.setCenterY(y);
     }
+
     /**
-     * not used in this class, empty
-     *
-     * @see Entity
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * {@inheritDoc}
      */
 
     @Override

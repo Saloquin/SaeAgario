@@ -1,9 +1,13 @@
 package com.example.sae.client.utils;
 
 import javafx.scene.paint.Color;
+
 import java.io.*;
 import java.util.Properties;
 
+/**
+ *
+ */
 public class PreferencesManager {
     private static final String CONFIG_FILE = "player_prefs.ini";
 
@@ -29,7 +33,7 @@ public class PreferencesManager {
 
         try (InputStream input = new FileInputStream(CONFIG_FILE)) {
             props.load(input);
-            return new String[] {
+            return new String[]{
                     props.getProperty("player.name"),
                     props.getProperty("player.color")
             };

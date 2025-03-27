@@ -1,9 +1,6 @@
 package com.example.sae.core.entity;
 
-import com.example.sae.client.controller.SoloController;
-import com.example.sae.core.Camera;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Group;
@@ -14,35 +11,26 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 /**
- * moveable object, parent class of an AI or a player
+ * Moveable entity abstract class
  *
  * @see Entity
  * @see Enemy
  * @see Player
- *
- * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
  */
 public abstract class MoveableBody extends Entity {
-    /**
-     * name of moving object
-     */
-
-    private final StringProperty name = new SimpleStringProperty(this, "name", "°-°");
-    private Text nameText;
-    protected double actualSpeedX = 0;
-    protected double actualSpeedY = 0;
     public static final double BASE_MAX_SPEED = 15;
     public static final double ENEMY_SPEED_MULTIPLIER = 0.7;
+    /// the name of the moveable entity
+    private final StringProperty name = new SimpleStringProperty(this, "name", "°-°");
+    protected double actualSpeedX = 0;
+    protected double actualSpeedY = 0;
     protected double speedMultiplier = 1.0;
-
+    private Text nameText;
 
     /**
-     * constructor
-     *
-     * @param group       Group
-     * @param initialSize size of moving object
-     * @param color       color of moving object
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param group       the group on which the entity is moving
+     * @param initialSize the moveable entity's initial size
+     * @param color       the moveable entity's color
      * @see Entity
      */
     MoveableBody(Group group, double initialSize, Color color) {
@@ -50,15 +38,11 @@ public abstract class MoveableBody extends Entity {
         initializeNameText(group);
     }
 
-
     /**
-     * constructor
-     *
-     * @param group       Group
-     * @param id          entity id
-     * @param initialSize size of moving object
-     * @param color       color of moving object
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param group       the group on which the entity is moving
+     * @param id          the moveable entity's id
+     * @param initialSize the moveable entity's initial size
+     * @param color       the moveable entity's color
      * @see Entity
      */
     MoveableBody(Group group, String id, double initialSize, Color color) {
@@ -66,20 +50,11 @@ public abstract class MoveableBody extends Entity {
         initializeNameText(group);
     }
 
-    MoveableBody(Group group, String id, double initialSize, Color color, String playerName) {
-        super(group, id, initialSize, color);
-        this.name.set(playerName);
-        initializeNameText(group);
-    }
-
     /**
-     * constructor
-     *
-     * @param group       Group
-     * @param initialSize size of moving object
-     * @param color       color of moving object
-     * @param name        name of moving object
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param group       the group on which the entity is moving
+     * @param initialSize the moveable entity's initial size
+     * @param color       the moveable entity's color
+     * @param name        the moveable entity's name
      * @see Entity
      */
     MoveableBody(Group group, double initialSize, Color color, String name) {
@@ -90,12 +65,9 @@ public abstract class MoveableBody extends Entity {
     }
 
     /**
-     * constructor
-     *
-     * @param group       Group
-     * @param initialSize size of moving object
-     * @param name        name of moving object
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param group       the group on which the entity is moving
+     * @param initialSize the moveable entity's initial size
+     * @param name        the moveable entity's name
      * @see Entity
      */
     MoveableBody(Group group, double initialSize, String name) {
@@ -105,11 +77,9 @@ public abstract class MoveableBody extends Entity {
     }
 
     /**
-     * increases the size of the moving object that has eaten another moving object
+     * initialize the name of the entity to be properly displayed on the sprite
      *
-     * @param group the moving object that is eaten
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @see Entity
+     * @param group the plan on which the moving entity is created
      * @see Player
      * @see Enemy
      */
@@ -118,7 +88,7 @@ public abstract class MoveableBody extends Entity {
         nameText.textProperty().bind(name);
         nameText.setFill(Color.BLACK);
         nameText.setStyle("-fx-font-size: 14;");
-        // Place le texte au-dessus du sprite dans l'ordre de rendu
+        // Place the text above the sprite in the render
         nameText.setViewOrder(-1000);
 
         nameText.styleProperty().bind(Bindings.createStringBinding(
@@ -129,10 +99,8 @@ public abstract class MoveableBody extends Entity {
         nameText.layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
             nameText.setX(sprite.getCenterX() - newBounds.getWidth() / 2);
         });
-        // Binding simple pour Y
         nameText.yProperty().bind(sprite.centerYProperty());
 
-        // Binding pour X avec le centre du sprite
         sprite.centerXProperty().addListener((obs, oldX, newX) -> {
             nameText.setX(newX.doubleValue() - nameText.getLayoutBounds().getWidth() / 2);
         });
@@ -141,42 +109,36 @@ public abstract class MoveableBody extends Entity {
 
 
     /**
-     * increases the size of the moving object that has eaten food
+     * increase the size of a moving entity
      *
-     * @param foodValue an entity, food eaten
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @see Entity
-     * @see Food
+     * @param foodValue the mass of the entity eaten
      */
     public void increaseSize(double foodValue) {
         setMasse(getMasse() + foodValue);
     }
 
     /**
-     * moves the moving object according to the position of the mouse on the screen
+     * move the entity toward a direction
      *
-     * @param velocity the position of the mouse on the screen as a double array
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param velocity the target direction
      */
     public void moveToward(double[] velocity) {
-        double maxSpeed = getMaxSpeed();
-
-        // Vecteur de direction (souris - position du joueur)
+        // direction vector
         double[] direction = new double[]{
                 velocity[0] - sprite.getCenterX(),
                 velocity[1] - sprite.getCenterY()
         };
 
-        // Distance du curseur par rapport au centre
+        // distance between target and entity's center
         double distanceFromCenter = Math.sqrt(
                 direction[0] * direction[0] +
                         direction[1] * direction[1]
         );
 
-        // Normalisation du vecteur de direction
+        // normalization of direction vector
         double[] normalizedDirection = normalizeDouble(direction);
 
-        // Zone morte au centre (10 pixels)
+        // dead zone in the entity center (don't trigger movement)
         if (distanceFromCenter <= 10) {
             actualSpeedX = 0;
             actualSpeedY = 0;
@@ -188,7 +150,7 @@ public abstract class MoveableBody extends Entity {
         double dx = normalizedDirection[0] * actualSpeedX;
         double dy = normalizedDirection[1] * actualSpeedY;
 
-        // Mise à jour de la position avec vérification des limites
+        // update position within the limit of the map
         if (sprite.getCenterX() + dx < MAP_LIMIT_WIDTH && sprite.getCenterX() + dx > -MAP_LIMIT_WIDTH) {
             sprite.setCenterX(sprite.getCenterX() + dx);
         }
@@ -197,19 +159,20 @@ public abstract class MoveableBody extends Entity {
         }
     }
 
+    /**
+     * calculate the speed at which the entity is moving
+     * @param distanceFromCenter the distance bewteen the center of the entity and the target direction
+     */
     protected abstract void calculateSpeeds(double distanceFromCenter);
 
     public double getMaxSpeed() {
-        return BASE_MAX_SPEED / (1 + Math.log10(getMasse()))*speedMultiplier;
+        return BASE_MAX_SPEED / (1 + Math.log10(getMasse())) * speedMultiplier;
     }
 
 
     /**
-     * splits the moving object by clicking on the keyboard space bar
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * splits the moving object in 2 equal parts
      */
-    //TODO: Implement the splitSprite method without using AgarioApplication.root
     public void splitSprite() {
         Player newBody = EntityFactory.createPlayer(sprite.getRadius() / 2, (Color) sprite.getFill());
         newBody.sprite.setCenterX(sprite.getCenterX() + 30);
@@ -223,23 +186,20 @@ public abstract class MoveableBody extends Entity {
     /**
      * calculates the distance between the moving object and another entity
      *
-     * @param position position of an entity as a double array
-     * @return returns the distance between the position of the moving object and that of another entity
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param position position of the other entity as a double array
+     * @return the distance between the center of the moving object and the other entity
      */
     public double distanceTo(double[] position) {
         return Math.sqrt(Math.pow(position[0] - getPosition()[0], 2) + Math.pow(position[1] - getPosition()[1], 2));
     }
 
     /**
-     * restructures an array of double
+     * transform an array of double in a vector if possible
      *
-     * @param array table to be restructured
-     * @return returns a restructured array of doubles
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param array the array being transformed
+     * @return the array as a vector if successful transformation, a (0; 0) vector otherwise
      */
     public double[] normalizeDouble(double[] array) {
-        //don't worry about it :)
 
         double magnitude = Math.sqrt((array[0] * array[0]) + (array[1] * array[1]));
 
@@ -249,18 +209,17 @@ public abstract class MoveableBody extends Entity {
         return new double[]{0, 0};
     }
 
+    /**
+     * set the speed multiplier of the moveable entity
+     * @param multiplier the speed multiplier
+     */
     public void setSpeedMultiplier(double multiplier) {
         this.speedMultiplier = multiplier;
     }
 
 
     /**
-     * removes the moving object that is eaten
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @see Entity
-     * @see Player
-     * @see Enemy
+     * {@inheritDoc}
      */
     @Override
     public void onDeletion() {
@@ -269,12 +228,7 @@ public abstract class MoveableBody extends Entity {
     }
 
     /**
-     * removes the name text of moving object that is eaten
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @see Entity
-     * @see Player
-     * @see Enemy
+     * removes the name of the entity from the visible plan
      */
     public void deleteText() {
         if (nameText.getParent() != null) {
@@ -282,26 +236,23 @@ public abstract class MoveableBody extends Entity {
         }
     }
 
-    public void resetAllEffects() {
-        setSpeedMultiplier(1.0);
-    }
-
+    /**
+     * {@return the moveable entity's name}
+     */
     public String getNom() {
         return name.get();
     }
 
-    public void setNom(String nom) {
-        this.name.set(nom);
-    }
-
-    public StringProperty nameProperty() {
-        return name;
-    }
-
+    /**
+     * {@return the entity's speed in the x-axis}
+     */
     public double getActualSpeedX() {
         return actualSpeedX;
     }
 
+    /**
+     * {@return the entity's speed in the y-axis}
+     */
     public double getActualSpeedY() {
         return actualSpeedY;
     }

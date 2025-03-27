@@ -6,6 +6,9 @@ import javafx.animation.Timeline;
 import javafx.scene.control.Label;
 import javafx.util.Duration;
 
+/**
+ *
+ */
 public class PlayerInfoManager {
     private final Player player;
     private final Label scoreLabel;

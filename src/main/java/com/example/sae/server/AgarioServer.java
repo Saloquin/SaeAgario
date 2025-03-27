@@ -6,11 +6,20 @@ import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
 import javafx.scene.paint.Color;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ *
+ */
 public class AgarioServer {
     // note : ne pas envoyer un gamestate par frame
     // envoyer simplement quand un élément est créé/modifié/supprimé avec les informations de cet élément
@@ -21,7 +30,7 @@ public class AgarioServer {
     private final GameEngine gameEngine;
     private final Map<String, ClientHandler> clientHandlers;
     private final ServerSocket serverSocket;
-    private volatile boolean running;
+    private final boolean running;
 
     public AgarioServer() throws IOException {
         this.gameEngine = new GameEngine(2000, 2000, true); // Même taille que le jeu original
@@ -30,6 +39,14 @@ public class AgarioServer {
         this.running = true;
 
         initializeWorld();
+    }
+
+    public static void main(String[] args) {
+        try {
+            new AgarioServer().start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initializeWorld() {
@@ -106,9 +123,9 @@ public class AgarioServer {
                 entity.getPosition()[0],
                 entity.getPosition()[1],
                 entity.getMasse(),
-                entity.getColor().getRed()*255,
-                entity.getColor().getBlue()*255,
-                entity.getColor().getGreen()*255);
+                entity.getColor().getRed() * 255,
+                entity.getColor().getBlue() * 255,
+                entity.getColor().getGreen() * 255);
     }
 
     private String serializeGameState() {
@@ -127,7 +144,7 @@ public class AgarioServer {
         private final PrintWriter out;
         private final BufferedReader in;
         private boolean ready;
-        private Player player;
+        private final Player player;
 
         public ClientHandler(Socket socket, String clientId) throws IOException {
             this.socket = socket;
@@ -196,14 +213,6 @@ public class AgarioServer {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    public static void main(String[] args) {
-        try {
-            new AgarioServer().start();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

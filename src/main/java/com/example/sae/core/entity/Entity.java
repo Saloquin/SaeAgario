@@ -111,6 +111,9 @@ public abstract class Entity extends Group {
         return new double[]{sprite.getCenterX(), sprite.getCenterY()};
     }
 
+    /**
+     * update the entity on the plan
+     */
     public abstract void Update();
 
     /**

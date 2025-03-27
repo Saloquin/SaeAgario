@@ -1,8 +1,6 @@
 package com.example.sae.core.entity.enemyStrategy;
 
 import com.example.sae.client.Client;
-import com.example.sae.client.Solo;
-import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Entity;
@@ -15,20 +13,16 @@ import com.example.sae.core.entity.powerUp.PowerUp;
  * @see Enemy
  * @see ChaseClosestEntityStrategy
  * @see RandomMoveStrategy
- *
- * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
  */
 public class SeekFoodStrategy implements EnemyStrategy {
     /**
      * Executes the AI's strategy of move around to eat as much food as possible
      *
+     * @param enemy Strategy executed on this AI
+     * @return will return true if execution was successful
      * @see Enemy
      * @see ChaseClosestEntityStrategy
      * @see RandomMoveStrategy
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param enemy Strategy executed on this AI
-     * @return will return true if execution was successful
      */
     @Override
     public boolean execute(Enemy enemy) {
@@ -38,9 +32,9 @@ public class SeekFoodStrategy implements EnemyStrategy {
         double closestFoodDistance = Double.MAX_VALUE;
         Entity closestFood = null;
 
-        for (Entity entity : gameEngine.getNearbyEntities(enemy,GameEngine.ENEMY_RANGE)) {
-            if((entity instanceof Food) || (entity instanceof PowerUp)) {
-                if(entity.getMasse()*1.33<enemy.getMasse()) {
+        for (Entity entity : gameEngine.getNearbyEntities(enemy, GameEngine.ENEMY_RANGE)) {
+            if ((entity instanceof Food) || (entity instanceof PowerUp)) {
+                if (entity.getMasse() * 1.33 < enemy.getMasse()) {
                     double distance = enemy.distanceTo(entity.getPosition());
                     if (distance < closestFoodDistance) {
                         closestFoodDistance = distance;

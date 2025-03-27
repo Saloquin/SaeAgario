@@ -1,18 +1,23 @@
 package com.example.sae.client;
 
 import javafx.application.Platform;
-import com.example.sae.client.controller.SoloController;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.function.Consumer;
 
+/**
+ *
+ */
 public class ChatClient {
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 55555;
-    private PrintWriter out;
     private final Consumer<String> messageHandler;
     private final String playerName;
+    private PrintWriter out;
 
     public ChatClient(String playerName, Consumer<String> messageHandler) {
         this.playerName = playerName;

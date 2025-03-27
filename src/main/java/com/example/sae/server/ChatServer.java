@@ -1,6 +1,9 @@
 package com.example.sae.server;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
@@ -10,12 +13,45 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ *
+ */
 public class ChatServer {
     private static final int PORT = 55555;
-    private final List<ClientHandler> clients = new CopyOnWriteArrayList<>();
-    private final List<ChatMessage> messageHistory = Collections.synchronizedList(new ArrayList<>());
     private static final int MAX_MESSAGES = 6; // Limite à 6 messages
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private final List<ClientHandler> clients = new CopyOnWriteArrayList<>();
+    private final List<ChatMessage> messageHistory = Collections.synchronizedList(new ArrayList<>());
+
+    public void start() {
+        new Thread(() -> {
+            try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+                while (true) {
+                    Socket clientSocket = serverSocket.accept();
+                    ClientHandler clientHandler = new ClientHandler(clientSocket);
+                    clients.add(clientHandler);
+                    new Thread(clientHandler).start();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private void broadcast(String message) {
+        for (ClientHandler client : clients) {
+            client.sendMessage(message);
+        }
+    }
+
+    // Récupérer les 6 derniers messages
+    private List<ChatMessage> getLastMessages() {
+        synchronized (messageHistory) {
+            int size = messageHistory.size();
+            int startIndex = Math.max(0, size - MAX_MESSAGES);
+            return new ArrayList<>(messageHistory.subList(startIndex, size));
+        }
+    }
 
     static class ChatMessage implements Comparable<ChatMessage> {
         final LocalDateTime timestamp;
@@ -38,21 +74,6 @@ public class ChatServer {
         public int compareTo(ChatMessage other) {
             return other.timestamp.compareTo(this.timestamp); // Pour trier du plus récent au plus ancien
         }
-    }
-
-    public void start() {
-        new Thread(() -> {
-            try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-                while (true) {
-                    Socket clientSocket = serverSocket.accept();
-                    ClientHandler clientHandler = new ClientHandler(clientSocket);
-                    clients.add(clientHandler);
-                    new Thread(clientHandler).start();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
     }
 
     private class ClientHandler implements Runnable {
@@ -109,21 +130,6 @@ public class ChatServer {
 
         public void sendMessage(String message) {
             out.println(message);
-        }
-    }
-
-    private void broadcast(String message) {
-        for (ClientHandler client : clients) {
-            client.sendMessage(message);
-        }
-    }
-
-    // Récupérer les 6 derniers messages
-    private List<ChatMessage> getLastMessages() {
-        synchronized (messageHistory) {
-            int size = messageHistory.size();
-            int startIndex = Math.max(0, size - MAX_MESSAGES);
-            return new ArrayList<>(messageHistory.subList(startIndex, size));
         }
     }
 }

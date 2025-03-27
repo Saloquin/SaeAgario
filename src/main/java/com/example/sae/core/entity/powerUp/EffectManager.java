@@ -4,24 +4,14 @@ import com.example.sae.client.Solo;
 import com.example.sae.client.utils.debug.DebugWindowController;
 import com.example.sae.client.utils.timer.GameTimer;
 import com.example.sae.core.entity.MoveableBody;
+
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ *
+ */
 public class EffectManager {
     private static final ConcurrentHashMap<MoveableBody, Effect> activeEffects = new ConcurrentHashMap<>();
-
-    private static class Effect {
-        private int remainingFrames;
-        private final PowerUpType type;
-
-        Effect(PowerUpType type) {
-            this.type = type;
-            this.remainingFrames = type.getDuration() * (int) GameTimer.FPS;
-        }
-
-        boolean update() {
-            return --remainingFrames <= 0;
-        }
-    }
 
     public static void applyEffect(MoveableBody body, PowerUpType powerUpType) {
         // Remove existing effect of same type if present
@@ -46,5 +36,19 @@ public class EffectManager {
 
             }
         });
+    }
+
+    private static class Effect {
+        private final PowerUpType type;
+        private int remainingFrames;
+
+        Effect(PowerUpType type) {
+            this.type = type;
+            this.remainingFrames = type.getDuration() * (int) GameTimer.FPS;
+        }
+
+        boolean update() {
+            return --remainingFrames <= 0;
+        }
     }
 }

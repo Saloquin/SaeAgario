@@ -8,9 +8,12 @@ import javafx.scene.paint.Color;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
+/**
+ *
+ */
 public class PowerUp extends Entity {
-    protected PowerUpType type;
     protected static final long DURATION = 5000; // 5 seconds in milliseconds
+    protected PowerUpType type;
 
     public PowerUp(Group group, PowerUpType type) {
         super(group, type.getMasse(), type.getColor());
