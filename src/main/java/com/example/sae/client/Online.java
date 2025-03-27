@@ -29,6 +29,7 @@ public class Online extends Client {
     private final ThreadDeFond handler;
     private final Socket socket;
     private Player player;
+    private double oldMasse;
 
     private final BooleanProperty gameIsEnded = new SimpleBooleanProperty(false);
 
@@ -36,7 +37,7 @@ public class Online extends Client {
         super(root, playerName, color);
         EntityFactory.setRoot(root);
         this.gameTimer = new GameTimer(this);
-        this.gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, true);
+        this.gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, false);
         this.socket = new Socket(HOST, PORT);
         handler = new ThreadDeFond(this, socket);
         new Thread(handler).start();
@@ -65,6 +66,8 @@ public class Online extends Client {
         player.setInputPosition(getMousePosition());
         handler.sendMessage(String.format(Locale.US, "MOVE|%.2f|%.2f", player.getPosition()[0], player.getPosition()[1]));
 
+        this.oldMasse = player.getMasse();
+
         gameEngine.update();
 
         // if eat entity in client side, send to server
@@ -72,6 +75,8 @@ public class Online extends Client {
             // System.out.println("Delete prey local : " + entity.getEntityId());
             removePrey(entity);
         }
+
+        this.oldMasse = player.getMasse();
 
         gameEngine.cleanupEntities();
 
@@ -82,10 +87,9 @@ public class Online extends Client {
 
 
     private void removePrey(Entity prey) {
-        if (prey == null) return;
-        handler.sendMessage("DELETE|" + prey.getEntityId());
+        if (prey == null || this.oldMasse == player.getMasse()) return;
+        handler.sendMessage("DELETE|" + prey.getEntityId()+ "|"+ player.getEntityId() + "|" + player.getMasse());
         // System.out.println("update mass local: " +  player.getEntityId());
-        handler.sendMessage("UPDATEMASSE|" + player.getEntityId() + "|" + player.getMasse());
     }
 
     class ThreadDeFond implements Runnable {
@@ -136,10 +140,7 @@ public class Online extends Client {
                     Player player = (Player)gameEngine.getEntityById(id);
                     // System.out.println("player: " + player);
                     if (player != null) {
-                        System.out.println("nouvelle masse de " + player.getNom() + " : " + masse);
                         player.setMasse(masse);
-                    } else {
-                        System.out.println("le gros nul");
                     }
                 }
             }

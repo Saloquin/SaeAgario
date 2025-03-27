@@ -11,9 +11,8 @@ import java.util.concurrent.*;
 
 public class AgarioServer {
     // actuellement : le serveur est mis à jour quand qlqn rej, leave, ou qu'il mange qlqch
-    //                les clients sont sync quand qlqn rej, se déplace et leave
-    //                si qlqn mange qlqch, le serveur n'est PAS sync
-    // à faire : sync parfaitement le serv et les joueurs lorsqu'un joueur mange qlqch
+    //                les clients sont sync quand qlqn rej, se déplace, leave, ou qu'il mange qlqch
+    // à faire : régler bug quand un joueur est proche d'un autre joueur
     private static final int PORT = 12345;
     private static final int TARGET_FPS = 30;
     private static final long FRAME_TIME = 1000000000 / TARGET_FPS; // 33ms en nanos
@@ -34,10 +33,20 @@ public class AgarioServer {
 
     private void initializeWorld() {
         // Initialiser la nourriture
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 90; i++) {
             Food food = new Food(null, 2); // null car pas besoin de Group côté serveur
             gameEngine.addEntity(food);
         }
+        gameEngine.addEntity(new Food(null, "a", 100, 0, 2, Color.BLACK));
+        gameEngine.addEntity(new Food(null, "b", 100, 10, 2, Color.RED));
+        gameEngine.addEntity(new Food(null, "c", 200, 0, 2, Color.BLACK));
+        gameEngine.addEntity(new Food(null, "d", 200, 10, 2, Color.RED));
+        gameEngine.addEntity(new Food(null, "e", 300, 0, 2, Color.BLACK));
+        gameEngine.addEntity(new Food(null, "f", 300, 10, 2, Color.RED));
+        gameEngine.addEntity(new Food(null, "g", 400, 0, 2, Color.BLACK));
+        gameEngine.addEntity(new Food(null, "h", 400, 10, 2, Color.RED));
+        gameEngine.addEntity(new Food(null, "i", 500, 0, 2, Color.BLACK));
+        gameEngine.addEntity(new Food(null, "j", 500, 10, 2, Color.RED));
     }
 
     public void start() {
@@ -87,7 +96,24 @@ public class AgarioServer {
     private void synchronizeEntities() {
         // Synchronisation des entités entre le serveur et les clients
         for (Entity entity : gameEngine.getEntitiesToAdd()) {
-            // broadcastEntityCreation(entity);
+            if (!(entity instanceof MoveableBody)) {
+                broadcastEntityCreation(entity);
+            }
+        }
+
+        boolean broadcastedMasse = false;
+        for (Entity entity : gameEngine.getEntitiesToRemove()) {
+            if (!(entity instanceof MoveableBody)) {
+                broadcastEntityDeletion(entity);
+            }
+
+            if (!broadcastedMasse) {
+                for (Player player : gameEngine.getPlayers().values()) {
+                    broadcastEntityMasse(player);
+                }
+
+                broadcastedMasse = true;
+            }
         }
 
         // Nettoyage manuel des entités
@@ -121,7 +147,7 @@ public class AgarioServer {
     }
 
     private void broadcastEntityMasse(Player player) {
-        System.out.println("update mass broadcast: " +  player.getEntityId());
+        // System.out.println("update mass broadcast: " +  player.getEntityId());
         clientHandlers.values().forEach(handler -> handler.sendMessage("UPDATEMASSE|" + player.getEntityId() + "|" + player.getMasse()));
     }
 
@@ -226,18 +252,17 @@ public class AgarioServer {
                         return;
                     }
                     gameEngine.removeEntity(entity);
+                    // entity.onDeletion();
                     broadcastEntityDeletion(gameEngine.getEntityById(parts[1]));
-                }
-                case "UPDATEMASSE" -> {
-                    // System.out.println("Update masse serveur : " + parts[1]);
-                    Player player = (Player) gameEngine.getEntityById(parts[1]);
+
+                    Player player = (Player) gameEngine.getEntityById(parts[2]);
 
                     if(player == null){
                         // System.out.println("Player not found");
                         return;
                     }
 
-                    player.setMasse(Double.parseDouble(parts[2]));
+                    player.setMasse(Double.parseDouble(parts[3]));
                     broadcastEntityMasse(player);
                 }
             }

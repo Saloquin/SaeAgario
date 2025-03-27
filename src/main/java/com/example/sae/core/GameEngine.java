@@ -49,8 +49,7 @@ public class GameEngine {
 
         handleCollisions();
 
-        if(!isServer){
-
+        if (!isServer) {
             cleanupEntities();
         }
     }
@@ -79,11 +78,11 @@ public class GameEngine {
         entitiesToAdd.clear();
         entitiesToRemove.clear();
     }
-    
-    private void handleCollisions() {
-        for (Entity entity1 : entitiesMovable) {
-            double detectionRange = entity1.getSprite().getRadius() + 10;
 
+    private void handleCollisions() {
+        List<MoveableBody> entitiesMovable2 = entitiesMovable.stream().toList();
+        for (Entity entity1 : entitiesMovable2) {
+            double detectionRange = entity1.getSprite().getRadius() + 10;
             HashSet<Entity> nearbyEntities = getNearbyEntities(entity1, detectionRange);
 
             for (Entity entity2 : nearbyEntities) {
@@ -149,7 +148,6 @@ public class GameEngine {
         if (prey instanceof Player) {
             int playerId = getPlayerId((Player) prey);
             removePlayer(playerId);
-
         } else {
             removeEntity(prey);
         }
