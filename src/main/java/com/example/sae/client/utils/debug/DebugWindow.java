@@ -11,7 +11,7 @@ import static com.example.sae.core.entity.MoveableBody.BASE_MAX_SPEED;
 import static com.example.sae.core.entity.MoveableBody.MIN_MAX_SPEED;
 
 public class DebugWindow {
-    public static final boolean DEBUG_MODE = false;
+    public static final boolean DEBUG_MODE = true;
     private static DebugWindow instance;
     private DebugWindowController controller;
 

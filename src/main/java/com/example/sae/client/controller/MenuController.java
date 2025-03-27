@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.fxml.LoadException;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -59,8 +60,7 @@ public class MenuController implements Initializable {
     }
 
     public void onOnlinePlay(ActionEvent event) {
-        // À implémenter pour le jeu en ligne
-        Dialog.alertWindow("Information", "Online Play", "Online mode not implemented yet");
+        launchOnlineGameWindow(event);
     }
 
     @FXML
@@ -100,6 +100,39 @@ public class MenuController implements Initializable {
             currentStage.show();
         }
         catch(Exception e) {
+            Dialog.alertWindow("Error", "Failed to start game", e.getMessage());
+        }
+    }
+
+    private void launchOnlineGameWindow(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sae/online.fxml"));
+            OnlineController controller = new OnlineController();
+            controller.setPlayerName(playerName);
+            controller.setPlayerColor(playerColor);
+            loader.setController(controller);
+
+            Node currentNode = (Node) (event.getSource());
+            Scene scene = new Scene(loader.load(),
+                    Screen.getPrimary().getBounds().getWidth()*0.9,
+                    Screen.getPrimary().getBounds().getHeight()*0.9);
+
+            Stage stage = new Stage();
+            mainStage = stage;
+            stage.setTitle("AgarIO - Online");
+            stage.setScene(scene);
+            stage.setMinHeight(500);
+            stage.setMinWidth(700);
+
+            Stage currentStage = (Stage) currentNode.getScene().getWindow();
+            currentStage.hide();
+
+            stage.showAndWait();
+            // currentStage.show();
+        } catch (LoadException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Server not found", ButtonType.OK);
+            alert.showAndWait();
+        } catch(Exception e) {
             Dialog.alertWindow("Error", "Failed to start game", e.getMessage());
         }
     }

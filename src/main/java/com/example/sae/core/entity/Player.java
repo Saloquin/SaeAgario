@@ -138,11 +138,9 @@ public class Player extends MoveableBody{
      * @param y coordinate of moving object
      * @param masse mass of the player's moving object
      * @param color name of the player's moving object
-     * @param isLocal Boolean that determines whether the player's mobile object is in the local or online game
      */
-    public Player(Group group, String id, double x, double y, double masse, Color color, boolean isLocal) {
+    public Player(Group group, String id, double x, double y, double masse, Color color) {
         super(group, id, masse, color);
-        this.isLocal = isLocal;
         sprite.setCenterX(x);
         sprite.setCenterY(y);
         sprite.setViewOrder(-sprite.getRadius());

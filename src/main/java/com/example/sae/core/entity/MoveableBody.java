@@ -101,7 +101,7 @@ public abstract class MoveableBody extends Entity{
      * @param name name of moving object
      */
     MoveableBody(Group group, double initialSize, Color color, String name) {
-        super(group, initialSize);
+        super(group, initialSize, color);
         this.name.set(name);
         sprite.setFill(color);
         initializeNameText(group);

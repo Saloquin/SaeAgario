@@ -1,10 +1,12 @@
 package com.example.sae.client;
 
-import com.example.sae.client.debug.DebugWindow;
+import com.example.sae.client.utils.debug.DebugWindow;
 import com.example.sae.client.utils.timer.GameTimer;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.*;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -29,8 +31,11 @@ public class Online extends Client {
     private final Socket socket;
     private Player player;
 
+    private final BooleanProperty gameIsEnded = new SimpleBooleanProperty(false);
+
     public Online(Group root, String playerName, Color color) throws IOException {
-        super(root,  playerName,  color);
+        super(root, playerName, color);
+        EntityFactory.setRoot(root);
         this.gameTimer = new GameTimer(this);
         this.gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, false);
         this.socket = new Socket(HOST, PORT);
@@ -41,13 +46,11 @@ public class Online extends Client {
     @Override
     public void init() {
         gameStarted = true;
-        Player player = EntityFactory.createPlayer(MoveableBody.DEFAULT_MASSE, "Player", Color.RED);
-        player.setCamera(camera);
-        camera.focusOn(player);
-        gameEngine.addPlayer(player);
+        player = EntityFactory.createPlayer(10, playerName, color);
+        playerId = gameEngine.addPlayer(player);
         gameTimer.start();
-        if (DebugWindow.DEBUG_MODE) {
-            // DebugWindow.getInstance();
+        if(DebugWindow.DEBUG_MODE) {
+            DebugWindow.getInstance();
         }
         handler.sendMessage("READY");
     }
@@ -55,17 +58,22 @@ public class Online extends Client {
     @Override
     public void update() {
         Player player = gameEngine.getPlayer(playerId);
-
         if (player == null) {
-            new javafx.animation.Timeline(
-                    new javafx.animation.KeyFrame(
-                            javafx.util.Duration.seconds(2),
-                            event -> returnToMenu()
-                    )
-            ).play();
+            gameIsEnded.set(true);
             return;
         }
 
+        /*
+        System.out.println(String.format(Locale.US, "%s,%s,%.2f,%.2f,%.2f,%.0f,%.0f,%.0f|",
+                player.getClass().getSimpleName(),
+                player.getEntityId(),
+                player.getPosition()[0],
+                player.getPosition()[1],
+                player.getMasse(),
+                player.getColor().getRed()*255,
+                player.getColor().getBlue()*255,
+                player.getColor().getGreen()*255));
+*/
         // handler.sendMessage(String.format(Locale.US, "MOVE|%.2f|%.2f", getMousePosition()[0], getMousePosition()[1]));
 
         player.setInputPosition(getMousePosition());
@@ -73,10 +81,9 @@ public class Online extends Client {
 
         gameEngine.update();
 
-        /*
         if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
             DebugWindow.getInstance().update(gameEngine, playerId);
-        }*/
+        }
     }
 
     public void handleAppClosed(Stage stage) {
@@ -146,7 +153,8 @@ public class Online extends Client {
                         if (!id.equals(clientId)) {
                             // System.out.println(part);
                             Platform.runLater(() -> {
-                                Player player = new Player(root, id, x, y, masse, Color.BLUE, false);
+                                // Player player = new Player(root, id, x, y, masse, Color.BLUE, false);
+                                Player player = new Player(root, id, x, y, masse, Color.GREEN);
                                 gameEngine.addPlayer(player);
                             });
                         }
@@ -180,8 +188,8 @@ public class Online extends Client {
             double y = Double.parseDouble(parts[3]);
 
             // Stream<Entity> allPlayers = gameEngine.getEntitiesOfType(Player.class).stream();
-            Stream<Entity> allPlayers = gameEngine.entitiesMovable.stream();
-            List<Entity> movingPlayers = allPlayers.filter(p -> movingPlayerId.equals(p.getEntityId())).toList();
+            Stream<MoveableBody> allPlayers = gameEngine.entitiesMovable.stream();
+            List<MoveableBody> movingPlayers = allPlayers.filter(p -> movingPlayerId.equals(p.getEntityId())).toList();
 
             movingPlayers.forEach(entity -> {
                 Platform.runLater(() -> {
@@ -241,7 +249,17 @@ public class Online extends Client {
         }
     }
 
-    private void returnToMenu() {
-        Platform.exit();
+    public BooleanProperty getGameIsEndedProperty() {
+        return gameIsEnded;
+    }
+
+    public void stopOnlineGame() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        DebugWindow.getInstance().getController().getStage().close();
+        gameTimer.stop();
     }
 }
