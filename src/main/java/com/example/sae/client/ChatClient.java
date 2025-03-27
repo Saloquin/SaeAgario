@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.function.Consumer;
 
 public class ChatClient {
-    private static final String SERVER_IP = "172.22.1.56";
+    private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 55555;
     private PrintWriter out;
     private final Consumer<String> messageHandler;

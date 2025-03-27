@@ -19,7 +19,6 @@ import java.net.Socket;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static com.example.sae.client.controller.SoloController.getMousePosition;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
@@ -43,7 +42,8 @@ public class Online extends Client {
     public void init() {
         gameStarted = true;
         Player player = EntityFactory.createPlayer(3, "Player", Color.RED);
-
+        player.setCamera(camera);
+        camera.focusOn(player);
         gameEngine.addPlayer(player);
         gameTimer.start();
     }
@@ -62,6 +62,7 @@ public class Online extends Client {
             return;
         }
 
+        player.setInputPosition(getMousePosition());
         handler.sendMessage(String.format(Locale.US, "MOVE|%f|%f", getMousePosition()[0], getMousePosition()[1]));
 
         gameEngine.update();
@@ -193,6 +194,8 @@ public class Online extends Client {
                         double y = Double.parseDouble(infos[3]);
                         Platform.runLater(() -> {
                             Player player = new Player(root, infos[1], x, y, 5, Color.RED, false);
+                            player.setCamera(camera);
+                            camera.focusOn(player);
                             gameEngine.addPlayer(player);
                         });
                         // System.out.println(part);

@@ -17,14 +17,13 @@
 
     <Label text="Game Constants" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
     <VBox fx:id="constantsBox" spacing="2" style="-fx-text-fill: white;"/>
-    <Label fx:id="mousePositionLabel" style="-fx-text-fill: white;"/>
+
     <Label text="Entity Information" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
     <Label fx:id="foodCountLabel" style="-fx-text-fill: white;"/>
     <Label fx:id="enemyCountLabel" style="-fx-text-fill: white;"/>
     <Label fx:id="playerPositionLabel" style="-fx-text-fill: white;"/>
     <Label fx:id="playerMassLabel" style="-fx-text-fill: white;"/>
     <Label fx:id="playerSpeedLabel" style="-fx-text-fill: white;"/>
-    <Label fx:id="playerMaxSpeedLabel" style="-fx-text-fill: white;"/>
     <Label text="Debug Logs" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
     <ListView fx:id="logsListView" prefHeight="250" prefWidth="350" style="-fx-control-inner-background: rgba(0, 0, 0, 0.5); -fx-text-fill: white;"/>
 </VBox>

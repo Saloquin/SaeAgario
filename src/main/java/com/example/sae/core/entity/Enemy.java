@@ -186,7 +186,7 @@ public class Enemy extends MoveableBody {
         GameEngine gameEngine = SoloController.getClient().getGameEngine();
         if (gameEngine == null) return new RandomMoveStrategy();
 
-        var nearbyEntities = gameEngine.getNearbyEntities(this, 600);
+        var nearbyEntities = gameEngine.getNearbyEntities(this, 400);
 
         boolean hasValidPrey = nearbyEntities.stream()
                 .anyMatch(entity -> entity.getMasse() <= this.getMasse() * 1.33
