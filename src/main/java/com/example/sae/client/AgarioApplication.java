@@ -18,7 +18,6 @@ import java.io.IOException;
 public class AgarioApplication extends Application {
     public static final Group root = new Group();
     private static Scene scene;
-    private static Client client;
 
     @Override
     public void start(Stage stage) throws IOException {

@@ -123,10 +123,10 @@ public class MenuController implements Initializable {
                     } else {
                         Alert alert = new Alert(Alert.AlertType.ERROR, "Server IP is required!", ButtonType.OK);
                         alert.showAndWait();
-                        return; // Annuler le lancement si aucune IP n'est renseignée
+                        return;
                     }
                 } else {
-                    return; // Annuler le lancement si aucune IP n'est renseignée
+                    return;
                 }
             }
 
