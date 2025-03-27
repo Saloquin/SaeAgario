@@ -177,7 +177,10 @@ public class GameEngine {
         entitiesToRemove.add(entity);
         entities.remove(entity);
         quadTree.remove(entity);
-
+        
+        if(entity instanceof MoveableBody) {
+            entitiesMovable.remove((MoveableBody)entity);
+        }
     }
 
     public int addPlayer(Player player) {
