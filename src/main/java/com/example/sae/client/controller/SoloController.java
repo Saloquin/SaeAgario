@@ -13,6 +13,7 @@ import com.example.sae.core.entity.*;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.DoubleProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
@@ -138,6 +139,7 @@ public class SoloController implements Initializable {
         drawWorldOnMinimap();
         drawPlayerOnMinimap();
         drawMinimapCenter();
+        drawPlayerCamera(pane);
 
     }
 
@@ -184,8 +186,7 @@ public class SoloController implements Initializable {
 
         double scaleX = minimap.getWidth() / worldWidth;
         double scaleY = minimap.getHeight() / worldHeight;
-        System.out.println("scaleX: " + scaleX);
-        System.out.println("scaleY: " + scaleY);
+
 
 
         return Math.min(scaleX, scaleY) * 0.9; // 10% de marge
@@ -237,12 +238,40 @@ public class SoloController implements Initializable {
 
         double radius = player.getSprite().getRadius();
         double scaleRadius = Math.max(3,radius * scale * 2);
-        System.out.println("scaleRadius: " + scaleRadius);
+
 
         // Dessiner le joueur
         minimapGC.setFill(Color.YELLOW);
         minimapGC.fillOval(playerX - scaleRadius/2, playerY - scaleRadius/2, scaleRadius, scaleRadius);
     }
+
+    private void drawPlayerCamera(Pane pane) {
+        double scale = calculateOptimalScale();
+        double zoom = pane.getScaleX(); // ou getScaleY()
+
+        // Taille de la vue visible en unités du monde
+        double cameraWidth = pane.getWidth() / zoom;
+        double cameraHeight = pane.getHeight() / zoom;
+
+        // Position du joueur sur la minimap
+        double centerX = minimap.getWidth() / 2;
+        double centerY = minimap.getHeight() / 2;
+
+        double playerMinimapX = centerX + (player.getX() * scale);
+        double playerMinimapY = centerY + (player.getY() * scale);
+
+        // Position du coin haut-gauche du rectangle caméra
+        double rectX = playerMinimapX - (cameraWidth * scale / 2);
+        double rectY = playerMinimapY - (cameraHeight * scale / 2);
+        double rectWidth = cameraWidth * scale;
+        double rectHeight = cameraHeight * scale;
+
+        minimapGC.setStroke(Color.RED);
+        minimapGC.setLineWidth(1);
+        minimapGC.strokeRect(rectX, rectY, rectWidth, rectHeight);
+    }
+
+
 
     private void initializeChat() {
         chatClient = new ChatClient(player.getNom(), message -> {
