@@ -1,11 +1,10 @@
 package com.example.sae.core.entity;
 
 import com.example.sae.client.controller.SoloController;
+import com.example.sae.core.entity.player.Player;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

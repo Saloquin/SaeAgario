@@ -24,5 +24,7 @@ module com.example.sae {
     exports com.example.sae.client.utils.timer;
     opens com.example.sae.client.utils.timer to javafx.fxml;
     exports com.example.sae.client.utils.debug;
-    opens com.example.sae.client.utils.debug to javafx.fxml; // Add this line
+    opens com.example.sae.client.utils.debug to javafx.fxml;
+    exports com.example.sae.core.entity.player;
+    opens com.example.sae.core.entity.player to javafx.fxml; // Add this line
 }

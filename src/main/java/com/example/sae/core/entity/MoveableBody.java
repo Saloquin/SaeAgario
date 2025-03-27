@@ -1,5 +1,6 @@
 package com.example.sae.core.entity;
 
+import com.example.sae.core.entity.player.Player;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleStringProperty;
@@ -46,7 +47,7 @@ public abstract class MoveableBody extends Entity{
      * @param initialSize size of moving object
      * @param color color of moving object
      */
-    MoveableBody(Group group, double initialSize, Color color) {
+    protected MoveableBody(Group group, double initialSize, Color color) {
         super(group, initialSize, color);
         initializeNameText(group);
     }
@@ -64,12 +65,12 @@ public abstract class MoveableBody extends Entity{
      * @param initialSize size of moving object
      * @param color color of moving object
      */
-    MoveableBody(Group group, String id, double initialSize, Color color) {
+    protected MoveableBody(Group group, String id, double initialSize, Color color) {
         super(group, id, initialSize, color);
         initializeNameText(group);
     }
 
-    MoveableBody(Group group, String id, double initialSize, Color color, String playerName) {
+    protected MoveableBody(Group group, String id, double initialSize, Color color, String playerName) {
         super(group, id, initialSize, color);
         this.name.set(playerName);
         initializeNameText(group);
@@ -86,7 +87,7 @@ public abstract class MoveableBody extends Entity{
      * @param color color of moving object
      * @param name name of moving object
      */
-    MoveableBody(Group group, double initialSize, Color color, String name) {
+    protected MoveableBody(Group group, double initialSize, Color color, String name) {
         super(group, initialSize);
         this.name.set(name);
         sprite.setFill(color);
@@ -103,7 +104,7 @@ public abstract class MoveableBody extends Entity{
      * @param initialSize size of moving object
      * @param name name of moving object
      */
-    MoveableBody(Group group, double initialSize, String name) {
+    protected MoveableBody(Group group, double initialSize, String name) {
         super(group, initialSize);
         this.name.set(name);
         initializeNameText(group);
@@ -298,7 +299,5 @@ public abstract class MoveableBody extends Entity{
     public StringProperty nameProperty() {
         return name;
     }
-
-
 
 }

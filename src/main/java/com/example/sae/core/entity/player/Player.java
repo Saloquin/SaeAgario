@@ -1,11 +1,16 @@
-package com.example.sae.core.entity;
+package com.example.sae.core.entity.player;
 
 import com.example.sae.core.Camera;
+import com.example.sae.core.entity.MoveableBody;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import com.example.sae.client.Solo;
 import com.example.sae.client.Online;
+
+import java.util.ArrayList;
 
 /**
  * moving object used by the player during a game
@@ -25,14 +30,37 @@ public class Player extends MoveableBody{
      * @see Online
      * @see Solo
      */
-    private boolean isLocal = false; // Pour identifier si c'est un joueur local ou distant
+    private boolean isLocal = false;
+
+    private final DoubleProperty totalMasse = new SimpleDoubleProperty(0);
 
     /**
      * player's mouse position (direction):
      * local: send by mouse
      * online: send by server
      */
-    private double[] inputPosition; // Position cible (souris pour le joueur local, position reçue du serveur pour les autres)
+    protected double[] inputPosition;
+
+    /**
+     * ArrayList containing all the player's parts
+     */
+    protected ArrayList<PlayerPart> parts = new ArrayList<>();
+
+    private void bindMasseProperty(){
+        /*Bindings.createDoubleBinding(
+                ()-> {
+                    double sumMasse = 0;
+                    for(PlayerPart p: parts){
+                        sumMasse += p.getMasse();
+                    }
+                    return sumMasse;
+                }
+                ,totalMasse);*/
+    }
+
+    public void createFirstPart(Group group){
+        parts.add(new PlayerPart(group, getMasse(), getColor()));
+    }
 
     /**
      * constructor
@@ -49,6 +77,8 @@ public class Player extends MoveableBody{
         sprite.setCenterX(0);
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());
+        bindMasseProperty();
+        createFirstPart(group);
     }
 
     /**
@@ -67,6 +97,8 @@ public class Player extends MoveableBody{
         sprite.setCenterX(0);
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());
+        bindMasseProperty();
+        createFirstPart(group);
     }
 
 
@@ -76,6 +108,8 @@ public class Player extends MoveableBody{
         sprite.setCenterX(0);
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());
+        bindMasseProperty();
+        createFirstPart(group);
     }
 
 
@@ -99,6 +133,8 @@ public class Player extends MoveableBody{
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());
         inputPosition = new double[]{0, 0};
+        bindMasseProperty();
+        createFirstPart(group);
     }
 
     /**
@@ -124,6 +160,8 @@ public class Player extends MoveableBody{
         sprite.setCenterY(y);
         sprite.setViewOrder(-sprite.getRadius());
         inputPosition = new double[] { x, y };
+        bindMasseProperty();
+        createFirstPart(group);
     }
 
     /**
@@ -166,26 +204,31 @@ public class Player extends MoveableBody{
         this.inputPosition = position;
     }
 
-
-
-    /**
-     * changes the camera of the player's moving object
-     *
-     * @see MoveableBody
-     * @see Camera
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param cam the new camera
-     */
-    public void setCamera(Camera cam) {
-        cam.focusOn(this);
+    public void removePart(int index){
+        parts.remove(index);
     }
 
-    public DoubleProperty getCenterXProperty() {
-        return sprite.centerXProperty();
+    public void removePart(PlayerPart part){
+        parts.remove(part);
     }
 
-    public DoubleProperty getCenterYProperty() {
-        return sprite.centerYProperty();
+    public Player getPart(int index){
+        return parts.get(index);
+    }
+
+    public void split(){
+        System.out.println("BOMBARDILLO CROCODILO");
+        System.out.println(parts.size());
+        for(PlayerPart p : parts){
+            p.split();
+        }
+    }
+
+    public double getTotalMasse() {
+        return totalMasse.get();
+    }
+
+    public DoubleProperty totalMasseProperty() {
+        return totalMasse;
     }
 }

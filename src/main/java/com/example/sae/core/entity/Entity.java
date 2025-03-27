@@ -2,6 +2,7 @@ package com.example.sae.core.entity;
 
 import java.util.Random;
 
+import com.example.sae.core.entity.player.Player;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import java.util.UUID;
@@ -40,7 +41,7 @@ public abstract class Entity extends Group{
      * @param group Group
      * @param initialMasse size of entity
      */
-    Entity(Group group, double initialMasse) {
+    protected Entity(Group group, double initialMasse) {
         super();
         this.entityId = UUID.randomUUID().toString();
         this.masse = new SimpleDoubleProperty(initialMasse);

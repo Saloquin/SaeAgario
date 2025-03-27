@@ -1,6 +1,7 @@
 package com.example.sae.core;
 
 import com.example.sae.core.entity.*;
+import com.example.sae.core.entity.player.Player;
 import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
 import javafx.animation.ScaleTransition;

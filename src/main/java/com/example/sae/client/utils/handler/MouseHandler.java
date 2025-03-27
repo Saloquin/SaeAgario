@@ -1,9 +1,8 @@
 package com.example.sae.client.utils.handler;
 
 import com.example.sae.core.GameEngine;
-import com.example.sae.core.entity.Player;
+import com.example.sae.core.entity.player.Player;
 import javafx.geometry.Point2D;
-import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
 

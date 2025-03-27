@@ -11,6 +11,7 @@ import com.example.sae.client.Solo;
 import com.example.sae.core.Camera;
 import com.example.sae.core.entity.*;
 
+import com.example.sae.core.entity.player.Player;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
@@ -21,6 +22,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -104,6 +107,12 @@ public class SoloController implements Initializable {
         minimapGC = minimap.getGraphicsContext2D();
         setupMinimap();
 
+        rootStack.setOnKeyReleased(event -> {
+            if(event.getCode() == KeyCode.SPACE ) {
+                System.out.println("BRR BRR PATAPIM");
+                player.split();
+            }
+        });
 
         client.getGameIsEndedProperty().addListener((observable, oldValue, newValue) -> {
             stopGame();

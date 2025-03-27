@@ -3,7 +3,7 @@ package com.example.sae.server;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Entity;
 import com.example.sae.core.entity.Food;
-import com.example.sae.core.entity.Player;
+import com.example.sae.core.entity.player.Player;
 import javafx.scene.paint.Color;
 
 import java.io.*;

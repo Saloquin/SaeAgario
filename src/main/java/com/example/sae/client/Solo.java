@@ -6,7 +6,7 @@ import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.Food;
-import com.example.sae.core.entity.Player;
+import com.example.sae.core.entity.player.Player;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
