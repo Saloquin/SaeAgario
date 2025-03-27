@@ -24,8 +24,8 @@ public class GameEngine {
     public final  static double NB_ENEMY_MAX = 20;
     public final  static double MASSE_INIT_PLAYER = 30;
     public final  static double MASSE_INIT_FOOD = 4;
-    public static final double MASSE_INIT_ENEMY = 15;
-    public static final int ENEMY_RANGE = 500;
+    public static final double MASSE_INIT_ENEMY = 30;
+    public static final int ENEMY_RANGE = 1000;
     private static final int QUAD_TREE_MAX_DEPTH = 6;
     private static QuadTree quadTree;
     private boolean gameStarted = false;
