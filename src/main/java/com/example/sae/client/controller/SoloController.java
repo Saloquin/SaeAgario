@@ -14,7 +14,6 @@ import javafx.scene.paint.Color;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 

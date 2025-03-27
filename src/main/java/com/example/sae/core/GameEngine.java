@@ -33,7 +33,6 @@ public class GameEngine {
     public static final double MAP_LIMIT_HEIGHT = Constants.getMapLimitHeight();
 
     private static QuadTree quadTree;
-    private boolean gameStarted = false;
 
 
     private final boolean isServer;
@@ -92,7 +91,6 @@ public class GameEngine {
             double detectionRange = entity1.getSprite().getRadius()+  10;
 
             HashSet<Entity> nearbyEntities = getNearbyEntities(entity1, detectionRange);
-            System.out.println(entity1.getNom() +" "+nearbyEntities.toString());
             for (Entity entity2 : nearbyEntities) {
                 if (checkCollision(entity1, entity2)) {
                     //DebugWindowController.addLog("Collision detected between: " + entity1 + " and " + entity2);

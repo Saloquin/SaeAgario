@@ -119,10 +119,12 @@ public class Enemy extends MoveableBody {
      * @return returns true if the distance between the target and the AI are small enough to be reached
      */
     public boolean hasReachedTarget() {
+        if (targetPosition == null) {
+            return false;
+        }
         double distance = Math.sqrt(Math.pow(targetPosition[0] - sprite.getCenterX(), 2) + Math.pow(targetPosition[1] - sprite.getCenterY(), 2));
-        return distance < 5;
+        return distance < sprite.getRadius() +5;
     }
-
     /**
      * returns to AI strategy
      *
