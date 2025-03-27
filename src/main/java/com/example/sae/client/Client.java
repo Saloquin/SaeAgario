@@ -33,8 +33,8 @@ public abstract class Client {
     public abstract void update();
 
 
-    public Pane createGamePane(double width, double height) {
-        return GamePaneFactory.createGamePane(root, gameEngine, playerId, width, height);
+    public Pane createGamePane() {
+        return GamePaneFactory.createGamePane(root, gameEngine, playerId);
     }
 
     public Camera getCamera() {
