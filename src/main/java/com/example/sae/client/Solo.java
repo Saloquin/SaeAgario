@@ -73,5 +73,6 @@ public class Solo extends Client {
         if(!gameIsEnded.get()) {
             gameIsEnded.set(true);
         }
+        gameEngine = null;
     }
 }

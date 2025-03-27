@@ -79,12 +79,16 @@ public class SoloController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         root = new Group();
+
+        EntityFactory.setRoot(root);
+
         client = new Solo(root, playerName, playerColor);
         client.init();
 
         setupPlayerInfoUpdater();
 
-        pane = client.createGamePane(1280, 720);
+        pane = client.createGamePane();
+
         pane.prefWidthProperty().bind(rootStack.widthProperty());
         pane.prefHeightProperty().bind(rootStack.heightProperty());
 
@@ -116,7 +120,11 @@ public class SoloController implements Initializable {
 
         // Timer pour rafraîchir la minimap
         Timeline minimapUpdater = new Timeline(
-                new KeyFrame(Duration.millis(100), e -> updateMinimap()));
+                new KeyFrame(Duration.millis(100), e -> {
+                    if(client.getGameEngine() != null) {
+                        updateMinimap();
+                    }
+                }));
         minimapUpdater.setCycleCount(Timeline.INDEFINITE);
         minimapUpdater.play();
     }
@@ -181,6 +189,7 @@ public class SoloController implements Initializable {
     }
 
     private void drawWorldOnMinimap() {
+
         double scale = calculateOptimalScale();
 
         // Sauvegarde l'état actuel
