@@ -18,7 +18,7 @@ public class GameEngine {
     private final HashSet<Entity> entitiesToAdd;
     private final HashSet<Entity> entitiesToRemove;
     public final HashSet<MoveableBody> entitiesMovable;
-    public final  static double NB_FOOD_MAX = 1000;
+    public final  static double NB_FOOD_MAX = 100;
     public final  static double NB_ENEMY_MAX = 10;
     private static final int QUAD_TREE_MAX_DEPTH = 6;
     private static QuadTree quadTree;
@@ -48,11 +48,11 @@ public class GameEngine {
         updateEntities();
 
         handleCollisions();
-        if(isServer){
-            entitiesToAdd.forEach(this::addEntity);
-            entitiesToRemove.forEach(this::removeEntity);
+
+        if(!isServer){
+
+            cleanupEntities();
         }
-        cleanupEntities();
     }
 
     public List<MoveableBody> getEntitiesMovable() {
@@ -178,9 +178,19 @@ public class GameEngine {
         entitiesToAdd.add(entity);
         entities.add(entity);
         quadTree.insert(entity);
-        if(entity instanceof MoveableBody) {
+        if (entity instanceof MoveableBody) {
             entitiesMovable.add((MoveableBody)entity);
         }
+    }
+
+    public Entity getEntityById(String id){
+        return entities.stream().filter(
+                entity -> entity.getEntityId().equals(id)
+        ).findFirst().orElse(null);
+    }
+
+    public HashSet<Entity> getEntitiesToRemove(){
+        return entitiesToRemove;
     }
 
 
@@ -188,7 +198,9 @@ public class GameEngine {
         entitiesToRemove.add(entity);
         entities.remove(entity);
         quadTree.remove(entity);
-
+        if (entity instanceof MoveableBody) {
+            entitiesMovable.remove(entity);
+        }
     }
 
     public int addPlayer(Player player) {
