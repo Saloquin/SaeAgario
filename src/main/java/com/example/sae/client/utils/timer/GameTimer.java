@@ -17,6 +17,7 @@ public class GameTimer extends AnimationTimer {
 
     @Override
     public void stop(){
+        super.stop();
         stopped = true;
     }
 
