@@ -9,7 +9,7 @@
 <?import javafx.geometry.Insets?>
 
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.example.sae.client.debug.DebugWindowController"
+        fx:controller="com.example.sae.client.utils.debug.DebugWindowController"
         spacing="5" style="-fx-background-color: rgba(0, 0, 0, 0.7); -fx-text-fill: white;" prefWidth="500">
     <padding>
         <Insets topRightBottomLeft="10"/>

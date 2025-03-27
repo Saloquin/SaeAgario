@@ -1,35 +1,37 @@
 package com.example.sae.client;
 
-import com.example.sae.client.debug.DebugWindow;
-import com.example.sae.client.timer.GameTimer;
+import com.example.sae.client.utils.debug.DebugWindow;
+import com.example.sae.client.utils.timer.GameTimer;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
-import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
 import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 public class Solo extends Client {
     private GameTimer gameTimer;
+    private Player player;
 
-    public Solo(Group root) {
-        super(root);
+    private final BooleanProperty gameIsEnded = new SimpleBooleanProperty(false);
+
+    public Solo(Group root, String playerName, Color color) {
+        super(root, playerName, color);
         this.gameTimer = new GameTimer(this);
         this.gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, false);
+
     }
 
     @Override
     public void init() {
         gameStarted = true;
-        Player player = EntityFactory.createPlayer(10, Color.RED, true);
-        player.setCamera(camera);
-        camera.focusOn(player);
+        player = EntityFactory.createPlayer(10, playerName, color);
         playerId = gameEngine.addPlayer(player);
         if(DebugWindow.DEBUG_MODE) {
             DebugWindow.getInstance();
@@ -41,32 +43,32 @@ public class Solo extends Client {
     public void update() {
         Player player = gameEngine.getPlayer(playerId);
         if (player == null) {
-            new javafx.animation.Timeline(
-                    new javafx.animation.KeyFrame(
-                            javafx.util.Duration.seconds(2),
-                            event -> returnToMenu()
-                    )
-            ).play();
-            return;
+            gameIsEnded.set(true);
+        }
+        else{
+            player.setInputPosition(getMousePosition());
+            if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
+                gameEngine.addEntity(EntityFactory.createFood(4));
+            }
+
+            if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
+                gameEngine.addEntity(EntityFactory.createEnemy(10));
+            }
+
+            gameEngine.update();
+            if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
+                DebugWindow.getInstance().update(gameEngine, playerId);
+            }
         }
 
-        player.setInputPosition(getMousePosition());
-        if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
-            gameEngine.addEntity(EntityFactory.createFood(2));
-        }
-
-        if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
-            gameEngine.addEntity(EntityFactory.createEnemy(10));
-        }
-
-        gameEngine.update();
-        if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
-            DebugWindow.getInstance().update(gameEngine, playerId);
-        }
 
     }
 
-    private void returnToMenu() {
-        Platform.exit();
+    public BooleanProperty getGameIsEndedProperty() {
+        return gameIsEnded;
+    }
+
+    public void stopSoloGame() {
+        gameTimer.stop();
     }
 }

@@ -1,6 +1,7 @@
 package com.example.sae.core.entity;
 
 
+
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 

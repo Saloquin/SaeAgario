@@ -1,6 +1,7 @@
 package com.example.sae.core.entity;
 
 import com.example.sae.core.Camera;
+import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import com.example.sae.client.Solo;
@@ -67,6 +68,16 @@ public class Player extends MoveableBody{
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());
     }
+
+
+
+    public Player(Group group, double masse, Color color,String playerName){
+        super(group, masse, color, playerName);
+        sprite.setCenterX(0);
+        sprite.setCenterY(0);
+        sprite.setViewOrder(-sprite.getRadius());
+    }
+
 
     /**
      * constructor
@@ -191,5 +202,13 @@ public class Player extends MoveableBody{
      */
     public void setCamera(Camera cam) {
         cam.focusOn(this);
+    }
+
+    public DoubleProperty getCenterXProperty() {
+        return sprite.centerXProperty();
+    }
+
+    public DoubleProperty getCenterYProperty() {
+        return sprite.centerYProperty();
     }
 }

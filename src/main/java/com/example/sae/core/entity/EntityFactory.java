@@ -1,12 +1,6 @@
 package com.example.sae.core.entity;
 
-import com.example.sae.client.AgarioApplication;
-import com.example.sae.client.Online;
-import com.example.sae.client.Solo;
-import com.example.sae.core.entity.enemyStrategy.ChaseClosestEntityStrategy;
-import com.example.sae.core.entity.enemyStrategy.EnemyStrategy;
-import com.example.sae.core.entity.enemyStrategy.RandomMoveStrategy;
-import com.example.sae.core.entity.enemyStrategy.SeekFoodStrategy;
+import com.example.sae.client.controller.SoloController;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -26,8 +20,7 @@ import java.util.List;
  * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
  */
 public class EntityFactory {
-
-    private static Group root = AgarioApplication.root;
+    private static Group root = SoloController.root;
 
     /**
      * name list for IA, or default
@@ -81,37 +74,18 @@ public class EntityFactory {
      * @see Player
      *
      * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param mass mass of the player's moving object
-     * @param color name of the player's moving object
-     * @param isLocal Boolean that determines whether the player's mobile object is in the local or online game
+     * @param playerName name of the player's moving object
+     * @param color Boolean that determines whether the player's mobile object is in the local or online game
      */
-    public static Player createPlayer(double mass, Color color, boolean isLocal) {
-        return new Player(root, mass, color, isLocal);
-    }
-
-    /**
-     * create a moving object for a player
-     *
-     * @see Entity
-     * @see MoveableBody
-     * @see Player
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param id entity id
-     * @param mass mass of the player's moving object
-     * @param color name of the player's moving object
-     * @param isLocal Boolean that determines whether the player's mobile object is in the local or online game
-     */
-    public static Player createPlayer(String id, double mass, Color color, boolean isLocal) {
-        return new Player(root, id, mass, color, isLocal);
+    public static Player createPlayer(double mass,String playerName, Color color) {
+        return new Player(root, mass, color,playerName);
     }
 
     /**
      * create a moving object for a player
      *
      * @see MoveableBody
-     * @see Online
-     * @see Solo
+     *
      *
      * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
      * @param mass mass of the player's moving object

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane fx:id="rootStack" prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sae.client.controller.SoloController">
+
+    <!-- The game world (moved by camera) -->
+    <Pane fx:id="gameContainer" />
+
+    <!-- The HUD : stay fixed on the screen -->
+    <AnchorPane fx:id="hudContainer" pickOnBounds="false">
+
+        <!-- Leaderboard at the top left corner -->
+        <ListView fx:id="leaderboard" prefHeight="200" prefWidth="200" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ListView fx:id="chat" prefHeight="578.0" prefWidth="200.0" />
+            <TextField fx:id="message" />
+              <!-- Minimap at the bottom right corner -->
+              <Canvas fx:id="minimap" height="180" width="200" />
+         </children>
+      </VBox>
+
+    </AnchorPane>
+</StackPane>

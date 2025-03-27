@@ -1,11 +1,9 @@
 package com.example.sae.core.entity;
 
-import com.example.sae.client.AgarioApplication;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Bounds;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -26,12 +24,16 @@ public abstract class MoveableBody extends Entity{
     /**
      * name of moving object
      */
-    public String name= "°-°";
+
+    private final StringProperty name = new SimpleStringProperty(this, "name", "°-°");
     private Text nameText;
 
-    public static final double BASE_MAX_SPEED = 10; // Vitesse de base maximum
-    public static final double MIN_MAX_SPEED = 2;  // Vitesse maximum minimale
-    public static final double SPEED_FACTOR = 1;
+    public static final double BASE_MAX_SPEED = 20; // Vitesse de base maximum
+
+    public static final double MIN_MAX_SPEED = 4;  // Vitesse maximum minimale
+
+    public static final double SPEED_FACTOR = 1.5;
+
     public static final double ENEMY_SPEED_MULTIPLIER = 0.7;
 
     public static final double DEFAULT_MASSE = 10; // Masse par défaut des joueurs
@@ -81,6 +83,12 @@ public abstract class MoveableBody extends Entity{
         initializeNameText(group);
     }
 
+    MoveableBody(Group group, String id, double initialSize, Color color, String playerName) {
+        super(group, id, initialSize, color);
+        this.name.set(playerName);
+        initializeNameText(group);
+    }
+
     /**
      * constructor
      *
@@ -94,7 +102,7 @@ public abstract class MoveableBody extends Entity{
      */
     MoveableBody(Group group, double initialSize, Color color, String name) {
         super(group, initialSize);
-        this.name = name;
+        this.name.set(name);
         sprite.setFill(color);
         initializeNameText(group);
     }
@@ -111,7 +119,7 @@ public abstract class MoveableBody extends Entity{
      */
     MoveableBody(Group group, double initialSize, String name) {
         super(group, initialSize);
-        this.name = name;
+        this.name.set(name);
         initializeNameText(group);
     }
 
@@ -126,7 +134,8 @@ public abstract class MoveableBody extends Entity{
      * @param group the moving object that is eaten
      */
     private void initializeNameText(Group group) {
-        nameText = new Text(name);
+        nameText = new Text();
+        nameText.textProperty().bind(name);
         nameText.setFill(Color.BLACK);
         nameText.setStyle("-fx-font-size: 14;");
         // Place le texte au-dessus du sprite dans l'ordre de rendu
@@ -290,6 +299,19 @@ public abstract class MoveableBody extends Entity{
         if (nameText.getParent() != null) {
             ((Group) nameText.getParent()).getChildren().remove(nameText);
         }
+    }
+
+
+    public String getNom() {
+        return name.get();
+    }
+
+    public void setNom(String nom) {
+        this.name.set(nom);
+    }
+
+    public StringProperty nameProperty() {
+        return name;
     }
 
 

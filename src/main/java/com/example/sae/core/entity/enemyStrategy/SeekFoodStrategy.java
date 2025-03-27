@@ -1,6 +1,7 @@
 package com.example.sae.core.entity.enemyStrategy;
 
-import com.example.sae.client.AgarioApplication;
+import com.example.sae.client.Solo;
+import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Entity;
@@ -28,7 +29,7 @@ public class SeekFoodStrategy implements EnemyStrategy {
      */
     @Override
     public boolean execute(Enemy enemy) {
-        GameEngine gameEngine = AgarioApplication.getClient().getGameEngine();
+        GameEngine gameEngine = SoloController.getClient().getGameEngine();
         if (gameEngine == null) return false;
 
         double closestFoodDistance = Double.MAX_VALUE;

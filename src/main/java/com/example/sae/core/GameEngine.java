@@ -1,6 +1,5 @@
 package com.example.sae.core;
 
-import com.example.sae.client.debug.DebugWindowController;
 import com.example.sae.core.entity.*;
 import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
@@ -9,9 +8,7 @@ import javafx.animation.TranslateTransition;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -20,11 +17,12 @@ public class GameEngine {
     private final HashSet<Entity> entities;
     private final HashSet<Entity> entitiesToAdd;
     private final HashSet<Entity> entitiesToRemove;
-    public final HashSet<Entity> entitiesMovable;
-    public final  static double NB_FOOD_MAX = 1000;
+    public final HashSet<MoveableBody> entitiesMovable;
+    public final  static double NB_FOOD_MAX = 100;
     public final  static double NB_ENEMY_MAX = 10;
     private static final int QUAD_TREE_MAX_DEPTH = 6;
     private static QuadTree quadTree;
+    private boolean gameStarted = false;
 
     public static final double MAP_LIMIT_WIDTH = 2000;
     public static final double MAP_LIMIT_HEIGHT = 2000;
@@ -53,6 +51,11 @@ public class GameEngine {
 
         cleanupEntities();
     }
+
+    public List<MoveableBody> getEntitiesMovable() {
+        return entitiesMovable.stream().toList();
+    }
+
     private void updateEntityInQuadTree(Entity entity) {
         // Supprimer l'entité de sa position actuelle dans le QuadTree
         quadTree.remove(entity);
@@ -66,7 +69,6 @@ public class GameEngine {
         for (Entity entity : entitiesMovable) {
             updateEntityInQuadTree(entity);
             entity.Update();
-
         }
     }
 
@@ -174,7 +176,7 @@ public class GameEngine {
         entities.add(entity);
         quadTree.insert(entity);
         if(entity instanceof MoveableBody) {
-            entitiesMovable.add(entity);
+            entitiesMovable.add((MoveableBody)entity);
         }
     }
 
@@ -182,7 +184,7 @@ public class GameEngine {
     public void removeEntity(Entity entity) {
         entitiesToRemove.add(entity);
         entities.remove(entity);
-        entity.setPosition(-999999, -999999); //TODO Move entity off screen before removing
+        quadTree.remove(entity);
 
     }
 
@@ -198,6 +200,7 @@ public class GameEngine {
         if (player != null) {
             removeEntity(player);
         }
+
     }
 
     public Player getPlayer(int playerId) {
@@ -239,6 +242,14 @@ public class GameEngine {
         nearbyEntities.remove(entity);
 
         return nearbyEntities;
+    }
+
+    public List<MoveableBody> getSortedMovableEntities() {
+        return entitiesMovable.stream()
+                .map(entity -> (MoveableBody) entity)
+                .sorted(Comparator.comparingDouble(MoveableBody::getMasse).reversed())
+                .limit(10)
+                .collect(Collectors.toList());
     }
 
 

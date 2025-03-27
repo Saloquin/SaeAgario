@@ -1,4 +1,4 @@
-package com.example.sae.client.timer;
+package com.example.sae.client.utils.timer;
 
 import com.example.sae.client.Client;
 import javafx.animation.AnimationTimer;
@@ -9,19 +9,29 @@ public class GameTimer extends AnimationTimer {
     private final double interval = 1000000000 / framesPerSecond;
     private double last = 0;
 
+    private boolean stopped = false;
+
     public GameTimer(Client client) {
         this.client = client;
     }
 
     @Override
+    public void stop(){
+        stopped = true;
+    }
+
+    @Override
     public void handle(long now) {
-        if (last == 0) {
-            last = now;
+        if(!stopped){
+            if (last == 0) {
+                last = now;
+            }
+
+            if (now - last > interval && client.getGameStarted()) {
+                last = now;
+                client.update();
+            }
         }
 
-        if (now - last > interval && client.getGameStarted()) {
-            last = now;
-            client.update();
-        }
     }
 }

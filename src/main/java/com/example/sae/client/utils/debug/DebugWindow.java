@@ -1,4 +1,4 @@
-package com.example.sae.client.debug;
+package com.example.sae.client.utils.debug;
 
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
@@ -11,7 +11,7 @@ import static com.example.sae.core.entity.MoveableBody.BASE_MAX_SPEED;
 import static com.example.sae.core.entity.MoveableBody.MIN_MAX_SPEED;
 
 public class DebugWindow {
-    public static final boolean DEBUG_MODE = true;
+    public static final boolean DEBUG_MODE = false;
     private static DebugWindow instance;
     private DebugWindowController controller;
 
