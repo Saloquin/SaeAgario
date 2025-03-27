@@ -49,7 +49,10 @@ public class GameEngine {
 
         handleCollisions();
 
-        cleanupEntities();
+        if(!isServer){
+
+            cleanupEntities();
+        }
     }
 
     public List<MoveableBody> getEntitiesMovable() {
@@ -178,6 +181,16 @@ public class GameEngine {
         if (entity instanceof MoveableBody) {
             entitiesMovable.add((MoveableBody)entity);
         }
+    }
+
+    public Entity getEntityById(String id){
+        return entities.stream().filter(
+                entity -> entity.getEntityId().equals(id)
+        ).findFirst().orElse(null);
+    }
+
+    public HashSet<Entity> getEntitiesToRemove(){
+        return entitiesToRemove;
     }
 
 

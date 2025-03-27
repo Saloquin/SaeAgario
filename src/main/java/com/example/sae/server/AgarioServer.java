@@ -70,7 +70,7 @@ public class AgarioServer {
             long now = System.nanoTime();
             if (now - lastUpdate >= FRAME_TIME) {
                 gameEngine.update();
-                // broadcastGameState();
+                synchronizeEntities();
                 lastUpdate = now;
             }
 
@@ -84,12 +84,42 @@ public class AgarioServer {
         }
     }
 
+    private void synchronizeEntities() {
+        // Synchronisation des entités entre le serveur et les clients
+        for (Entity entity : gameEngine.getEntitiesToAdd()) {
+            broadcastEntityCreation(entity);
+        }
+
+        // Nettoyage manuel des entités
+        gameEngine.cleanupEntities();
+    }
+
+    private void broadcastEntityCreation(Entity entity) {
+        // Sérialisation de l'entité
+        String entityData = serializeEntity(entity);
+        // Envoyer l'entité à tous les clients
+        clientHandlers.values().forEach(handler -> handler.sendMessage("CREATE|" + entityData));
+    }
+
     private void broadcastGameState() {
         String gameState = serializeGameState();
         clientHandlers.values().stream()
                 .filter(ClientHandler::isReady)
                 .forEach(handler -> handler.sendMessage(gameState));
     }
+
+    private void broadcastEntityDeletion(Entity entity) {
+        // Supprimer l'entité de tous les clients
+        if(entity == null) return;
+        // System.out.println("Delete prey broadcast : " + entity.getEntityId());
+        clientHandlers.values().forEach(handler -> handler.sendMessage("DELETE|" + entity.getEntityId()));
+    }
+
+    private void broadcastEntityMasse(Player player) {
+        // System.out.println("update mass broadcast: " +  player.getEntityId());
+        clientHandlers.values().forEach(handler -> handler.sendMessage("UPDATEMASSE|" + player.getEntityId() + "|" + player.getMasse()));
+    }
+
 
     private String serializeEntity(Entity entity) {
         return String.format(Locale.US, "%s,%s,%.2f,%.2f,%.2f,%.0f,%.0f,%.0f,%s|",
@@ -182,6 +212,28 @@ public class AgarioServer {
 
                         clientHandlers.values().forEach(handler -> handler.sendMessage(String.format(Locale.US, "MOVE|%s|%f|%f", player.getEntityId(), x, y)));
                     }
+                }
+                case "DELETE" -> {
+                    // System.out.println("Delete prey serveur : " + parts[1]);
+                    Entity entity = gameEngine.getEntityById(parts[1]);
+                    if(entity == null){
+                        // System.out.println("Entity not found");
+                        return;
+                    }
+                    gameEngine.removeEntity(entity);
+                    broadcastEntityDeletion(gameEngine.getEntityById(parts[1]));
+                }
+                case "UPDATEMASSE" -> {
+                    // System.out.println("Update masse serveur : " + parts[1]);
+                    Player player = (Player) gameEngine.getEntityById(parts[1]);
+
+                    if(player == null){
+                        // System.out.println("Player not found");
+                        return;
+                    }
+
+                    player.setMasse(Double.parseDouble(parts[2]));
+                    broadcastEntityMasse(player);
                 }
             }
         }
