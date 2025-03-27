@@ -9,7 +9,7 @@ import javafx.scene.layout.Pane;
 
 public class GamePaneFactory {
 
-    public static Pane createGamePane(Group root, GameEngine gameEngine, int playerId, double width, double height) {
+    public static Pane createGamePane(Group root, GameEngine gameEngine, int playerId) {
         Pane pane = new Pane(root);
         pane.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.SPACE) {

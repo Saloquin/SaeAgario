@@ -2,8 +2,6 @@ package com.example.sae.client;
 
 import com.example.sae.client.utils.debug.DebugWindow;
 import com.example.sae.client.utils.timer.GameTimer;
-import com.example.sae.core.GameEngine;
-import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
@@ -11,9 +9,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-
-import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
-import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 public class Solo extends Client {
     private GameTimer gameTimer;
@@ -24,8 +19,6 @@ public class Solo extends Client {
     public Solo(Group root, String playerName, Color color) {
         super(root, playerName, color);
         this.gameTimer = new GameTimer(this);
-        this.gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, false);
-
     }
 
     @Override
@@ -36,6 +29,11 @@ public class Solo extends Client {
         if(DebugWindow.DEBUG_MODE) {
             DebugWindow.getInstance();
         }
+
+        while (gameEngine.getEntitiesOfType(Food.class).size() < 100) {
+            gameEngine.addEntity(EntityFactory.createFood(4));
+        }
+
         gameTimer.start();
     }
 
@@ -45,14 +43,9 @@ public class Solo extends Client {
         if (player == null) {
             gameIsEnded.set(true);
         }
-        else{
-            if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
-                gameEngine.addEntity(EntityFactory.createFood(4));
-            }
-
-            if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
-                gameEngine.addEntity(EntityFactory.createEnemy(10));
-            }
+        else if (!gameIsEnded.get()) {
+            player.setInputPosition(getMousePosition());
+            manageEntities();
 
             gameEngine.update();
             if (DebugWindow.DEBUG_MODE && DebugWindow.getInstance().getController() != null) {
@@ -67,5 +60,9 @@ public class Solo extends Client {
 
     public void stopSoloGame() {
         gameTimer.stop();
+        if(!gameIsEnded.get()) {
+            gameIsEnded.set(true);
+        }
+        gameEngine = null;
     }
 }

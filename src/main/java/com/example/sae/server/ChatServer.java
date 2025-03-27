@@ -14,7 +14,7 @@ public class ChatServer {
     private static final int PORT = 55555;
     private final List<ClientHandler> clients = new CopyOnWriteArrayList<>();
     private final List<ChatMessage> messageHistory = Collections.synchronizedList(new ArrayList<>());
-    private static final int MAX_MESSAGES = 10;
+    private static final int MAX_MESSAGES = 6; // Limite à 6 messages
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     static class ChatMessage implements Comparable<ChatMessage> {
@@ -65,11 +65,10 @@ public class ChatServer {
             this.out = new PrintWriter(socket.getOutputStream(), true);
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            // Envoyer l'historique au nouveau client
+            // Envoyer les 6 derniers messages au nouveau client
             synchronized (messageHistory) {
-                List<ChatMessage> sortedMessages = new ArrayList<>(messageHistory);
-                Collections.sort(sortedMessages);
-                for (ChatMessage msg : sortedMessages) {
+                List<ChatMessage> lastMessages = getLastMessages();
+                for (ChatMessage msg : lastMessages) {
                     out.println(msg.toString());
                 }
             }
@@ -116,6 +115,15 @@ public class ChatServer {
     private void broadcast(String message) {
         for (ClientHandler client : clients) {
             client.sendMessage(message);
+        }
+    }
+
+    // Récupérer les 6 derniers messages
+    private List<ChatMessage> getLastMessages() {
+        synchronized (messageHistory) {
+            int size = messageHistory.size();
+            int startIndex = Math.max(0, size - MAX_MESSAGES);
+            return new ArrayList<>(messageHistory.subList(startIndex, size));
         }
     }
 }

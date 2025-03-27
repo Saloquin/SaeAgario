@@ -41,7 +41,7 @@ public class OnlineController  implements Initializable {
         Group root = new Group();
         client = new Solo(root, "Player", Color.BEIGE);
         client.init();
-        Pane scene = client.createGamePane(1280,720);
+        Pane scene = client.createGamePane();
         gameContainer.getChildren().add(scene);
     }
 

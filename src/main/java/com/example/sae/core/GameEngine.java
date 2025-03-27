@@ -18,8 +18,8 @@ public class GameEngine {
     private final HashSet<Entity> entitiesToAdd;
     private final HashSet<Entity> entitiesToRemove;
     public final HashSet<MoveableBody> entitiesMovable;
-    public final  static double NB_FOOD_MAX = 100;
-    public final  static double NB_ENEMY_MAX = 10;
+    public final  static double NB_FOOD_MAX = 1000;
+    public final  static double NB_ENEMY_MAX = 20;
     private static final int QUAD_TREE_MAX_DEPTH = 6;
     private static QuadTree quadTree;
     private boolean gameStarted = false;

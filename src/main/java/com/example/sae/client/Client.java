@@ -4,6 +4,9 @@ import com.example.sae.client.factory.GamePaneFactory;
 import com.example.sae.client.factory.GameSceneFactory;
 import com.example.sae.core.Camera;
 import com.example.sae.core.GameEngine;
+import com.example.sae.core.entity.Enemy;
+import com.example.sae.core.entity.EntityFactory;
+import com.example.sae.core.entity.Food;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -22,6 +25,7 @@ public abstract class Client {
         this.playerName = playerName;
         this.color = color;
         camera = new Camera();
+        this.gameEngine = new GameEngine(GameEngine.MAP_LIMIT_WIDTH, GameEngine.MAP_LIMIT_HEIGHT, false);
     }
 
 
@@ -33,8 +37,8 @@ public abstract class Client {
     public abstract void update();
 
 
-    public Pane createGamePane(double width, double height) {
-        return GamePaneFactory.createGamePane(root, gameEngine, playerId, width, height);
+    public Pane createGamePane() {
+        return GamePaneFactory.createGamePane(root, gameEngine, playerId);
     }
 
     public Camera getCamera() {
@@ -47,5 +51,15 @@ public abstract class Client {
 
     public GameEngine getGameEngine() {
         return gameEngine;
+    }
+
+    protected void manageEntities() {
+        if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
+            gameEngine.addEntity(EntityFactory.createFood(4));
+        }
+
+        if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
+            gameEngine.addEntity(EntityFactory.createEnemy(10));
+        }
     }
 }

@@ -20,7 +20,7 @@ import java.util.List;
  * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
  */
 public class EntityFactory {
-    private static Group root = SoloController.root;
+    private static Group root = SoloController.getRoot();
 
     /**
      * name list for IA, or default
