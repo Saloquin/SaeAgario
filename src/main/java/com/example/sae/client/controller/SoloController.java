@@ -6,21 +6,15 @@ import com.example.sae.client.Client;
 import com.example.sae.client.Solo;
 import com.example.sae.core.Camera;
 import com.example.sae.core.entity.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -32,8 +26,7 @@ public class SoloController implements Initializable {
     @FXML private Pane gameContainer;
     @FXML private ListView<String> leaderboard;
     @FXML private Canvas minimap;
-    @FXML private ListView<String> chatListView;
-    @FXML private TextField chatInput;
+    private GraphicsContext minimapGC;
     @FXML private Label scoreLabel;
     @FXML private Label positionLabel;
 
@@ -69,7 +62,6 @@ public class SoloController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         initializeGame();
         initializeManagers();
-        initializeChat();
         setCamera();
     }
 
@@ -87,7 +79,7 @@ public class SoloController implements Initializable {
         gameContainer.getChildren().add(pane);
 
         player = Client.getGameEngine().getPlayer(client.getPlayerId());
-
+        minimapGC = minimap.getGraphicsContext2D();
 
         client.getGameIsEndedProperty().addListener((observable, oldValue, newValue) -> {
             stopGame();
@@ -100,46 +92,12 @@ public class SoloController implements Initializable {
 
     private void initializeManagers() {
         minimapManager = new MinimapManager(minimap, player,
-                () -> Client.getGameEngine().getEntitiesMovable());
+                () -> Client.getGameEngine().getEntitiesMovable(), pane);
 
         playerInfoManager = new PlayerInfoManager(player, scoreLabel, positionLabel);
 
         leaderboardManager = new LeaderboardManager(leaderboard,
                 () -> Client.getGameEngine().getSortedMovableEntities());
-    }
-
-    private void initializeChat() {
-        chatListView.setItems(FXCollections.observableArrayList());
-
-        chatClient = new ChatClient(player.getNom(), message -> {
-            javafx.application.Platform.runLater(() -> {
-                ObservableList<String> messages = chatListView.getItems();
-                messages.add(message);
-
-                while (messages.size() > 6) {
-                    messages.remove(0);
-                }
-
-                chatListView.scrollTo(messages.size() - 1);
-            });
-        });
-
-        chatClient.start();
-
-        chatInput.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                sendMessage();
-            }
-        });
-    }
-
-    @FXML
-    private void sendMessage() {
-        String message = chatInput.getText().trim();
-        if (!message.isEmpty()) {
-            chatClient.sendMessage(message);
-            chatInput.clear();
-        }
     }
 
     public void stopGame() {

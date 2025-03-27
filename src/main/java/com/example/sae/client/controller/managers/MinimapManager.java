@@ -7,6 +7,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
@@ -22,12 +23,14 @@ public class MinimapManager {
     private final Canvas canvas;
     private final Player player;
     private final Supplier<List<MoveableBody>> entitiesSupplier;
+    private final Pane playerView;
     private Timeline updater;
 
-    public MinimapManager(Canvas canvas, Player player, Supplier<List<MoveableBody>> entitiesSupplier) {
+    public MinimapManager(Canvas canvas, Player player, Supplier<List<MoveableBody>> entitiesSupplier, Pane playerView) {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
         this.player = player;
+        this.playerView = playerView;
         this.entitiesSupplier = entitiesSupplier;
         initialize();
     }
@@ -48,6 +51,7 @@ public class MinimapManager {
         drawEntities();
         drawPlayer();
         drawCenter();
+        drawPlayerCamera(playerView);
     }
 
     private void clear() {
@@ -78,12 +82,15 @@ public class MinimapManager {
         for (MoveableBody entity : entitiesSupplier.get()) {
             double x = centerX + (entity.getX() * scale);
             double y = centerY + (entity.getY() * scale);
-            double size = Math.max(2, Math.sqrt(entity.getMasse() / MAX_MASS) * 20);
+            double radius = entity.getSprite().getRadius();
+            double scaleRadius = Math.max(3, radius * scale * 2);
 
             gc.setFill(entity instanceof Player ? Color.CYAN :
                     entity instanceof Enemy ? Color.RED : Color.GREEN);
-            gc.fillOval(x - size/2, y - size/2, size, size);
+            gc.fillOval(x - scaleRadius/2, y - scaleRadius/2, scaleRadius, scaleRadius);
         }
+
+        gc.restore();
     }
 
     private void drawPlayer() {
@@ -93,13 +100,14 @@ public class MinimapManager {
 
         double x = centerX + (player.getX() * scale);
         double y = centerY + (player.getY() * scale);
-        double size = Math.max(5, Math.sqrt(player.getMasse() / MAX_MASS) * 25);
+        double radius = player.getSprite().getRadius();
+        double scaleRadius = Math.max(3,radius * scale * 2);
+
+
 
         gc.setFill(Color.YELLOW);
-        gc.fillOval(x - size/2, y - size/2, size, size);
-        gc.setStroke(Color.WHITE);
-        gc.setLineWidth(1);
-        gc.strokeOval(x - size/2, y - size/2, size, size);
+        gc.fillOval(x - scaleRadius/2, y - scaleRadius/2, scaleRadius, scaleRadius);
+
     }
 
     private void drawCenter() {
@@ -117,6 +125,32 @@ public class MinimapManager {
         double scaleX = canvas.getWidth() / (WORLD_SIZE * (1 + MARGIN));
         double scaleY = canvas.getHeight() / (WORLD_SIZE * (1 + MARGIN));
         return Math.min(scaleX, scaleY);
+    }
+    private void drawPlayerCamera(Pane pane) {
+        double scale = calculateScale();
+        double zoom = pane.getScaleX();
+
+        // Camera view consideration of the zoom
+        double cameraWidth = pane.getWidth() / zoom;
+        double cameraHeight = pane.getHeight() / zoom;
+
+        // Position of player on the minimap
+        double centerX = canvas.getWidth() / 2;
+        double centerY = canvas.getHeight() / 2;
+
+        double playerMinimapX = centerX + (player.getX() * scale);
+        double playerMinimapY = centerY + (player.getY() * scale);
+
+        // Position top-left corner of rectangle caméra
+        double rectX = playerMinimapX - (cameraWidth * scale / 2);
+        double rectY = playerMinimapY - (cameraHeight * scale / 2);
+        double rectWidth = cameraWidth * scale;
+        double rectHeight = cameraHeight * scale;
+
+        // Draw rectangle
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(1);
+        gc.strokeRect(rectX, rectY, rectWidth, rectHeight);
     }
 
     public void stop(){
