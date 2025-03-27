@@ -72,6 +72,9 @@ public class AgarioServer {
         while (running) {
             long now = System.nanoTime();
             if (now - lastUpdate >= FRAME_TIME) {
+                if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
+                    gameEngine.addEntity(EntityFactory.createFood(4));
+                }
                 gameEngine.update();
                 synchronizeEntities();
                 lastUpdate = now;

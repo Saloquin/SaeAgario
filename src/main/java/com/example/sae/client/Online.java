@@ -138,6 +138,7 @@ public class Online extends Client {
                         player.setMasse(masse);
                     }
                 }
+
             }
         }
 
@@ -173,6 +174,7 @@ public class Online extends Client {
                             gameEngine.addEntity(new Food(root, infos[1], x, y, masse, Color.rgb(r, g, b, 0.99)));
                         });
                     }
+
                     default -> System.out.println(part);
                 }
             }
