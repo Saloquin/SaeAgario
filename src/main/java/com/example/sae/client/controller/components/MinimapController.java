@@ -2,6 +2,7 @@ package com.example.sae.client.controller.components;
 
 import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.entity.Entity;
+import com.example.sae.core.entity.Food;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -58,6 +59,7 @@ public class MinimapController {
         double worldWidth = root.getBoundsInParent().getWidth();
         double worldHeight = root.getBoundsInParent().getHeight();
 
+        // Scale for the minimap
         double scaleX = MINIMAP_SIZE / worldWidth;
         double scaleY = MINIMAP_SIZE / worldHeight;
 
@@ -65,11 +67,16 @@ public class MinimapController {
         Set<Entity> entities = SoloController.getClient().getGameEngine().getEntities();
 
         for (Entity entity : entities) {
-            double x = (entity.getSprite().getCenterX() - worldMinX) * scaleX;
-            double y = (entity.getSprite().getCenterY() - worldMinY) * scaleY;
+            if (!(entity instanceof Food)){
+                double x = (entity.getSprite().getCenterX() - worldMinX) * scaleX;
+                double y = (entity.getSprite().getCenterY() - worldMinY) * scaleY;
+                double entitysizeX = entity.getMasse() * scaleX;
+                double entitysizeY = entity.getMasse() * scaleY;
 
-            gc.setFill(entity.getSprite().getFill());
-            gc.fillOval(x - 2, y - 2, 4, 4);
+                gc.setFill(entity.getSprite().getFill());
+                gc.fillOval(x - 2, y - 2, entitysizeX + 3, entitysizeY + 3);
+            }
+
         }
 
         // Highlight the player's position in red
@@ -77,9 +84,12 @@ public class MinimapController {
         if (player != null) {
             double px = (player.getSprite().getCenterX() - worldMinX) * scaleX;
             double py = (player.getSprite().getCenterY() - worldMinY) * scaleY;
+            double pxsize = player.getMasse() * scaleX;
+            double pysize = player.getMasse() * scaleY;
+
 
             gc.setFill(Color.RED);
-            gc.fillOval(px - 3, py - 3, 6, 6);
+            gc.fillOval(px - 3, py - 3, pxsize, pysize);
         }
     }
 
