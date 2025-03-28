@@ -4,9 +4,11 @@ import com.example.sae.core.entity.MoveableBody;
 import javafx.scene.paint.Color;
 
 /**
- *
+ * Enumeration defining the different possible power-up
+ * @see PowerUp
  */
 public enum PowerUpType {
+    /// power-up increasing the speed
     SPEED_BOOST(Color.BLUE, 5, 2) {
         @Override
         public void applyEffect(MoveableBody body) {
@@ -19,6 +21,7 @@ public enum PowerUpType {
         }
     },
 
+    /// power-up decreasing speed
     SPEED_DECREASE(Color.RED, 5, 2) {
         @Override
         public void applyEffect(MoveableBody body) {
@@ -31,6 +34,7 @@ public enum PowerUpType {
         }
     },
 
+    /// power-up splitting the target body
     SPLIT(Color.GREEN, 0, 100) {
         @Override
         public void applyEffect(MoveableBody body) {
@@ -44,33 +48,61 @@ public enum PowerUpType {
         }
     };
 
+    /// the power-up sprite color
     private final Color color;
+    /// the power-up duration
     private final int duration;
-    private final double masse;
+    /// the power-up mass
+    private final double mass;
 
-    PowerUpType(Color color, int duration, int masse) {
+    /**
+     * @param color the power-up color
+     * @param duration the power-up duration
+     * @param mass the power-up mass
+     */
+    PowerUpType(Color color, int duration, int mass) {
         this.color = color;
         this.duration = duration;
-        this.masse = masse;
+        this.mass = mass;
     }
 
+    /**
+     * {@return a randomly chosen power-up}
+     */
     public static PowerUpType getRandomPowerUpType() {
         return values()[(int) (Math.random() * values().length)];
     }
 
+    /**
+     * {@return the power-up color}
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     * {@return the power-up duration}
+     */
     public int getDuration() {
         return duration;
     }
 
+    /**
+     * {@return the power-up mass}
+     */
     public double getMasse() {
-        return masse;
+        return mass;
     }
 
+    /**
+     * apply the power-up effect to a moving entity
+     * @param body the entity affected by the power-up
+     */
     public abstract void applyEffect(MoveableBody body);
 
+    /**
+     * remove the power-up effect of a moving entity
+     * @param body the entity affected by the power-up
+     */
     public abstract void removeEffect(MoveableBody body);
 }
