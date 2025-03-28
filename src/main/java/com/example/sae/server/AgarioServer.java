@@ -22,7 +22,7 @@ public class AgarioServer {
     private volatile boolean running;
 
     public AgarioServer() throws IOException {
-        this.gameEngine = new GameEngine(2000, 2000, true); // Même taille que le jeu original
+        this.gameEngine = new GameEngine(2000, 2000, true, true); // Même taille que le jeu original
         this.clientHandlers = new ConcurrentHashMap<>();
         this.serverSocket = new ServerSocket(PORT);
         this.running = true;
