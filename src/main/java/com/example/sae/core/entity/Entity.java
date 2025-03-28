@@ -72,6 +72,7 @@ public abstract class Entity extends Group{
      */
     protected Entity(Group group, double initialMasse, Color color) {
         super();
+
         this.entityId = UUID.randomUUID().toString();
         this.masse = new SimpleDoubleProperty(initialMasse);
 
@@ -84,11 +85,9 @@ public abstract class Entity extends Group{
 
         // Bind le viewOrder au rayon
         viewOrderProperty().bind(sprite.radiusProperty().negate());
-
+        System.out.println(group);
         getChildren().add(sprite);
-        if (group != null) {
-            group.getChildren().add(this);
-        }
+        group.getChildren().add(this);
     }
 
     /**
@@ -212,6 +211,16 @@ public abstract class Entity extends Group{
      */
     public String getEntityId() {
         return this.entityId;
+    }
+
+    /**
+     * changes the entity id
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param id the new entity id
+     */
+    public void setEntityId(String id) {
+        this.entityId = id;
     }
 
     /**

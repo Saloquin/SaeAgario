@@ -1,9 +1,8 @@
 package com.example.sae.server;
 
 import com.example.sae.core.GameEngine;
-import com.example.sae.core.entity.Entity;
-import com.example.sae.core.entity.Food;
-import com.example.sae.core.entity.Player;
+import com.example.sae.core.entity.*;
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
 import java.io.*;
@@ -12,8 +11,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class AgarioServer {
-    // note : ne pas envoyer un gamestate par frame
-    // envoyer simplement quand un élément est créé/modifié/supprimé avec les informations de cet élément
+    // normalement c bon
     private static final int PORT = 12345;
     private static final int TARGET_FPS = 30;
     private static final long FRAME_TIME = 1000000000 / TARGET_FPS; // 33ms en nanos
@@ -34,10 +32,20 @@ public class AgarioServer {
 
     private void initializeWorld() {
         // Initialiser la nourriture
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 90; i++) {
             Food food = new Food(null, 2); // null car pas besoin de Group côté serveur
             gameEngine.addEntity(food);
         }
+        gameEngine.addEntity(new Food(null, "a", 100, 0, 2, Color.BLACK));
+        gameEngine.addEntity(new Food(null, "b", 100, 10, 2, Color.RED));
+        gameEngine.addEntity(new Food(null, "c", 200, 0, 2, Color.BLACK));
+        gameEngine.addEntity(new Food(null, "d", 200, 10, 2, Color.RED));
+        gameEngine.addEntity(new Food(null, "e", 300, 0, 2, Color.BLACK));
+        gameEngine.addEntity(new Food(null, "f", 300, 10, 2, Color.RED));
+        gameEngine.addEntity(new Food(null, "g", 400, 0, 2, Color.BLACK));
+        gameEngine.addEntity(new Food(null, "h", 400, 10, 2, Color.RED));
+        gameEngine.addEntity(new Food(null, "i", 500, 0, 2, Color.BLACK));
+        gameEngine.addEntity(new Food(null, "j", 500, 10, 2, Color.RED));
     }
 
     public void start() {
@@ -69,27 +77,58 @@ public class AgarioServer {
         while (running) {
             long now = System.nanoTime();
             if (now - lastUpdate >= FRAME_TIME) {
-                // gameEngine.update();
-                // broadcastGameState();
+                gameEngine.update();
+                synchronizeEntities();
                 lastUpdate = now;
             }
 
             // à retirer
             if (now - groscaca >= 5000000000L) {
-                // System.out.println(serializeGameState());
-                clientHandlers.values().stream().findFirst().ifPresent(clientHandler -> {
-                    System.out.println(serializeEntity(clientHandler.player));
-                });
                 groscaca = now;
-                StringBuilder state = new StringBuilder("DELETE|");
 
-                for (Entity entity : gameEngine.getEntitiesOfType(Food.class)) {
-                    state.append(entity.getEntityId()).append("|");
-                }
-
-                // clientHandlers.values().forEach(handler -> handler.sendMessage(state.toString()));
+                System.out.println("---------------");
+                clientHandlers.values().forEach(handler -> System.out.println(serializeEntity(handler.player)));
             }
         }
+    }
+
+    private void synchronizeEntities() {
+        // Synchronisation des entités entre le serveur et les clients
+        for (Entity entity : gameEngine.getEntitiesToAdd()) {
+            if (!(entity instanceof MoveableBody)) {
+                broadcastEntityCreation(entity);
+            }
+        }
+
+        boolean broadcastedMasse = false;
+        for (Entity entity : gameEngine.getEntitiesToRemove()) {
+            if (!(entity instanceof MoveableBody)) {
+                broadcastEntityDeletion(entity);
+            }
+
+            if (!broadcastedMasse) {
+                for (Player player : gameEngine.getPlayers().values()) {
+                    broadcastEntityMasse(player);
+                }
+
+                broadcastedMasse = true;
+            }
+        }
+
+        // Nettoyage manuel des entités
+        gameEngine.cleanupEntities();
+    }
+
+    private void broadcastEntityCreation(Entity entity) {
+        // pour éviter que les joueurs soient créés en double
+        if (entity instanceof MoveableBody) {
+            return;
+        }
+
+        // Sérialisation de l'entité
+        String entityData = serializeEntity(entity);
+        // Envoyer l'entité à tous les clients
+        clientHandlers.values().forEach(handler -> handler.sendMessage("CREATE|" + entityData));
     }
 
     private void broadcastGameState() {
@@ -99,8 +138,21 @@ public class AgarioServer {
                 .forEach(handler -> handler.sendMessage(gameState));
     }
 
+    private void broadcastEntityDeletion(Entity entity) {
+        // Supprimer l'entité de tous les clients
+        if (entity == null) return;
+        // System.out.println("Delete prey broadcast : " + entity.getEntityId());
+        clientHandlers.values().forEach(handler -> handler.sendMessage("DELETE|" + entity.getEntityId()));
+    }
+
+    private void broadcastEntityMasse(Player player) {
+        // System.out.println("update mass broadcast: " +  player.getEntityId());
+        clientHandlers.values().forEach(handler -> handler.sendMessage("UPDATEMASSE|" + player.getEntityId() + "|" + player.getMasse()));
+    }
+
+
     private String serializeEntity(Entity entity) {
-        return String.format(Locale.US, "%s,%s,%.2f,%.2f,%.2f,%.0f,%.0f,%.0f|",
+        return String.format(Locale.US, "%s,%s,%.2f,%.2f,%.2f,%.0f,%.0f,%.0f,%s|",
                 entity.getClass().getSimpleName(),
                 entity.getEntityId(),
                 entity.getPosition()[0],
@@ -108,7 +160,8 @@ public class AgarioServer {
                 entity.getMasse(),
                 entity.getColor().getRed()*255,
                 entity.getColor().getBlue()*255,
-                entity.getColor().getGreen()*255);
+                entity.getColor().getGreen()*255,
+                entity instanceof MoveableBody ? ((MoveableBody) entity).getNom() : ":(");
     }
 
     private String serializeGameState() {
@@ -137,7 +190,11 @@ public class AgarioServer {
             this.ready = false;
 
             // Créer un nouveau joueur pour ce client
-            this.player = new Player(null, clientId, 5, Color.RED); // null car pas besoin de Group côté serveur
+            // this.player = new Player(null, clientId, MoveableBody.DEFAULT_MASSE, Color.RED); // null car pas besoin de Group côté serveur
+            EntityFactory.setRoot(new Group());
+
+            this.player = EntityFactory.createPlayer(clientId, MoveableBody.DEFAULT_MASSE, "verisubbo", Color.GREEN);
+            this.player.setInputPosition(new double[]{ 0, 0 });
             gameEngine.addPlayer(player);
 
             // Envoyer l'ID et les informations initiales
@@ -166,15 +223,47 @@ public class AgarioServer {
             switch (parts[0]) {
                 case "READY" -> {
                     ready = true;
+                    this.player.setNom(parts[1]);
+                    int r = Integer.parseInt(parts[2]);
+                    int g = Integer.parseInt(parts[3]);
+                    int b = Integer.parseInt(parts[4]);
+                    Color playerColor = Color.rgb(r, g, b);
+                    this.player.getSprite().setFill(playerColor);
                     String gameState = serializeGameState();
                     sendMessage(gameState);
+
+                    clientHandlers.values().forEach(handler -> handler.sendMessage("CREATE|" + serializeEntity(player)));
                 }
                 case "MOVE" -> {
                     if (parts.length == 3) {
                         double x = Double.parseDouble(parts[1]);
                         double y = Double.parseDouble(parts[2]);
-                        player.moveToward(new double[]{x, y});
+
+                        player.getSprite().setCenterX(x);
+                        player.getSprite().setCenterY(y);
+
+                        clientHandlers.values().forEach(handler -> handler.sendMessage(String.format(Locale.US, "MOVE|%s|%f|%f", player.getEntityId(), x, y)));
                     }
+                }
+                case "DELETE" -> {
+                    System.out.println("Delete prey serveur : " + parts[1]);
+                    Entity entity = gameEngine.getEntityById(parts[1]);
+                    if (entity == null) {
+                        // System.out.println("Entity not found");
+                        return;
+                    }
+
+                    gameEngine.removePrey(entity);
+                    broadcastEntityDeletion(gameEngine.getEntityById(parts[1]));
+
+                    Player player = (Player) gameEngine.getEntityById(parts[2]);
+                    if (player == null) {
+                        // System.out.println("Player not found");
+                        return;
+                    }
+
+                    player.setMasse(Double.parseDouble(parts[3]));
+                    broadcastEntityMasse(player);
                 }
             }
         }
@@ -189,10 +278,11 @@ public class AgarioServer {
 
         private void disconnect() {
             try {
-                System.out.println("LOG TEMPORAIRE : client déconnecté");
                 gameEngine.removeEntity(player);
                 clientHandlers.remove(clientId);
                 socket.close();
+
+                clientHandlers.values().forEach(handler -> handler.sendMessage("DELETE|" + clientId));
             } catch (IOException e) {
                 e.printStackTrace();
             }

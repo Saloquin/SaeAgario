@@ -22,6 +22,7 @@
 
         <Button fx:id="localPlay" text="Play Offline" defaultButton="true" onAction="#onLocalPlay" />
         <Button fx:id="onlinePlay" text="Play Online" onAction="#onOnlinePlay" />
+        <Button fx:id="settingsButton" text="Settings" onAction="#onSettings" />
         <Button fx:id="exit" text="Exit" cancelButton="true" onAction="#onExit" />
     </VBox>
 </AnchorPane>

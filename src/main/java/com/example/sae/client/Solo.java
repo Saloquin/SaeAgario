@@ -1,5 +1,6 @@
 package com.example.sae.client;
 
+import com.example.sae.client.controller.SoloController;
 import com.example.sae.client.utils.debug.DebugWindow;
 import com.example.sae.client.utils.timer.GameTimer;
 import com.example.sae.core.GameEngine;
@@ -44,6 +45,7 @@ public class Solo extends Client {
 
     @Override
     public void update() {
+        player.setInputPosition(SoloController.getMousePosition());
         Player player = gameEngine.getPlayer(playerId);
         if (player == null) {
             gameIsEnded.set(true);

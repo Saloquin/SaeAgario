@@ -37,6 +37,22 @@ public abstract class MoveableBody extends Entity {
     protected double speedMultiplier = 1.0;
 
 
+    public static final double DEFAULT_MASSE = 10; // Masse par défaut des joueurs
+
+    /**
+     * constructor
+     *
+     * @see Entity
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param group Group
+     * @param initialSize size of moving object
+     */
+    MoveableBody(Group group, double initialSize) {
+        super(group, initialSize);
+        initializeNameText(group);
+    }
+
     /**
      * constructor
      *
@@ -67,6 +83,18 @@ public abstract class MoveableBody extends Entity {
         initializeNameText(group);
     }
 
+    /**
+     * constructor
+     *
+     * @see Entity
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param group Group
+     * @param id entity id
+     * @param initialSize size of moving object
+     * @param color color of moving object
+     * @param playerName name of moving object
+     */
     MoveableBody(Group group, String id, double initialSize, Color color, String playerName) {
         super(group, id, initialSize, color);
         this.name.set(playerName);
@@ -84,7 +112,7 @@ public abstract class MoveableBody extends Entity {
      * @see Entity
      */
     MoveableBody(Group group, double initialSize, Color color, String name) {
-        super(group, initialSize);
+        super(group, initialSize, color);
         this.name.set(name);
         sprite.setFill(color);
         initializeNameText(group);
@@ -139,7 +167,6 @@ public abstract class MoveableBody extends Entity {
         });
         group.getChildren().add(nameText);
     }
-
 
     /**
      * increases the size of the moving object that has eaten food

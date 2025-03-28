@@ -1,5 +1,4 @@
 package com.example.sae.core.entity;
-
 import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.Camera;
 import javafx.beans.property.DoubleProperty;
@@ -31,6 +30,12 @@ public class Player extends MoveableBody{
      */
     private boolean isLocal = false; // Pour identifier si c'est un joueur local ou distant
 
+    /**
+     * player's mouse position (direction):
+     * local: send by mouse
+     * online: send by server
+     */
+    private double[] inputPosition; // Position cible (souris pour le joueur local, position reçue du serveur pour les autres)
 
     /**
      * constructor
@@ -67,9 +72,18 @@ public class Player extends MoveableBody{
         sprite.setViewOrder(-sprite.getRadius());
     }
 
-
-
-    public Player(Group group, double masse, Color color,String playerName){
+    /**
+     * constructor
+     *
+     * @see MoveableBody
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param group Group
+     * @param masse mass of the player's moving object
+     * @param color name of the player's moving object
+     * @param playerName name of the player's moving object
+     */
+    public Player(Group group, double masse, Color color, String playerName) {
         super(group, masse, color, playerName);
         sprite.setCenterX(0);
         sprite.setCenterY(0);
@@ -78,9 +92,9 @@ public class Player extends MoveableBody{
 
     @Override
     protected void calculateSpeeds(double distanceFromCenter) {
-        double currentScale = SoloController.getPane().getScaleX();
-        double maxDistanceH = (SoloController.getPane().getScene().getHeight()/2) / currentScale;
-        double maxDistanceW = (SoloController.getPane().getScene().getWidth()/2) / currentScale;
+        double currentScale = sprite.getParent().getScaleX();
+        double maxDistanceH = (sprite.getParent().getScene().getHeight()/2) / currentScale;
+        double maxDistanceW = (sprite.getParent().getScene().getWidth()/2) / currentScale;
 
         double speedFactorX = Math.min(distanceFromCenter / maxDistanceW, 1.0);
         double speedFactorY = Math.min(distanceFromCenter / maxDistanceH, 1.0);
@@ -89,6 +103,24 @@ public class Player extends MoveableBody{
         actualSpeedY = getMaxSpeed() * speedFactorY ;
     }
 
+    /**
+     * constructor
+     *
+     * @see MoveableBody
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param group Group
+     * @param id entity id
+     * @param masse mass of the player's moving object
+     * @param color name of the player's moving object
+     * @param playerName name of the player's moving object
+     */
+    public Player(Group group, String id, double masse, Color color, String playerName) {
+        super(group, id, masse, color, playerName);
+        sprite.setCenterX(0);
+        sprite.setCenterY(0);
+        sprite.setViewOrder(-sprite.getRadius());
+    }
 
     /**
      * constructor
@@ -109,6 +141,30 @@ public class Player extends MoveableBody{
         sprite.setCenterX(0);
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());
+        inputPosition = new double[]{0, 0};
+    }
+
+    /**
+     * constructor
+     *
+     * @see MoveableBody
+     * @see Online
+     * @see Solo
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param group Group
+     * @param id entity id
+     * @param masse mass of the player's moving object
+     * @param color name of the player's moving object
+     * @param isLocal Boolean that determines whether the player's mobile object is in the local or online game
+     */
+    public Player(Group group, String id, double masse, Color color, boolean isLocal) {
+        super(group, id, masse, color);
+        this.isLocal = isLocal;
+        sprite.setCenterX(0);
+        sprite.setCenterY(0);
+        sprite.setViewOrder(-sprite.getRadius());
+        inputPosition = new double[]{0, 0};
     }
 
     /**
@@ -125,14 +181,14 @@ public class Player extends MoveableBody{
      * @param y coordinate of moving object
      * @param masse mass of the player's moving object
      * @param color name of the player's moving object
-     * @param isLocal Boolean that determines whether the player's mobile object is in the local or online game
+     * @param playerName name of the player's moving object
      */
-    public Player(Group group, String id, double x, double y, double masse, Color color, boolean isLocal) {
-        super(group, id, masse, color);
-        this.isLocal = isLocal;
+    public Player(Group group, String id, double x, double y, double masse, Color color, String playerName) {
+        super(group, id, masse, color, playerName);
         sprite.setCenterX(x);
         sprite.setCenterY(y);
         sprite.setViewOrder(-sprite.getRadius());
+        inputPosition = new double[] { x, y };
     }
 
     /**
@@ -144,7 +200,8 @@ public class Player extends MoveableBody{
      */
     @Override
     public void Update() {
-        moveToward(SoloController.getMousePosition());
+
+        moveToward(inputPosition);
     }
 
     /**
@@ -161,6 +218,19 @@ public class Player extends MoveableBody{
         return isLocal;
     }
 
+    /**
+     * changes the direction of the player's moving object :
+     * local: sent by mouse
+     * online: sent by server
+     *
+     * @see MoveableBody
+     *
+     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
+     * @param position new direction in the form of an array of doubles
+     */
+    public void setInputPosition(double[] position) {
+        this.inputPosition = position;
+    }
 
 
 

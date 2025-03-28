@@ -66,7 +66,6 @@ public class SoloController implements Initializable {
         root = new Group();
 
         EntityFactory.setRoot(root);
-
         client = new Solo(root, playerName, playerColor);
         client.init();
 

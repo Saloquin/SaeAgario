@@ -57,7 +57,9 @@ public class GameEngine {
 
         handleCollisions();
 
-        cleanupEntities();
+        if (!isServer) {
+            cleanupEntities();
+        }
     }
 
     public List<MoveableBody> getEntitiesMovable() {
@@ -84,17 +86,15 @@ public class GameEngine {
         entitiesToRemove.clear();
     }
 
-
     private void handleCollisions() {
-        for (MoveableBody entity1 : entitiesMovable) {
-
-            double detectionRange = entity1.getSprite().getRadius()+  10;
-
+        List<MoveableBody> entitiesMovable2 = entitiesMovable.stream().toList();
+        for (Entity entity1 : entitiesMovable2) {
+            double detectionRange = entity1.getSprite().getRadius() + 10;
             HashSet<Entity> nearbyEntities = getNearbyEntities(entity1, detectionRange);
             for (Entity entity2 : nearbyEntities) {
                 if (checkCollision(entity1, entity2)) {
                     //DebugWindowController.addLog("Collision detected between: " + entity1 + " and " + entity2);
-                    handleCollision(entity1, entity2);
+                    handleCollision((MoveableBody) entity1, entity2);
                 }
             }
         }
@@ -119,6 +119,14 @@ public class GameEngine {
 
         if (checkCollision(predator, prey) && canEat(predator, prey)) {
             entities.remove(prey);
+
+            if (prey instanceof MoveableBody) {
+                ((MoveableBody) prey).deleteText();
+            }
+
+            predator.increaseSize(prey.getMasse());
+
+            if (!isServer) {
             TranslateTransition transition = new TranslateTransition(Duration.millis(200 ), prey.getSprite());
 
             double targetX = predator.getSprite().getCenterX() - prey.getSprite().getCenterX();
@@ -131,34 +139,26 @@ public class GameEngine {
             scaleTransition.setToX(0);
             scaleTransition.setToY(0);
 
-
-            predator.increaseSize(prey.getMasse());
-            if (prey instanceof PowerUp powerUp) {
-                try{
-                    powerUp.applyEffect(predator);
-                }catch (Exception e)
-                {
-                    System.out.println("boule verte mangé");
-                }
-            }
-            transition.setOnFinished(e -> {
-                if (prey instanceof Player) {
-                    int playerId = getPlayerId((Player) prey);
-                    removePlayer(playerId);
-
-                } else {
-                    removeEntity(prey);
-                }
-
-                prey.onDeletion();
-            });
-            if(prey instanceof MoveableBody){
-                ((MoveableBody) prey).deleteText();
-            }
+                transition.setOnFinished(e -> {
+                    removePrey(prey);
+                });
                 transition.play();
                 scaleTransition.play();
-
+            } else {
+                removePrey(prey);
+            }
         }
+    }
+
+    public void removePrey(Entity prey) {
+        if (prey instanceof Player) {
+            int playerId = getPlayerId((Player) prey);
+            removePlayer(playerId);
+        } else {
+            removeEntity(prey);
+        }
+
+        prey.onDeletion();
     }
 
     private int getPlayerId(Player player) {
@@ -180,9 +180,19 @@ public class GameEngine {
         entitiesToAdd.add(entity);
         entities.add(entity);
         quadTree.insert(entity);
-        if(entity instanceof MoveableBody) {
+        if (entity instanceof MoveableBody) {
             entitiesMovable.add((MoveableBody)entity);
         }
+    }
+
+    public Entity getEntityById(String id){
+        return entities.stream().filter(
+                entity -> entity.getEntityId().equals(id)
+        ).findFirst().orElse(null);
+    }
+
+    public HashSet<Entity> getEntitiesToRemove(){
+        return entitiesToRemove;
     }
 
 
@@ -233,9 +243,9 @@ public class GameEngine {
 
     public HashSet<Entity> getEntitiesOfType(Class<?> type) {
         return
-            entities.stream()
-                .filter(e -> type.isAssignableFrom(e.getClass()))
-                .collect(Collectors.toCollection(HashSet::new));
+                entities.stream()
+                        .filter(e -> type.isAssignableFrom(e.getClass()))
+                        .collect(Collectors.toCollection(HashSet::new));
     }
 
     public HashSet<Entity> getNearbyEntities(Entity entity, double range) {
