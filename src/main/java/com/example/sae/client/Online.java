@@ -232,12 +232,12 @@ public class Online extends Client {
         }
 
         public void deleteEntityUsingSocketData(String entitiesId) {
-            // System.out.println("Delete prey local broadcast: " + entitiesId);
+            System.out.println("Delete prey local broadcast: " + entitiesId);
             Entity entity = gameEngine.getEntityById(entitiesId);
 
             if (entity != null) {
                 Platform.runLater(() -> {
-                    gameEngine.removeEntity(entity);
+                    gameEngine.removePrey(entity);
                     entity.onDeletion();
                 });
             }
