@@ -102,9 +102,12 @@ public class AgarioServer {
 
         boolean broadcastedMasse = false;
         for (Entity entity : gameEngine.getEntitiesToRemove()) {
+            broadcastEntityDeletion(entity);
+            /*
             if (!(entity instanceof MoveableBody)) {
                 broadcastEntityDeletion(entity);
             }
+            */
 
             if (!broadcastedMasse) {
                 for (Player player : gameEngine.getPlayers().values()) {
@@ -249,7 +252,7 @@ public class AgarioServer {
                     System.out.println("Delete prey serveur : " + parts[1]);
                     Entity entity = gameEngine.getEntityById(parts[1]);
                     if (entity == null) {
-                        // System.out.println("Entity not found");
+                        System.out.println("Entity not found");
                         return;
                     }
 
