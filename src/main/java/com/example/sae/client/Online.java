@@ -16,12 +16,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import static com.example.sae.client.controller.SoloController.getMousePosition;
-import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
-import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 /**
  * Manages the game logic when the player is playing online.
@@ -51,7 +51,7 @@ public class Online extends Client {
     public Online(Group root, String playerName, Color color) throws IOException {
         super(root, playerName, color);
         this.gameTimer = new GameTimer(this);
-        this.gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, false);
+        this.gameEngine = new GameEngine(false);
         this.socket = new Socket("localhost", 12345);
         handler = new ThreadDeFond(this, socket);
         new Thread(handler).start();

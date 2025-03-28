@@ -6,10 +6,16 @@ import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
 import javafx.scene.paint.Color;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AgarioServer {
     // note : ne pas envoyer un gamestate par frame
@@ -24,7 +30,7 @@ public class AgarioServer {
     private volatile boolean running;
 
     public AgarioServer() throws IOException {
-        this.gameEngine = new GameEngine(2000, 2000, true); // Même taille que le jeu original
+        this.gameEngine = new GameEngine(true); // Même taille que le jeu original
         this.clientHandlers = new ConcurrentHashMap<>();
         this.serverSocket = new ServerSocket(PORT);
         this.running = true;

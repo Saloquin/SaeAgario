@@ -4,6 +4,7 @@ import com.example.sae.client.Solo;
 import com.example.sae.client.utils.debug.DebugWindowController;
 import com.example.sae.client.utils.timer.GameTimer;
 import com.example.sae.core.entity.MoveableBody;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EffectManager {

@@ -1,6 +1,7 @@
 package com.example.sae.core.quadtree;
 
 import com.example.sae.core.entity.Entity;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

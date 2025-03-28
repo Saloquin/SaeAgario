@@ -1,9 +1,6 @@
 package com.example.sae.core.entity;
 
-import com.example.sae.client.controller.SoloController;
-import com.example.sae.core.Camera;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Group;

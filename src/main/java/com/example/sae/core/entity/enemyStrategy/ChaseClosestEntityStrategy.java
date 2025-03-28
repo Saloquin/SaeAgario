@@ -1,13 +1,10 @@
 package com.example.sae.core.entity.enemyStrategy;
 
 import com.example.sae.client.Client;
-import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Entity;
-import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.Player;
-import com.example.sae.core.entity.powerUp.PowerUp;
 
 import java.util.HashSet;
 

@@ -1,8 +1,6 @@
 package com.example.sae.core.entity.enemyStrategy;
 
 import com.example.sae.client.Client;
-import com.example.sae.client.Solo;
-import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.Entity;

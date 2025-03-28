@@ -48,7 +48,7 @@ public abstract class Client {
         this.playerName = playerName;
         this.color = color;
         this.camera = new Camera();
-        this.gameEngine = new GameEngine(GameEngine.MAP_LIMIT_WIDTH, GameEngine.MAP_LIMIT_HEIGHT, false);
+        this.gameEngine = new GameEngine(false);
     }
 
     /**

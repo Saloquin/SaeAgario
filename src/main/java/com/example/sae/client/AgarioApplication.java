@@ -1,15 +1,10 @@
 package com.example.sae.client;
 
 
-import com.example.sae.client.controller.MenuController;
-import com.example.sae.core.Camera;
-import com.example.sae.server.AgarioServer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;

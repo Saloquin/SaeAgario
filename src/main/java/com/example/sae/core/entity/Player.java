@@ -1,15 +1,12 @@
 package com.example.sae.core.entity;
 
+import com.example.sae.client.Online;
+import com.example.sae.client.Solo;
 import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.Camera;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import com.example.sae.client.Solo;
-import com.example.sae.client.Online;
-
-import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
-import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 /**
  * moving object used by the player during a game

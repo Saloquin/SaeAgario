@@ -2,21 +2,29 @@ package com.example.sae.core;
 
 import com.example.sae.core.entity.Entity;
 import com.example.sae.core.quadtree.Boundary;
-
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 
+/**
+ * Managed the view of the player
+ */
 public class Camera extends Boundary {
     public static final double ZOOM_FACTOR = 6; // Increased to reduce zoom intensity
     public static final double DEZOOM_FACTOR = 1.5;
 
-
+    /**
+     * Constructor of the class
+     */
     public Camera() {
         super(0, 0, GameEngine.MAP_LIMIT_WIDTH, GameEngine.MAP_LIMIT_HEIGHT);
     }
 
+    /**
+     * Focus the camera view on the entity
+     * @param entity The entity on which the camera is focused
+     */
     public void focusOn(Entity entity) {
         if (entity == null || entity.getSprite() == null) return;
 

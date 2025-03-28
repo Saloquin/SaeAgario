@@ -1,8 +1,6 @@
 package com.example.sae.core.entity;
 
-import com.example.sae.client.AgarioApplication;
 import com.example.sae.client.Client;
-import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.enemyStrategy.ChaseClosestEntityStrategy;
 import com.example.sae.core.entity.enemyStrategy.EnemyStrategy;

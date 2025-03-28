@@ -3,11 +3,8 @@ package com.example.sae.client.controller.managers;
 import com.example.sae.core.entity.MoveableBody;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.binding.Bindings;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.text.Text;
-import javafx.util.Callback;
 import javafx.util.Duration;
 
 import java.util.List;

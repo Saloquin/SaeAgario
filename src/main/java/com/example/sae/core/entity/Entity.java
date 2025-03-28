@@ -1,14 +1,13 @@
 package com.example.sae.core.entity;
 
-import java.util.Random;
-
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import java.util.UUID;
-
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * entity: a physical body representing food, an AI/enemy or a player

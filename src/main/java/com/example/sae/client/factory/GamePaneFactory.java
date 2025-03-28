@@ -1,13 +1,9 @@
 package com.example.sae.client.factory;
 
-import com.example.sae.core.Camera;
 import com.example.sae.core.GameEngine;
 import javafx.scene.Group;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.*;
-
-import java.util.Objects;
+import javafx.scene.layout.Pane;
 
 public class GamePaneFactory {
     /**

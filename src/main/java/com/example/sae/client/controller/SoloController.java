@@ -1,20 +1,23 @@
 package com.example.sae.client.controller;
 
-import com.example.sae.client.controller.managers.*;
-import com.example.sae.client.ChatClient;
 import com.example.sae.client.Client;
 import com.example.sae.client.Solo;
+import com.example.sae.client.controller.managers.LeaderboardManager;
+import com.example.sae.client.controller.managers.MinimapManager;
+import com.example.sae.client.controller.managers.PlayerInfoManager;
 import com.example.sae.core.Camera;
-import com.example.sae.core.entity.*;
+import com.example.sae.core.entity.EntityFactory;
+import com.example.sae.core.entity.Player;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
