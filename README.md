@@ -15,7 +15,7 @@ To launch the offline version of the game:
 
 1. Checkout the `quality` branch:
    ```sh
-   git checkout quality```
+   git checkout quality
 
 2. Run the AgarioApplication class.
 
@@ -25,7 +25,7 @@ To launch the online version of the game:
 
 1. Checkout the `merge-server` branch:
    ```sh
-    git checkout merge-server```
+    git checkout merge-server
 2. Start the server by running the AgarioServer class.
 3. Launch the game by running the AgarioApplication class.
 
