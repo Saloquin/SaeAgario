@@ -1,5 +1,6 @@
 package com.example.sae.client;
 
+import com.example.sae.client.utils.PreferencesManager;
 import javafx.application.Platform;
 import com.example.sae.client.controller.SoloController;
 
@@ -8,7 +9,7 @@ import java.net.Socket;
 import java.util.function.Consumer;
 
 public class ChatClient {
-    private static final String SERVER_IP = "localhost";
+    private static final String SERVER_IP = PreferencesManager.loadServerIP();
     private static final int SERVER_PORT = 55555;
     private PrintWriter out;
     private final Consumer<String> messageHandler;

@@ -30,6 +30,11 @@ public class AgarioServer {
         initializeWorld();
     }
 
+    private void startChatServer(){
+        ChatServer chatServer = new ChatServer();
+        chatServer.start();
+    }
+
     private void initializeWorld() {
         // Initialiser la nourriture
         for (int i = 0; i < 90; i++) {
