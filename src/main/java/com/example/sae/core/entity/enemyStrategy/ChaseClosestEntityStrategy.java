@@ -9,26 +9,20 @@ import com.example.sae.core.entity.Player;
 import java.util.HashSet;
 
 /**
- * AI strategy: seek out and attempt to devour the closest entity
+ * Strategy making the enemy chase the closest moving entity
  *
- * @see Enemy
- * @see RandomMoveStrategy
- * @see SeekFoodStrategy
+ * @see EnemyStrategy
  */
 public class ChaseClosestEntityStrategy implements EnemyStrategy {
     /**
-     * Executes the AI's strategy of seeking out and attempting to devour the closest entity
+     * {@inheritDoc}
      *
-     * @param enemy Strategy executed on this AI
-     * @return will return true if execution was successful
-     * @see Enemy
-     * @see RandomMoveStrategy
-     * @see SeekFoodStrategy
+     * @param enemy {@inheritDoc}
      */
     @Override
-    public boolean execute(Enemy enemy) {
+    public void execute(Enemy enemy) {
         GameEngine gameEngine = Client.getGameEngine();
-        if (gameEngine == null) return false;
+        if (gameEngine == null) return;
 
         Entity closestEntity = null;
         double closestDistance = Double.MAX_VALUE;
@@ -48,10 +42,8 @@ public class ChaseClosestEntityStrategy implements EnemyStrategy {
 
         if (closestEntity != null) {
             enemy.moveToward(closestEntity.getPosition());
-            return true;
         } else {
             new SeekFoodStrategy().execute(enemy);
-            return false;
         }
     }
 }

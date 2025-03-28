@@ -5,48 +5,36 @@ import com.example.sae.core.entity.Enemy;
 import java.util.Random;
 
 /**
- * AI strategy: move randomly
+ * Strategy making the enemy move randomly
  *
- * @see Enemy
- * @see ChaseClosestEntityStrategy
- * @see SeekFoodStrategy
+ * @see EnemyStrategy
  */
 public class RandomMoveStrategy implements EnemyStrategy {
-    /**
-     * number of seconds before updating AI direction
-     */
-    private static final double UPDATE_INTERVAL = 2.0; // Secondes
-    /**
-     * function to generate random numbers
-     */
+    ///  interval before switching strategy in seconds
+    private static final double UPDATE_INTERVAL = 2.0;
+    /// the random seed
     private final Random random = new Random();
-    /**
-     * last time direction was updated in seconds
-     */
+    /// amount of time since the last update in seconds
     private double lastUpdateTime = 0;
 
     /**
-     * Executes the AI's random move strategy
+     * {@inheritDoc}
      *
-     * @param enemy Strategy executed on this AI
-     * @return will return true if execution was successful
-     * @see Enemy
-     * @see ChaseClosestEntityStrategy
-     * @see SeekFoodStrategy
+     * @param enemy {@inheritDoc}
      */
     @Override
-    public boolean execute(Enemy enemy) {
+    public void execute(Enemy enemy) {
         double currentTime = System.currentTimeMillis() / 1000.0;
 
         if (enemy.getTargetPosition() == null ||
                 enemy.hasReachedTarget() ||
                 currentTime - lastUpdateTime > UPDATE_INTERVAL) {
 
-            // Distance de déplacement plus grande
+            // Largest moving distance possible
             double distance = random.nextDouble() * 800 + 200; // Entre 200 et 1000
             double angle = random.nextDouble() * 2 * Math.PI;
 
-            // Calculer la nouvelle position cible
+            // Calculate the new target position
             double[] currentPos = enemy.getPosition();
             double[] targetPosition = new double[]{
                     currentPos[0] + Math.cos(angle) * distance,
@@ -57,11 +45,10 @@ public class RandomMoveStrategy implements EnemyStrategy {
             lastUpdateTime = currentTime;
         }
 
-        // Déplacement plus rapide
+        // Quicker movement
         if (enemy.getTargetPosition() != null) {
             enemy.moveToward(enemy.getTargetPosition());
         }
-        return true;
     }
 
 

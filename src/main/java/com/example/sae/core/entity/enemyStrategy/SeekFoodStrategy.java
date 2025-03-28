@@ -8,26 +8,21 @@ import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.powerUp.PowerUp;
 
 /**
- * AI strategy: move around to eat as much food as possible
+ * Strategy making the enemy chase the closest food
  *
- * @see Enemy
- * @see ChaseClosestEntityStrategy
- * @see RandomMoveStrategy
+ * @see EnemyStrategy
  */
 public class SeekFoodStrategy implements EnemyStrategy {
+
     /**
-     * Executes the AI's strategy of move around to eat as much food as possible
+     * {@inheritDoc}
      *
-     * @param enemy Strategy executed on this AI
-     * @return will return true if execution was successful
-     * @see Enemy
-     * @see ChaseClosestEntityStrategy
-     * @see RandomMoveStrategy
+     * @param enemy {@inheritDoc}
      */
     @Override
-    public boolean execute(Enemy enemy) {
+    public void execute(Enemy enemy) {
         GameEngine gameEngine = Client.getGameEngine();
-        if (gameEngine == null) return false;
+        if (gameEngine == null) return;
 
         double closestFoodDistance = Double.MAX_VALUE;
         Entity closestFood = null;
@@ -46,10 +41,8 @@ public class SeekFoodStrategy implements EnemyStrategy {
 
         if (closestFood != null) {
             enemy.moveToward(closestFood.getPosition());
-            return true;
         } else {
             new RandomMoveStrategy().execute(enemy);
-            return false;
         }
     }
 }

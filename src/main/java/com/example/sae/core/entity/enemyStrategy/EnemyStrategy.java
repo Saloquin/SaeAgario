@@ -3,7 +3,7 @@ package com.example.sae.core.entity.enemyStrategy;
 import com.example.sae.core.entity.Enemy;
 
 /**
- * interface for different AI strategies
+ * interface defining the mandatory method for an enemy strategy
  *
  * @see Enemy
  * @see ChaseClosestEntityStrategy
@@ -12,15 +12,10 @@ import com.example.sae.core.entity.Enemy;
  */
 public interface EnemyStrategy {
     /**
-     * Executes the AI's strategy
+     * Execute the strategy
      *
-     * @param enemy Strategy executed on this AI
-     * @return will return true if execution was successful
-     * @see Enemy
-     * @see ChaseClosestEntityStrategy
-     * @see RandomMoveStrategy
-     * @see SeekFoodStrategy
+     * @param enemy the enemy executing the strategy
      */
-    boolean execute(Enemy enemy);
+    void execute(Enemy enemy);
 }
 
