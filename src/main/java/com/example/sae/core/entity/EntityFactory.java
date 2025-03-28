@@ -1,8 +1,12 @@
 package com.example.sae.core.entity;
 
 import com.example.sae.client.controller.SoloController;
-import com.example.sae.core.entity.powerUp.PowerUp;
-import com.example.sae.core.entity.powerUp.PowerUpType;
+import com.example.sae.core.entity.immobile.Food;
+import com.example.sae.core.entity.movable.Enemy;
+import com.example.sae.core.entity.movable.body.MoveableBody;
+import com.example.sae.core.entity.movable.Player;
+import com.example.sae.core.entity.immobile.powerUp.PowerUp;
+import com.example.sae.core.entity.immobile.powerUp.PowerUpType;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
@@ -108,6 +112,10 @@ public class EntityFactory {
      */
     public static Enemy createEnemy(double mass) {
         return new Enemy(root, mass, (idDebug++)+" ");
+    }
+
+    public static Enemy createEnemy(double mass, String name, Color color) {
+        return new Enemy(root, mass, name);
     }
 
     /**

@@ -1,10 +1,11 @@
-package com.example.sae.core.entity;
+package com.example.sae.core.entity.movable.body;
 
-import com.example.sae.client.controller.SoloController;
 import com.example.sae.client.utils.config.Constants;
-import com.example.sae.core.Camera;
+import com.example.sae.core.entity.Entity;
+import com.example.sae.core.entity.immobile.Food;
+import com.example.sae.core.entity.movable.Enemy;
+import com.example.sae.core.entity.movable.Player;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Group;
@@ -23,10 +24,16 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
  *
  * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
  */
-public abstract class MoveableBody extends Entity {
+public abstract class MoveableBody extends Entity implements BodyComponent {
+    public BodyComposite getComposite() {
+        return composite;
+    }
+
     /**
      * name of moving object
      */
+
+    protected BodyComposite composite;
 
     private final StringProperty name = new SimpleStringProperty(this, "name", "°-°");
     private Text nameText;
@@ -34,6 +41,7 @@ public abstract class MoveableBody extends Entity {
     protected double actualSpeedY = 0;
     public static final double BASE_MAX_SPEED = Constants.getBaseMaxSpeed();
     public static final double ENEMY_SPEED_MULTIPLIER = Constants.getEnemySpeedMultiplier();
+    public static final double CLONE_SPLIT_DISTANCE = Constants.getCloneSplitDistance();
     protected double speedMultiplier = 1.0;
 
 
@@ -46,9 +54,10 @@ public abstract class MoveableBody extends Entity {
      * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
      * @see Entity
      */
-    MoveableBody(Group group, double initialSize, Color color) {
+    public MoveableBody(Group group, double initialSize, Color color) {
         super(group, initialSize, color);
         initializeNameText(group);
+        this.composite = new BodyComposite(this);
     }
 
 
@@ -62,15 +71,17 @@ public abstract class MoveableBody extends Entity {
      * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
      * @see Entity
      */
-    MoveableBody(Group group, String id, double initialSize, Color color) {
+    public MoveableBody(Group group, String id, double initialSize, Color color) {
         super(group, id, initialSize, color);
         initializeNameText(group);
+        this.composite = new BodyComposite(this);
     }
 
-    MoveableBody(Group group, String id, double initialSize, Color color, String playerName) {
+    public MoveableBody(Group group, String id, double initialSize, Color color, String playerName) {
         super(group, id, initialSize, color);
         this.name.set(playerName);
         initializeNameText(group);
+        this.composite = new BodyComposite(this);
     }
 
     /**
@@ -83,11 +94,12 @@ public abstract class MoveableBody extends Entity {
      * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
      * @see Entity
      */
-    MoveableBody(Group group, double initialSize, Color color, String name) {
+    public MoveableBody(Group group, double initialSize, Color color, String name) {
         super(group, initialSize);
         this.name.set(name);
         sprite.setFill(color);
         initializeNameText(group);
+        this.composite = new BodyComposite(this);
     }
 
     /**
@@ -99,11 +111,30 @@ public abstract class MoveableBody extends Entity {
      * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
      * @see Entity
      */
-    MoveableBody(Group group, double initialSize, String name) {
+    public MoveableBody(Group group, double initialSize, String name) {
         super(group, initialSize);
         this.name.set(name);
         initializeNameText(group);
+        this.composite = new BodyComposite(this);
     }
+
+    @Override
+    public void addClone(BodyComponent clone) {
+        composite.addClone(clone);
+    }
+
+    @Override
+    public void removeClone(BodyComponent clone) {
+        composite.removeClone(clone);
+    }
+
+    @Override
+    public boolean isComposite() {
+        return false;
+    }
+
+    // Modify the splitSprite method
+    public abstract void splitSprite();
 
     /**
      * increases the size of the moving object that has eaten another moving object
@@ -198,28 +229,16 @@ public abstract class MoveableBody extends Entity {
         }
     }
 
+    public boolean isAlive() {
+        return getSprite().getParent() != null;
+    }
+
     protected abstract void calculateSpeeds(double distanceFromCenter);
 
     public double getMaxSpeed() {
         return BASE_MAX_SPEED / (1 + Math.log10(getMasse()))*speedMultiplier;
     }
 
-
-    /**
-     * splits the moving object by clicking on the keyboard space bar
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     */
-    //TODO: Implement the splitSprite method without using AgarioApplication.root
-    public void splitSprite() {
-        Player newBody = EntityFactory.createPlayer(sprite.getRadius() / 2, (Color) sprite.getFill());
-        newBody.sprite.setCenterX(sprite.getCenterX() + 30);
-        newBody.sprite.setCenterY(sprite.getCenterY() + 30);
-
-
-        sprite.setRadius(sprite.getRadius() / 2);
-
-    }
 
     /**
      * calculates the distance between the moving object and another entity
@@ -305,5 +324,31 @@ public abstract class MoveableBody extends Entity {
 
     public double getActualSpeedY() {
         return actualSpeedY;
+    }
+
+    @Override
+    public boolean belongsToSameComposite(BodyComponent other) {
+        if (other instanceof MoveableBody) {
+            return composite == ((MoveableBody) other).composite;
+        }
+        return false;
+    }
+
+    public void setComposite(BodyComposite composite) {
+        this.composite = composite;
+    }
+
+    public double getTotalMasse() {
+        if (composite.isComposite()) {
+            // Calculer la masse totale du composite
+            double totalMasse = super.getMasse(); // Masse du corps principal
+            for (BodyComponent clone : composite.getClones()) {
+                if (clone instanceof MoveableBody) {
+                    totalMasse += ((MoveableBody) clone).getMasse();
+                }
+            }
+            return totalMasse;
+        }
+        return super.getMasse();
     }
 }

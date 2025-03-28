@@ -1,34 +1,42 @@
 package com.example.sae.client;
 
+import com.example.sae.client.controller.managers.MinimapManager;
+import com.example.sae.client.controller.managers.PlayerInfoManager;
 import com.example.sae.client.factory.GamePaneFactory;
 import com.example.sae.core.Camera;
 import com.example.sae.core.GameEngine;
-import com.example.sae.core.entity.Enemy;
+import com.example.sae.core.entity.movable.Enemy;
 import com.example.sae.core.entity.EntityFactory;
-import com.example.sae.core.entity.Food;
-import com.example.sae.core.entity.powerUp.PowerUp;
+import com.example.sae.core.entity.immobile.Food;
+import com.example.sae.core.entity.immobile.powerUp.PowerUp;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+
+import java.io.IOException;
 
 public abstract class Client {
     protected static GameEngine gameEngine;
     public int playerId;
     protected Group root;
-    protected Camera camera;
+    protected static Camera camera;
     protected boolean gameStarted = false;
     protected String playerName;
     protected Color color;
+    protected static final BooleanProperty gameIsEnded = new SimpleBooleanProperty(false);
 
     public Client(Group root, String playerName, Color color) {
         this.root = root;
         this.playerName = playerName;
         this.color = color;
-        this.camera = new Camera();
-        this.gameEngine = new GameEngine(GameEngine.MAP_LIMIT_WIDTH, GameEngine.MAP_LIMIT_HEIGHT, false);
+        camera = new Camera();
+        gameEngine = new GameEngine(GameEngine.MAP_LIMIT_WIDTH, GameEngine.MAP_LIMIT_HEIGHT, false);
     }
 
-    public Camera getCamera() {
+    public static Camera getCamera() {
         return camera;
     }
 
@@ -64,4 +72,5 @@ public abstract class Client {
         }
 
     }
+
 }

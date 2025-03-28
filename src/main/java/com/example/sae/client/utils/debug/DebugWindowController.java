@@ -1,7 +1,6 @@
 package com.example.sae.client.utils.debug;
 
 import com.example.sae.core.GameEngine;
-import com.example.sae.core.entity.MoveableBody;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -15,7 +14,6 @@ import javafx.stage.StageStyle;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 public class DebugWindowController {
     @FXML private Label playerMaxSpeedLabel;

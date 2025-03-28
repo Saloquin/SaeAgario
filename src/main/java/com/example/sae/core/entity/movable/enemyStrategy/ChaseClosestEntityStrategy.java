@@ -1,10 +1,11 @@
-package com.example.sae.core.entity.enemyStrategy;
+package com.example.sae.core.entity.movable.enemyStrategy;
 
 import com.example.sae.client.Client;
-import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
-import com.example.sae.core.entity.*;
-import com.example.sae.core.entity.powerUp.PowerUp;
+import com.example.sae.core.entity.Entity;
+import com.example.sae.core.entity.movable.Enemy;
+import com.example.sae.core.entity.movable.body.MoveableBody;
+import com.example.sae.core.entity.movable.Player;
 
 import java.util.HashSet;
 

@@ -1,15 +1,17 @@
-package com.example.sae.core.entity;
+package com.example.sae.core.entity.movable;
 
-import com.example.sae.client.AgarioApplication;
 import com.example.sae.client.Client;
-import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
-import com.example.sae.core.entity.enemyStrategy.ChaseClosestEntityStrategy;
-import com.example.sae.core.entity.enemyStrategy.EnemyStrategy;
-import com.example.sae.core.entity.enemyStrategy.RandomMoveStrategy;
-import com.example.sae.core.entity.enemyStrategy.SeekFoodStrategy;
-import com.example.sae.core.entity.powerUp.PowerUp;
+import com.example.sae.core.entity.EntityFactory;
+import com.example.sae.core.entity.immobile.Food;
+import com.example.sae.core.entity.movable.body.MoveableBody;
+import com.example.sae.core.entity.movable.enemyStrategy.ChaseClosestEntityStrategy;
+import com.example.sae.core.entity.movable.enemyStrategy.EnemyStrategy;
+import com.example.sae.core.entity.movable.enemyStrategy.RandomMoveStrategy;
+import com.example.sae.core.entity.movable.enemyStrategy.SeekFoodStrategy;
+import com.example.sae.core.entity.immobile.powerUp.PowerUp;
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 
 import java.util.Random;
 
@@ -67,17 +69,31 @@ public class Enemy extends MoveableBody {
     public Enemy(Group group, double masse, String name) {
         super(group, masse, name);
         this.strategy =chooseOptimalStrategy();
-
         // Position initiale plus proche du centre
         double spreadFactor = 0.7; // Réduire la dispersion
         sprite.setCenterX((Math.random() * MAP_LIMIT_WIDTH * 2 -MAP_LIMIT_WIDTH) * spreadFactor);
         sprite.setCenterY((Math.random() * MAP_LIMIT_HEIGHT * 2 - MAP_LIMIT_HEIGHT) * spreadFactor);
+    }
+    public Enemy(Group group, double masse, String name, Color color) {
+        super(group, masse, color, name);
+        this.strategy =((Enemy)composite.getMainBody()).getStrategy();
     }
 
     @Override
     protected void calculateSpeeds(double distanceFromCenter) {
         actualSpeedX = getMaxSpeed() * ENEMY_SPEED_MULTIPLIER;
         actualSpeedY = getMaxSpeed() * ENEMY_SPEED_MULTIPLIER;
+    }
+    @Override
+    public void splitSprite() {
+        Enemy clone = EntityFactory.createEnemy(getMasse()/2,getNom(), (Color) sprite.getFill());
+        clone.sprite.setCenterX(sprite.getCenterX() + CLONE_SPLIT_DISTANCE);
+        clone.sprite.setCenterY(sprite.getCenterY() + CLONE_SPLIT_DISTANCE);
+        setMasse(getMasse() / 2);
+        clone.setComposite(this.composite);
+        Client.getGameEngine().addEntity(clone);
+        addClone(clone);
+        this.composite.updateLastSplitTime();
     }
 
     /**
@@ -93,7 +109,12 @@ public class Enemy extends MoveableBody {
      */
     @Override
     public void Update() {
-        strategy = chooseOptimalStrategy();
+        if(isComposite()) {
+            strategy= ((Enemy)composite.getMainBody()).getStrategy();
+        }
+        else {
+            strategy = chooseOptimalStrategy();
+        }
         strategy.execute(this);
     }
 
@@ -111,6 +132,7 @@ public class Enemy extends MoveableBody {
     public void setStrategy(EnemyStrategy strategy) {
         this.strategy = strategy;
     }
+
 
     /**
      * indicates whether the AI has reached the target

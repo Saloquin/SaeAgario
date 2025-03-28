@@ -1,5 +1,6 @@
-package com.example.sae.core.entity.powerUp;
-import com.example.sae.core.entity.MoveableBody;
+package com.example.sae.core.entity.immobile.powerUp;
+import com.example.sae.client.utils.config.Constants;
+import com.example.sae.core.entity.movable.body.MoveableBody;
 import javafx.scene.paint.Color;
 
 public enum PowerUpType {
@@ -30,7 +31,6 @@ public enum PowerUpType {
     SPLIT(Color.GREEN, 0,100) {
         @Override
         public void applyEffect(MoveableBody body) {
-            body.splitSprite();
             body.splitSprite();
         }
 

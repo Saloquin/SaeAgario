@@ -1,13 +1,10 @@
 package com.example.sae.client.controller.managers;
 
-import com.example.sae.core.entity.MoveableBody;
+import com.example.sae.core.entity.movable.body.MoveableBody;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.binding.Bindings;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.text.Text;
-import javafx.util.Callback;
 import javafx.util.Duration;
 
 import java.util.List;
@@ -35,9 +32,11 @@ public class LeaderboardManager {
 
     private void update() {
         leaderboard.getItems().clear();
-        entitiesSupplier.get().forEach(entity ->
-                leaderboard.getItems().add(entity.getNom() + ": " + (int) Math.round(entity.getMasse()))
-        );
+        entitiesSupplier.get().stream()
+                .filter(entity -> entity == entity.getComposite().getMainBody()) // Ne garde que les mainBody
+                .forEach(entity -> leaderboard.getItems().add(
+                        entity.getNom() + ": " + (int) Math.round(entity.getTotalMasse())
+                ));
     }
 
     public void stop() {

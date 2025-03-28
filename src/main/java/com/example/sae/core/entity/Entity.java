@@ -2,6 +2,10 @@ package com.example.sae.core.entity;
 
 import java.util.Random;
 
+import com.example.sae.core.entity.immobile.Food;
+import com.example.sae.core.entity.movable.Enemy;
+import com.example.sae.core.entity.movable.body.MoveableBody;
+import com.example.sae.core.entity.movable.Player;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import java.util.UUID;
@@ -40,7 +44,7 @@ public abstract class Entity extends Group{
      * @param group Group
      * @param initialMasse size of entity
      */
-    Entity(Group group, double initialMasse) {
+    protected Entity(Group group, double initialMasse) {
         super();
         this.entityId = UUID.randomUUID().toString();
         this.masse = new SimpleDoubleProperty(initialMasse);
@@ -100,7 +104,7 @@ public abstract class Entity extends Group{
      * @param initialMasse size of entity
      * @param color color of entity
      */
-    Entity(Group group, String id, double initialMasse, Color color) {
+    protected Entity(Group group, String id, double initialMasse, Color color) {
         super();
         this.entityId = id;
         this.masse = new SimpleDoubleProperty(initialMasse);

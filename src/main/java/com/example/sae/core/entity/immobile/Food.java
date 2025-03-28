@@ -1,7 +1,9 @@
-package com.example.sae.core.entity;
+package com.example.sae.core.entity.immobile;
 
 
 
+import com.example.sae.core.entity.Entity;
+import com.example.sae.core.entity.movable.body.MoveableBody;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 

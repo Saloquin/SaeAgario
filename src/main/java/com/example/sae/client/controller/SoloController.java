@@ -4,24 +4,30 @@ import com.example.sae.client.controller.managers.*;
 import com.example.sae.client.ChatClient;
 import com.example.sae.client.Client;
 import com.example.sae.client.Solo;
+import com.example.sae.client.utils.config.Constants;
 import com.example.sae.core.Camera;
 import com.example.sae.core.entity.*;
+import com.example.sae.core.entity.movable.Player;
+import com.example.sae.core.entity.movable.body.BodyComponent;
+import com.example.sae.core.entity.movable.body.MoveableBody;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class SoloController implements Initializable {
+    private static final double MIN_MASSE_SPLIT = Constants.getMinMasseSplit();
     @FXML private StackPane rootStack;
     @FXML private Pane gameContainer;
     @FXML private ListView<String> leaderboard;
@@ -37,6 +43,7 @@ public class SoloController implements Initializable {
     private MinimapManager minimapManager;
     private PlayerInfoManager playerInfoManager;
     private LeaderboardManager leaderboardManager;
+    private boolean isSpacePressed = false;
 
     private String playerName;
     private Color playerColor;
@@ -84,7 +91,38 @@ public class SoloController implements Initializable {
             stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
         });
 
+
+        pane.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.SPACE && !isSpacePressed) {
+                isSpacePressed = true;
+                handleSplit();
+            }
+        });
+
+        pane.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.SPACE) {
+                isSpacePressed = false;
+            }
+        });
+        pane.setFocusTraversable(true);
+        pane.requestFocus();
         rootStack.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, event -> stopGame());
+    }
+
+    private void handleSplit() {
+        // Split le player principal s'il a assez de masse
+
+
+        // Split tous les clones qui ont assez de masse
+        List<BodyComponent> clones = player.getComposite().getClones();
+        for (BodyComponent clone : clones) {
+            if (clone instanceof MoveableBody body && body.getMasse() >= MIN_MASSE_SPLIT) {
+                body.splitSprite();
+            }
+        }
+        if (player.getMasse() >= MIN_MASSE_SPLIT) {
+            player.splitSprite();
+        }
     }
 
     private void initializeManagers() {
@@ -116,7 +154,7 @@ public class SoloController implements Initializable {
         Camera camera = client.getCamera();
         camera.focusPaneOn(pane, player);
     }
-    
+
     public static Pane getPane() {
         return pane;
     }

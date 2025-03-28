@@ -37,7 +37,9 @@
                   prefHeight="250"
                   prefWidth="200"
                   AnchorPane.leftAnchor="0.0"
-                  AnchorPane.topAnchor="0.0"/>
+                  AnchorPane.topAnchor="0.0"
+
+        />
 
         <!-- Chat at bottom left -->
         <VBox spacing="5" prefWidth="250" AnchorPane.leftAnchor="0.0" AnchorPane.bottomAnchor="0.0">

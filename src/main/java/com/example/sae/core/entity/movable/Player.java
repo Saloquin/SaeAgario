@@ -1,15 +1,15 @@
-package com.example.sae.core.entity;
+package com.example.sae.core.entity.movable;
 
+import com.example.sae.client.Client;
 import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.Camera;
+import com.example.sae.core.entity.EntityFactory;
+import com.example.sae.core.entity.movable.body.MoveableBody;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import com.example.sae.client.Solo;
 import com.example.sae.client.Online;
-
-import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
-import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 /**
  * moving object used by the player during a game
@@ -70,17 +70,29 @@ public class Player extends MoveableBody{
 
 
     public Player(Group group, double masse, Color color,String playerName){
-        super(group, masse, color, playerName);
+        super(group, masse, color,playerName);
         sprite.setCenterX(0);
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());
     }
 
     @Override
+    public void splitSprite() {
+        Player clone = EntityFactory.createPlayer(getMasse()/2,getNom(), (Color) sprite.getFill());
+        clone.sprite.setCenterX(sprite.getCenterX() + CLONE_SPLIT_DISTANCE);
+        clone.sprite.setCenterY(sprite.getCenterY() + CLONE_SPLIT_DISTANCE);
+        setMasse(getMasse() / 2);
+        clone.setComposite(this.composite);
+        Client.getGameEngine().addEntity(clone);
+        addClone(clone);
+        this.composite.updateLastSplitTime();
+    }
+
+    @Override
     protected void calculateSpeeds(double distanceFromCenter) {
-        double currentScale = SoloController.getPane().getScaleX();
-        double maxDistanceH = (SoloController.getPane().getScene().getHeight()/2) / currentScale;
-        double maxDistanceW = (SoloController.getPane().getScene().getWidth()/2) / currentScale;
+        double currentScale = sprite.getParent().getScaleX();
+        double maxDistanceH = (sprite.getParent().getScene().getHeight()/2) / currentScale;
+        double maxDistanceW = (sprite.getParent().getScene().getWidth()/2) / currentScale;
 
         double speedFactorX = Math.min(distanceFromCenter / maxDistanceW, 1.0);
         double speedFactorY = Math.min(distanceFromCenter / maxDistanceH, 1.0);

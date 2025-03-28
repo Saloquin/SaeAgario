@@ -3,6 +3,8 @@ package com.example.sae.client.utils.config;
 public final class Constants {
     private Constants() {}
 
+
+
     // Map settings
     public static double getMapLimitWidth() {
         return ConfigLoader.getDouble("Map", "MAP_LIMIT_WIDTH");
@@ -13,6 +15,10 @@ public final class Constants {
     }
 
     // Entity settings
+    public static double getMinMasseSplit() {return ConfigLoader.getDouble("Entities", "MIN_MASSE_SPLIT");}
+    public static double getCloneSplitDistance() {return ConfigLoader.getDouble("Entities", "ClONE_SPLIT_DISTANCE");}
+    public static double getCloneMergeCooldown() {return ConfigLoader.getDouble("Entities", "CLONE_MERGE_COOLDOWN");}
+
     public static double getNbFoodMax() {
         return ConfigLoader.getDouble("Entities", "NB_FOOD_MAX");
     }

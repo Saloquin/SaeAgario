@@ -1,6 +1,6 @@
 package com.example.sae.client.controller.managers;
 
-import com.example.sae.core.entity.Player;
+import com.example.sae.core.entity.movable.Player;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.control.Label;
@@ -32,7 +32,7 @@ public class PlayerInfoManager {
 
     private void updateScore() {
         int currentScore = Integer.parseInt(scoreLabel.getText());
-        int newScore = (int) Math.round(player.getMasse());
+        int newScore = (int) Math.round(player.getTotalMasse());
 
         if (newScore > currentScore) {
             scoreLabel.getStyleClass().add("score-increase");

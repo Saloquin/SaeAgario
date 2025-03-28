@@ -1,6 +1,6 @@
-package com.example.sae.core.entity.enemyStrategy;
+package com.example.sae.core.entity.movable.enemyStrategy;
 
-import com.example.sae.core.entity.Enemy;
+import com.example.sae.core.entity.movable.Enemy;
 /**
  * interface for different AI strategies
  *

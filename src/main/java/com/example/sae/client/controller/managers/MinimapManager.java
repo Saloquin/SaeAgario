@@ -1,8 +1,9 @@
 package com.example.sae.client.controller.managers;
 
-import com.example.sae.core.entity.Enemy;
-import com.example.sae.core.entity.MoveableBody;
-import com.example.sae.core.entity.Player;
+
+import com.example.sae.core.entity.movable.Enemy;
+import com.example.sae.core.entity.movable.Player;
+import com.example.sae.core.entity.movable.body.MoveableBody;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
@@ -85,8 +86,9 @@ public class MinimapManager {
             double radius = entity.getSprite().getRadius();
             double scaleRadius = Math.max(3, radius * scale * 2);
 
-            gc.setFill(entity instanceof Player ? Color.CYAN :
-                    entity instanceof Enemy ? Color.RED : Color.GREEN);
+            gc.setFill(entity.belongsToSameComposite(player)? Color.YELLOW:
+                    entity instanceof Player ? Color.CYAN :
+                    entity instanceof Enemy ? Color.RED :Color.GREEN);
             gc.fillOval(x - scaleRadius/2, y - scaleRadius/2, scaleRadius, scaleRadius);
         }
 
