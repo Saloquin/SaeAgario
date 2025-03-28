@@ -11,6 +11,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -94,7 +95,7 @@ public class OnlineController  implements Initializable {
 
         setupPlayerInfoUpdater();
 
-        pane = client.createGamePane(1280, 720);
+        pane = client.createGamePane();
         pane.prefWidthProperty().bind(rootStack.widthProperty());
         pane.prefHeightProperty().bind(rootStack.heightProperty());
 
@@ -176,6 +177,12 @@ public class OnlineController  implements Initializable {
 
         minimapGC.strokeLine(centerX - crossSize, centerY, centerX + crossSize, centerY);
         minimapGC.strokeLine(centerX, centerY - crossSize, centerX, centerY + crossSize);
+    }
+
+    static public double[] getMousePosition(){
+        java.awt.Point mouse = java.awt.MouseInfo.getPointerInfo().getLocation();
+        Point2D mousePos = root.screenToLocal(mouse.x, mouse.y);
+        return new double[]{mousePos.getX(), mousePos.getY()};
     }
 
     private double calculateOptimalScale() {

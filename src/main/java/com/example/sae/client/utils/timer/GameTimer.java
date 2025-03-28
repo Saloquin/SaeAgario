@@ -5,8 +5,8 @@ import javafx.animation.AnimationTimer;
 
 public class GameTimer extends AnimationTimer {
     private final Client client;
-    private final double framesPerSecond = 120;
-    private final double interval = 1000000000 / framesPerSecond;
+    public static final double FPS = 120;
+    private final double interval = 1000000000 / FPS;
     private double last = 0;
 
     private boolean stopped = false;
@@ -17,6 +17,7 @@ public class GameTimer extends AnimationTimer {
 
     @Override
     public void stop(){
+        super.stop();
         stopped = true;
     }
 

@@ -3,72 +3,52 @@ package com.example.sae.core.entity.enemyStrategy;
 import com.example.sae.core.entity.Enemy;
 
 import java.util.Random;
-/**
- * AI strategy: move randomly
- *
- * @see Enemy
- * @see ChaseClosestEntityStrategy
- * @see SeekFoodStrategy
- *
- * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
- */
+
+import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
+import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
+
 public class RandomMoveStrategy implements EnemyStrategy {
-    /**
-     * function to generate random numbers
-     */
     private Random random = new Random();
+    private static final double UPDATE_INTERVAL = 3.0;
+    private static final double MAX_TURN_ANGLE = Math.PI / 4; // 45 degrees
+    private long lastUpdateTime = System.nanoTime();
 
-    /**
-     * number of seconds before updating AI direction
-     */
-    private static final double UPDATE_INTERVAL = 2.0; // Secondes
-
-    /**
-     * last time direction was updated in seconds
-     */
-    private double lastUpdateTime = 0;
-
-    /**
-     * Executes the AI's random move strategy
-     *
-     * @see Enemy
-     * @see ChaseClosestEntityStrategy
-     * @see SeekFoodStrategy
-     *
-     * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
-     * @param enemy Strategy executed on this AI
-     * @return will return true if execution was successful
-     */
     @Override
     public boolean execute(Enemy enemy) {
-        double currentTime = System.currentTimeMillis() / 1000.0;
+        long currentTime = System.nanoTime();
+        double elapsedTime = (currentTime - lastUpdateTime) / 1_000_000_000.0;
 
-        if (enemy.getTargetPosition() == null ||
-                enemy.hasReachedTarget() ||
-                currentTime - lastUpdateTime > UPDATE_INTERVAL) {
-
-            // Distance de déplacement plus grande
-            double distance = random.nextDouble() * 800 + 200; // Entre 200 et 1000
-            double angle = random.nextDouble() * 2 * Math.PI;
-
-            // Calculer la nouvelle position cible
-            double[] currentPos = enemy.getPosition();
-            double[] targetPosition = new double[] {
-                    currentPos[0] + Math.cos(angle) * distance,
-                    currentPos[1] + Math.sin(angle) * distance
-            };
+        if (enemy.getTargetPosition() == null || enemy.hasReachedTarget() || elapsedTime > UPDATE_INTERVAL) {
+            double[] currentPosition = enemy.getPosition();
+            double[] targetPosition = generateNewTargetPosition(currentPosition, enemy.getTargetPosition());
 
             enemy.setTargetPosition(targetPosition);
             lastUpdateTime = currentTime;
         }
 
-        // Déplacement plus rapide
         if (enemy.getTargetPosition() != null) {
             enemy.moveToward(enemy.getTargetPosition());
         }
         return true;
     }
 
+    private double[] generateNewTargetPosition(double[] currentPosition, double[] previousTargetPosition) {
+        double angle;
+        if (previousTargetPosition == null) {
+            angle = random.nextDouble() * 2 * Math.PI;
+        } else {
+            double currentAngle = Math.atan2(previousTargetPosition[1] - currentPosition[1], previousTargetPosition[0] - currentPosition[0]);
+            angle = currentAngle + (random.nextDouble() * 2 * MAX_TURN_ANGLE - MAX_TURN_ANGLE);
+        }
 
+        double distance = random.nextDouble() * Math.min(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT) / 2;
+        double newX = currentPosition[0] + Math.cos(angle) * distance;
+        double newY = currentPosition[1] + Math.sin(angle) * distance;
+
+        // Ensure the new position is within the map limits
+        newX = Math.max(-MAP_LIMIT_WIDTH, Math.min(MAP_LIMIT_WIDTH, newX));
+        newY = Math.max(-MAP_LIMIT_HEIGHT, Math.min(MAP_LIMIT_HEIGHT, newY));
+
+        return new double[]{newX, newY};
+    }
 }
-

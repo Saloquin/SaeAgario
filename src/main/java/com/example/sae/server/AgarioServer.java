@@ -2,6 +2,7 @@ package com.example.sae.server;
 
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.*;
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
 import java.io.*;
@@ -193,6 +194,8 @@ public class AgarioServer {
 
             // Créer un nouveau joueur pour ce client
             // this.player = new Player(null, clientId, MoveableBody.DEFAULT_MASSE, Color.RED); // null car pas besoin de Group côté serveur
+            EntityFactory.setRoot(new Group());
+
             this.player = EntityFactory.createPlayer(clientId, MoveableBody.DEFAULT_MASSE, "verisubbo", Color.GREEN);
             this.player.setInputPosition(new double[]{ 0, 0 });
             gameEngine.addPlayer(player);

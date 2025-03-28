@@ -26,7 +26,7 @@ public class MenuController implements Initializable {
     @FXML private TextField nameField;
     @FXML private ColorPicker colorPicker;
 
-    private String playerName = "Player";
+    private String playerName = "";
     private Color playerColor = Color.BLUE;
 
     static Stage mainStage;

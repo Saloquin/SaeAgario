@@ -1,5 +1,7 @@
 package com.example.sae.client;
 
+import com.example.sae.client.controller.OnlineController;
+import com.example.sae.client.controller.SoloController;
 import com.example.sae.client.utils.debug.DebugWindow;
 import com.example.sae.client.utils.timer.GameTimer;
 import com.example.sae.core.GameEngine;
@@ -65,7 +67,7 @@ public class Online extends Client {
             return;
         }
 
-        player.setInputPosition(getMousePosition());
+        player.setInputPosition(OnlineController.getMousePosition());
         handler.sendMessage(String.format(Locale.US, "MOVE|%.2f|%.2f", player.getPosition()[0], player.getPosition()[1]));
 
         this.oldMasse = player.getMasse();

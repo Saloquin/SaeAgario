@@ -1,9 +1,12 @@
 package com.example.sae.core.entity.enemyStrategy;
 
+import com.example.sae.client.Client;
 import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
-import com.example.sae.core.entity.Enemy;
-import com.example.sae.core.entity.Entity;
+import com.example.sae.core.entity.*;
+import com.example.sae.core.entity.powerUp.PowerUp;
+
+import java.util.HashSet;
 
 /**
  * AI strategy: seek out and attempt to devour the closest entity
@@ -28,28 +31,32 @@ public class ChaseClosestEntityStrategy implements EnemyStrategy {
      */
     @Override
     public boolean execute(Enemy enemy) {
-        GameEngine gameEngine = SoloController.getClient().getGameEngine();
+        GameEngine gameEngine = Client.getGameEngine();
         if (gameEngine == null) return false;
 
-        Entity closestEntity = null;
+        MoveableBody closestEntity = null;
         double closestDistance = Double.MAX_VALUE;
 
-        // Find closest entity among existing entities
-        for (Entity entity : gameEngine.getNearbyEntities(enemy, 400)) {
-            if (entity != enemy && entity.getParent() != null && entity.getMasse()*1.33<enemy.getMasse() ) {
-                double distance = enemy.distanceTo(entity.getPosition());
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    closestEntity = entity;
+        HashSet<Entity> nearbyEntities = gameEngine.getNearbyEntities(enemy, GameEngine.ENEMY_RANGE);
+        for (Entity entity : nearbyEntities) {
+            if (entity instanceof Enemy || entity instanceof Player) {
+                if (gameEngine.canEat(enemy, entity)) {
+                    double distance = enemy.distanceTo(entity.getPosition());
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestEntity = (MoveableBody) entity;
+                    }
                 }
             }
         }
 
-        // Move toward closest entity if found
         if (closestEntity != null) {
             enemy.moveToward(closestEntity.getPosition());
             return true;
         }
-        return false;
+        else {
+            new SeekFoodStrategy().execute(enemy);
+            return false;
+        }
     }
 }

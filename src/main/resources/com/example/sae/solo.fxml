@@ -45,7 +45,7 @@
                       prefHeight="200"/>
             <HBox spacing="5">
                 <TextField fx:id="chatInput" HBox.hgrow="ALWAYS" styleClass="chat-input"/>
-                <Button text="Send" onAction="#sendMessage" styleClass="chat-button"/>
+                <Button text="Send" styleClass="chat-button"/>
             </HBox>
         </VBox>
 

@@ -1,11 +1,14 @@
 package com.example.sae.core.entity;
-
+import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.Camera;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import com.example.sae.client.Solo;
 import com.example.sae.client.Online;
+
+import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
+import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 /**
  * moving object used by the player during a game
@@ -85,6 +88,19 @@ public class Player extends MoveableBody{
         sprite.setCenterX(0);
         sprite.setCenterY(0);
         sprite.setViewOrder(-sprite.getRadius());
+    }
+
+    @Override
+    protected void calculateSpeeds(double distanceFromCenter) {
+        double currentScale = sprite.getParent().getScaleX();
+        double maxDistanceH = (sprite.getParent().getScene().getHeight()/2) / currentScale;
+        double maxDistanceW = (sprite.getParent().getScene().getWidth()/2) / currentScale;
+
+        double speedFactorX = Math.min(distanceFromCenter / maxDistanceW, 1.0);
+        double speedFactorY = Math.min(distanceFromCenter / maxDistanceH, 1.0);
+
+        actualSpeedX = getMaxSpeed() * speedFactorX ;
+        actualSpeedY = getMaxSpeed() * speedFactorY ;
     }
 
     /**
@@ -184,6 +200,7 @@ public class Player extends MoveableBody{
      */
     @Override
     public void Update() {
+
         moveToward(inputPosition);
     }
 

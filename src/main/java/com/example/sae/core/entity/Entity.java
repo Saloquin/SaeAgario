@@ -70,8 +70,9 @@ public abstract class Entity extends Group{
      * @param initialMasse size of entity
      * @param color color of entity
      */
-    Entity(Group group, double initialMasse, Color color) {
+    protected Entity(Group group, double initialMasse, Color color) {
         super();
+
         this.entityId = UUID.randomUUID().toString();
         this.masse = new SimpleDoubleProperty(initialMasse);
 
@@ -84,11 +85,9 @@ public abstract class Entity extends Group{
 
         // Bind le viewOrder au rayon
         viewOrderProperty().bind(sprite.radiusProperty().negate());
-
+        System.out.println(group);
         getChildren().add(sprite);
-        if (group != null) {
-            group.getChildren().add(this);
-        }
+        group.getChildren().add(this);
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.example.sae.core.entity;
 
 import com.example.sae.client.controller.SoloController;
+import com.example.sae.core.entity.powerUp.PowerUp;
+import com.example.sae.core.entity.powerUp.PowerUpType;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
@@ -18,7 +20,8 @@ import java.util.List;
  * @author Elsa HAMON - Paul LETELLIER - Camille GILLE - Thomas ROGER - Maceo DAVID - Clemence PAVY
  */
 public class EntityFactory {
-    private static Group root = SoloController.root;
+    private static Group root = SoloController.getRoot();
+    private static int idDebug = 0;
 
     /**
      * name list for IA, or default
@@ -139,7 +142,7 @@ public class EntityFactory {
      * @param mass masse of IA
      */
     public static Enemy createEnemy(double mass) {
-        return new Enemy(root, mass, getRandomName());
+        return new Enemy(root, mass, (idDebug++)+" ");
     }
 
     /**
@@ -151,4 +154,19 @@ public class EntityFactory {
     private static String getRandomName() {
         return ENEMY_NAMES.get((int) (Math.random() * ENEMY_NAMES.size()));
     }
+
+    public static PowerUp createIncreaseSpeedPowerUp() {
+        return new PowerUp(root,PowerUpType.SPEED_BOOST);
+    }
+    public static PowerUp createDecreaseSpeedPowerUp() {
+        return new PowerUp(root,PowerUpType.SPEED_DECREASE );
+    }
+    public static PowerUp createSplitPowerUp() {
+        return new PowerUp(root,PowerUpType.SPLIT);
+    }
+
+    public static PowerUp createRandomPowerUp() {
+        return new PowerUp(root,PowerUpType.getRandomPowerUpType());
+    }
+
 }
