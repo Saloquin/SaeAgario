@@ -39,7 +39,6 @@ public class Online extends Client {
 
     /// The socket used to communicate with the server
     private final Socket socket;
-    private String clientId;
 
     /**
      * Constructs an online client for multiplayer gameplay.

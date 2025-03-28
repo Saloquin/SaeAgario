@@ -21,7 +21,6 @@ public class ChatClient {
     private final Consumer<String> messageHandler;
     /// The player's name
     private final String playerName;
-    private PrintWriter out;
 
     /**
      * Constructor of the class

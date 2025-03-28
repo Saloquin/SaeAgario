@@ -82,6 +82,11 @@ public class Solo extends Client {
         return gameIsEnded;
     }
 
+    @Override
+    public void stopGame(){
+        stopSoloGame();
+    }
+
     /**
      * Stop the game
      */

@@ -7,6 +7,7 @@ import com.example.sae.core.entity.Enemy;
 import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.Food;
 import com.example.sae.core.entity.powerUp.PowerUp;
+import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
@@ -123,5 +124,9 @@ public abstract class Client {
     }
 
     public abstract void stopGame();
+
+    public BooleanProperty getGameIsEndedProperty() {
+        return gameIsEnded;
+    }
 }
 
