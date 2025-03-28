@@ -7,22 +7,36 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- *
+ * segment a plan in subarea
  */
 public class QuadTree {
+    /// the quadtree boundary
     private final Boundary boundary;
+    /// the quadtree capacity
     private int capacity;
+    /// the list of entities in the quadtree area
     private final HashSet<Entity> entities;
+    /// if the quadtree is divided
     private boolean divided;
 
+    /// the northwest subarea of this area
     private QuadTree northwest;
+    /// the northeast subarea of this area
     private QuadTree northeast;
+    /// the southeast subarea of this area
     private QuadTree southwest;
+    /// the southeast subarea of this area
     private QuadTree southeast;
 
+    /// the maximum depth level of the quadtree
     private final int maxDepth;
+    /// the current depth level of this quadtree
     private int currentDepth;
 
+    /**
+     * @param boundary the boundary of the quadtree
+     * @param maxDepth the maximum depth level
+     */
     public QuadTree(Boundary boundary, int maxDepth) {
         this.boundary = boundary;
         this.entities = new HashSet<>();
@@ -31,12 +45,19 @@ public class QuadTree {
         this.currentDepth = 0;
     }
 
+    /**
+     * @param boundary the boundary of the quadtree
+     * @param maxDepth the maximum depth level
+     * @param currentDepth the current depth level
+     */
     private QuadTree(Boundary boundary, int maxDepth, int currentDepth) {
         this(boundary, maxDepth);
         this.currentDepth = currentDepth;
     }
 
-
+    /**
+     * segment the current quadtree node in 4 quadtree
+     */
     public void subdivide() {
         double x = boundary.getX();
         double y = boundary.getY();
@@ -58,6 +79,11 @@ public class QuadTree {
         divided = true;
     }
 
+    /**
+     * insert an entity in the quadtree entities list
+     * @param entity the entity to add
+     * @return true if the insertion is successful, false otherwise
+     */
     public boolean insert(Entity entity) {
         if (!boundary.contains(entity.getSprite().getCenterX(), entity.getSprite().getCenterY())) {
             return false;
@@ -80,8 +106,13 @@ public class QuadTree {
         return insertIntoChildren(entity);
     }
 
+    /**
+     * remove an entity from the quadtree entities list
+     * @param entity the entity to remove
+     * @return true if the deletion was successful, false otherwise
+     */
     public boolean remove(Entity entity) {
-        // Si l'entité n'est pas dans la zone du QuadTree, ne rien faire
+        // if the entity isn't in the quadtree area, do nothing
         if (!boundary.contains(entity.getSprite().getCenterX(), entity.getSprite().getCenterY())) {
             return false;
         }
@@ -109,7 +140,11 @@ public class QuadTree {
         return false;
     }
 
-
+    /**
+     * insert an entity in the sub-quadtree
+     * @param entity the entity to insert
+     * @return true if the insertion was successful, false otherwise
+     */
     private boolean insertIntoChildren(Entity entity) {
         if (northwest.insert(entity)) return true;
         else if (northeast.insert(entity)) return true;
@@ -117,6 +152,11 @@ public class QuadTree {
         else return southeast.insert(entity);
     }
 
+    /**
+     * get the entities within an area
+     * @param range the boundary of the search
+     * @return the entities list
+     */
     public List<Entity> query(Boundary range) {
         List<Entity> found = new ArrayList<>();
 
@@ -138,43 +178,5 @@ public class QuadTree {
         }
 
         return found;
-    }
-
-
-    public void printAllEntities() {
-        System.out.println("=== QuadTree Entities ===");
-        int totalEntities = printEntitiesRecursive(0);
-        System.out.println("Total entities: " + totalEntities);
-        System.out.println("=== End of QuadTree ===");
-    }
-
-    private int printEntitiesRecursive(int depth) {
-        String indent = "  ".repeat(depth);
-        int totalCount = entities.size();
-
-        // Print current node entities
-        System.out.println(indent + "Node at depth " + depth + " (" +
-                boundary.getX() + ", " + boundary.getY() + ") - " +
-                "Size: " + entities.size());
-
-        for (Entity entity : entities) {
-            System.out.println(indent + "- " + entity.getClass().getSimpleName() +
-                    " at [" + String.format("%.2f", entity.getSprite().getCenterX()) +
-                    ", " + String.format("%.2f", entity.getSprite().getCenterY()) + "]");
-        }
-
-        // Recursively print child nodes
-        if (divided) {
-            System.out.println(indent + "Northwest:");
-            totalCount += northwest.printEntitiesRecursive(depth + 1);
-            System.out.println(indent + "Northeast:");
-            totalCount += northeast.printEntitiesRecursive(depth + 1);
-            System.out.println(indent + "Southwest:");
-            totalCount += southwest.printEntitiesRecursive(depth + 1);
-            System.out.println(indent + "Southeast:");
-            totalCount += southeast.printEntitiesRecursive(depth + 1);
-        }
-
-        return totalCount;
     }
 }

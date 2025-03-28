@@ -1,54 +1,83 @@
 package com.example.sae.core.quadtree;
 
 /**
- *
+ * define the boundary of an element
+ * @see QuadTree
  */
 public class Boundary {
-    // Position coordinates
+    /// boundary x starting coordinate
     protected double x;
+    /// boundary y starting coordinate
     protected double y;
-    // Dimensions
-    protected double w;
-    protected double h;
+    /// boundary width
+    protected double width;
+    /// boundary height
+    protected double height;
 
-    public Boundary(double x, double y, double w, double h) {
+    /**
+     * @param x the boundary origin x coordinate
+     * @param y the boundary origin y coordinate
+     * @param width the boundary width
+     * @param height the boundary height
+     */
+    public Boundary(double x, double y, double width, double height) {
         this.x = x;
         this.y = y;
-        this.w = w;
-        this.h = h;
+        this.width = width;
+        this.height = height;
     }
 
-    // Vérifie si un point est à l'intérieur de cette frontière
+    /**
+     * check if a point is contained in the boundary
+     * @param px the target x coordinate
+     * @param py the target y coordinate
+     * @return true if the point is contained within the boundary, false otherwise
+     */
     public boolean contains(double px, double py) {
-        return (px >= x - w &&
-                px <= x + w &&
-                py >= y - h &&
-                py <= y + h);
+        return (px >= x - width &&
+                px <= x + width &&
+                py >= y - height &&
+                py <= y + height);
     }
 
-    // Vérifie si cette frontière intersecte une autre frontière
+    /**
+     * check if the boundary intersect with another boundary
+     * @param range the other boundary
+     * @return true if there is an intersection, false otherwise
+     */
     public boolean intersects(Boundary range) {
-        return !(range.x - range.w > x + w ||
-                range.x + range.w < x - w ||
-                range.y - range.h > y + h ||
-                range.y + range.h < y - h);
+        return !(range.x - range.width > x + width ||
+                range.x + range.width < x - width ||
+                range.y - range.height > y + height ||
+                range.y + range.height < y - height);
     }
 
-    // Getters and setters
+    /**
+     * {@return the x origin coordinate of the boundary}
+     */
     public double getX() {
         return x;
     }
 
+    /**
+     * {@return the y origin coordinate of the boundary}
+     */
     public double getY() {
         return y;
     }
 
+    /**
+     * {@return the width of the boundary}
+     */
     public double getWidth() {
-        return w;
+        return width;
     }
 
+    /**
+     * {@return the height of the boundary}
+     */
     public double getHeight() {
-        return h;
+        return height;
     }
 
 }
