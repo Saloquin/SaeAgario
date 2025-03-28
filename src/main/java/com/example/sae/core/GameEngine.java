@@ -54,12 +54,12 @@ public class GameEngine {
 
     }
 
-    public GameEngine(double worldWidth, double worldHeight, boolean isServer) {
+    public GameEngine(double worldWidth, double worldHeight, boolean gestionCleanup) {
         this.entitiesMovable = new HashSet<>();
         this.entities = new HashSet<>();
         this.entitiesToAdd = new HashSet<>();
         this.entitiesToRemove = new HashSet<>();
-        this.isServer = isServer;
+        this.gestionCleanup = gestionCleanup;
 
         Boundary mapBoundary = new Boundary(0, 0, MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT);
         quadTree = new QuadTree(mapBoundary, QUAD_TREE_MAX_DEPTH);
@@ -91,7 +91,7 @@ public class GameEngine {
     private void updateEntities() {
         for (Entity entity : entitiesMovable) {
             updateEntityInQuadTree(entity);
-            if(!isServer2){
+            if(!isServer){
                 entity.Update();
             }
         }

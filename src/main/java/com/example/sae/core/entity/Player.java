@@ -94,26 +94,9 @@ public class Player extends MoveableBody{
     protected void calculateSpeeds(double distanceFromCenter) {
 
 
-        double currentScale;
-        if (OnlineController.getInstance() != null) {
-            currentScale = sprite.getParent().getScaleX();
-        } else {
-            currentScale = SoloController.getPane().getScaleX();
-        }
-
-        double maxDistanceH;
-        if (OnlineController.getInstance() != null) {
-            maxDistanceH = (sprite.getParent().getScene().getHeight() / 2) / currentScale;
-        } else {
-            maxDistanceH = (SoloController.getPane().getScene().getHeight() / 2) / currentScale;
-        }
-
-        double maxDistanceW;
-        if (OnlineController.getInstance() != null) {
-            maxDistanceW = (sprite.getParent().getScene().getWidth() / 2) / currentScale;
-        } else {
-            maxDistanceW = (SoloController.getPane().getScene().getWidth() / 2) / currentScale;
-        }
+        double currentScale = sprite.getParent().getScaleX();
+        double maxDistanceH = (sprite.getParent().getScene().getHeight()/2) / currentScale;
+        double maxDistanceW = (sprite.getParent().getScene().getWidth()/2) / currentScale;
 
         double speedFactorX = Math.min(distanceFromCenter / maxDistanceW, 1.0);
         double speedFactorY = Math.min(distanceFromCenter / maxDistanceH, 1.0);
