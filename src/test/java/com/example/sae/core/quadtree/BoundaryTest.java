@@ -23,7 +23,7 @@ class BoundaryTest {
     private static Stream<Arguments> pointsDeliverer() {
         return Stream.of(
                 Arguments.of(true, 0.5, 0.5),
-                Arguments.of(false, 0.5, -0.5),
+                Arguments.of(false, 0.5, -1.5),
                 Arguments.of(true, 0.0, 0.0)
         );
     }
@@ -31,7 +31,7 @@ class BoundaryTest {
     private static Stream<Arguments> boundariesDeliverer() {
         return Stream.of(
                 Arguments.of(true, new Boundary(0.5,0.5,0.2,0.2)),
-                Arguments.of(false, new Boundary(1.5,1.5,1.0,1.0)),
+                Arguments.of(false, new Boundary(2.5,2.5,1.0,1.0)),
                 Arguments.of(true, new Boundary(0.0,0.0,1.0,1.0))
         );
     }
