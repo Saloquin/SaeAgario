@@ -5,7 +5,7 @@ This project includes both offline and online versions of the game, each maintai
 ## Branches
 
 - **quality**: Contains the offline version of the game.
-- **merge-server**: Contains the online version of the game.
+- **merge_server**: Contains the online version of the game.
 
 ## Getting Started
 
@@ -23,9 +23,9 @@ To launch the offline version of the game:
 
 To launch the online version of the game:
 
-1. Checkout the `merge-server` branch:
+1. Checkout the `merge_server` branch:
    ```sh
-    git checkout merge-server
+    git checkout merge_server
 2. Start the server by running the AgarioServer class.
 3. Launch the game by running the AgarioApplication class.
 
