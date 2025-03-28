@@ -26,8 +26,10 @@ public class AgarioServer {
         this.clientHandlers = new ConcurrentHashMap<>();
         this.serverSocket = new ServerSocket(PORT);
         this.running = true;
+        startChatServer();
 
         initializeWorld();
+
     }
 
     private void startChatServer(){

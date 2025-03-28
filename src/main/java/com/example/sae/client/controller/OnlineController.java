@@ -103,7 +103,7 @@ public class OnlineController  implements Initializable {
         player = client.getGameEngine().getPlayer(client.getPlayerId());
 
         // Initialisation du chat
-        // initializeChat();
+        initializeChat();
 
         setCamera();
         initializeComponents();
