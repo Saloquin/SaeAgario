@@ -63,7 +63,6 @@ public class AgarioServer {
         gameUpdateThread.start();
 
         // Thread principal pour accepter les connexions
-        System.out.println("Serveur démarré sur le port " + PORT);
         while (running) {
             try {
                 Socket clientSocket = serverSocket.accept();
@@ -93,7 +92,6 @@ public class AgarioServer {
 
             // à retirer
             if (now - groscaca >= 5000000000L) {
-                // System.out.println(serializeGameState());
                 clientHandlers.values().stream().findFirst().ifPresent(clientHandler -> {
                     System.out.println(serializeEntity(clientHandler.player));
                 });

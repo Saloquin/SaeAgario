@@ -40,7 +40,6 @@ public class ChaseClosestEntityStrategy implements EnemyStrategy {
                 }
             }
         }
-        System.out.println("closestEntity: " + closestEntity);
 
         if (closestEntity != null && enemy.getComposite().getMainBody() == enemy) {
             enemy.updateTargetForClones(closestEntity.getPosition());
