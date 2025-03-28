@@ -1,5 +1,11 @@
 package com.example.sae.core.entity;
 
+import java.util.Random;
+
+import com.example.sae.core.entity.immobile.Food;
+import com.example.sae.core.entity.movable.Enemy;
+import com.example.sae.core.entity.movable.body.MoveableBody;
+import com.example.sae.core.entity.movable.Player;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
@@ -29,7 +35,7 @@ public abstract class Entity extends Group {
      * @param group       the group on which the entity is displayed
      * @param initialMass the entity's initial mass
      */
-    Entity(Group group, double initialMass) {
+    protected Entity(Group group, double initialMass) {
         super();
         this.entityId = UUID.randomUUID().toString();
         this.mass = new SimpleDoubleProperty(initialMass);
@@ -57,7 +63,7 @@ public abstract class Entity extends Group {
      * @param initialMass the entity's initial mass
      * @param color       the entity's color
      */
-    Entity(Group group, String id, double initialMass, Color color) {
+    protected Entity(Group group, String id, double initialMass, Color color) {
         super();
         this.entityId = id;
         this.mass = new SimpleDoubleProperty(initialMass);
@@ -109,6 +115,18 @@ public abstract class Entity extends Group {
      */
     public double[] getPosition() {
         return new double[]{sprite.getCenterX(), sprite.getCenterY()};
+    }
+
+
+    /**
+     * changes the entity's position
+     *
+     * @param x new entity x coordinate
+     * @param y new entity y coordinate
+     */
+    public void setPosition(double x, double y){
+        sprite.setCenterX(x);
+        sprite.setCenterY(y);
     }
 
     /**

@@ -1,12 +1,15 @@
-package com.example.sae.core.entity;
+package com.example.sae.core.entity.movable;
 
-import com.example.sae.client.Online;
-import com.example.sae.client.Solo;
+import com.example.sae.client.Client;
 import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.Camera;
+import com.example.sae.core.entity.EntityFactory;
+import com.example.sae.core.entity.movable.body.MoveableBody;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import com.example.sae.client.Solo;
+import com.example.sae.client.Online;
 
 /**
  * player in the game
@@ -122,4 +125,17 @@ public class Player extends MoveableBody {
     public void Update() {
         moveToward(SoloController.getMousePosition());
     }
+
+    @Override
+    public void splitSprite() {
+        Player clone = EntityFactory.createPlayer(getMasse()/2,getNom(), (Color) sprite.getFill());
+        clone.sprite.setCenterX(sprite.getCenterX() + CLONE_SPLIT_DISTANCE);
+        clone.sprite.setCenterY(sprite.getCenterY() + CLONE_SPLIT_DISTANCE);
+        setMasse(getMasse() / 2);
+        clone.setComposite(this.composite);
+        Client.getGameEngine().addEntity(clone);
+        addClone(clone);
+        this.composite.updateLastSplitTime();
+    }
+
 }

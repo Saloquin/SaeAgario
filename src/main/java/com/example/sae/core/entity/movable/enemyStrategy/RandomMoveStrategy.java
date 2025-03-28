@@ -1,6 +1,6 @@
-package com.example.sae.core.entity.enemyStrategy;
+package com.example.sae.core.entity.movable.enemyStrategy;
 
-import com.example.sae.core.entity.Enemy;
+import com.example.sae.core.entity.movable.Enemy;
 
 import java.util.Random;
 
@@ -15,7 +15,8 @@ public class RandomMoveStrategy implements EnemyStrategy {
     /// the random seed
     private final Random random = new Random();
     /// amount of time since the last update in seconds
-    private double lastUpdateTime = 0;
+    private double lastUpdateTime = System.nanoTime();
+
 
     /**
      * {@inheritDoc}
@@ -23,8 +24,16 @@ public class RandomMoveStrategy implements EnemyStrategy {
      * @param enemy {@inheritDoc}
      */
     @Override
-    public void execute(Enemy enemy) {
-        double currentTime = System.currentTimeMillis() / 1000.0;
+    public boolean execute(Enemy enemy) {
+        long currentTime = System.nanoTime();
+        double elapsedTime = (currentTime - lastUpdateTime) / 1_000_000_000.0;
+
+        if (enemy.getTargetPosition() == null ||
+                enemy.hasReachedTarget() ||
+                elapsedTime > UPDATE_INTERVAL) {
+            // Update logic here
+            lastUpdateTime = currentTime;
+        }
 
         if (enemy.getTargetPosition() == null ||
                 enemy.hasReachedTarget() ||
@@ -49,6 +58,7 @@ public class RandomMoveStrategy implements EnemyStrategy {
         if (enemy.getTargetPosition() != null) {
             enemy.moveToward(enemy.getTargetPosition());
         }
+        return true;
     }
 
 

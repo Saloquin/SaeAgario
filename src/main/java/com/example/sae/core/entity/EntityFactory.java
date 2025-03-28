@@ -2,8 +2,12 @@ package com.example.sae.core.entity;
 
 import com.example.sae.client.controller.GameController;
 import com.example.sae.client.controller.SoloController;
-import com.example.sae.core.entity.powerUp.PowerUp;
-import com.example.sae.core.entity.powerUp.PowerUpType;
+import com.example.sae.core.entity.immobile.Food;
+import com.example.sae.core.entity.movable.Enemy;
+import com.example.sae.core.entity.movable.body.MoveableBody;
+import com.example.sae.core.entity.movable.Player;
+import com.example.sae.core.entity.immobile.powerUp.PowerUp;
+import com.example.sae.core.entity.immobile.powerUp.PowerUpType;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
@@ -15,6 +19,8 @@ import java.util.List;
  * @see Entity
  */
 public class EntityFactory {
+    private static Group root = SoloController.getRoot();
+    private static int idDebug = 0;
 
     /// default names list
     private static final List<String> ENEMY_NAMES = List.of(
@@ -24,9 +30,6 @@ public class EntityFactory {
             "LeFouDuMétro", "Hank", "CoucouLesCopains", "Split=Friend",
             "Split=Enemy", "Me+YourMom=You", "BRR BRR PATAPIM"
     );
-
-    /// the plan of the factory
-    private static Group root = GameController.getRoot();
 
     /**
      * @param root the plan on which the factory creates entities
@@ -85,6 +88,10 @@ public class EntityFactory {
      */
     public static Enemy createEnemy(double mass) {
         return new Enemy(root, mass, getRandomName());
+    }
+
+    public static Enemy createEnemy(double mass, String name, Color color) {
+        return new Enemy(root, mass, name,color);
     }
 
     /**

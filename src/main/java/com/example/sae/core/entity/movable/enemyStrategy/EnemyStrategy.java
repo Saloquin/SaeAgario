@@ -1,7 +1,6 @@
-package com.example.sae.core.entity.enemyStrategy;
+package com.example.sae.core.entity.movable.enemyStrategy;
 
-import com.example.sae.core.entity.Enemy;
-
+import com.example.sae.core.entity.movable.Enemy;
 /**
  * interface defining the mandatory method for an enemy strategy
  *
@@ -16,6 +15,6 @@ public interface EnemyStrategy {
      *
      * @param enemy the enemy executing the strategy
      */
-    void execute(Enemy enemy);
+    boolean execute(Enemy enemy);
 }
 

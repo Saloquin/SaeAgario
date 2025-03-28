@@ -2,8 +2,8 @@ package com.example.sae.client.utils.debug;
 
 import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.GameEngine;
-import com.example.sae.core.entity.Enemy;
-import com.example.sae.core.entity.Food;
+import com.example.sae.core.entity.movable.Enemy;
+import com.example.sae.core.entity.immobile.Food;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

@@ -1,5 +1,10 @@
-package com.example.sae.core.entity;
+package com.example.sae.core.entity.movable.body;
 
+import com.example.sae.client.utils.config.Constants;
+import com.example.sae.core.entity.Entity;
+import com.example.sae.core.entity.immobile.Food;
+import com.example.sae.core.entity.movable.Enemy;
+import com.example.sae.core.entity.movable.Player;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -17,15 +22,25 @@ import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
  * @see Enemy
  * @see Player
  */
-public abstract class MoveableBody extends Entity {
-    public static final double BASE_MAX_SPEED = 15;
-    public static final double ENEMY_SPEED_MULTIPLIER = 0.7;
-    /// the name of the moveable entity
+public abstract class MoveableBody extends Entity implements BodyComponent {
+    public BodyComposite getComposite() {
+        return composite;
+    }
+
+    /**
+     * name of moving object
+     */
+
+    protected BodyComposite composite;
+
     private final StringProperty name = new SimpleStringProperty(this, "name", "°-°");
+    private Text nameText;
     protected double actualSpeedX = 0;
     protected double actualSpeedY = 0;
+    public static final double BASE_MAX_SPEED = Constants.getBaseMaxSpeed();
+    public static final double ENEMY_SPEED_MULTIPLIER = Constants.getEnemySpeedMultiplier();
+    public static final double CLONE_SPLIT_DISTANCE = Constants.getCloneSplitDistance();
     protected double speedMultiplier = 1.0;
-    private Text nameText;
 
     /**
      * @param group       the group on which the entity is moving
@@ -33,9 +48,10 @@ public abstract class MoveableBody extends Entity {
      * @param color       the moveable entity's color
      * @see Entity
      */
-    MoveableBody(Group group, double initialSize, Color color) {
+    public MoveableBody(Group group, double initialSize, Color color) {
         super(group, initialSize, color);
         initializeNameText(group);
+        this.composite = new BodyComposite(this);
     }
 
     /**
@@ -45,9 +61,17 @@ public abstract class MoveableBody extends Entity {
      * @param color       the moveable entity's color
      * @see Entity
      */
-    MoveableBody(Group group, String id, double initialSize, Color color) {
+    public MoveableBody(Group group, String id, double initialSize, Color color) {
         super(group, id, initialSize, color);
         initializeNameText(group);
+        this.composite = new BodyComposite(this);
+    }
+
+    public MoveableBody(Group group, String id, double initialSize, Color color, String playerName) {
+        super(group, id, initialSize, color);
+        this.name.set(playerName);
+        initializeNameText(group);
+        this.composite = new BodyComposite(this);
     }
 
     /**
@@ -57,11 +81,12 @@ public abstract class MoveableBody extends Entity {
      * @param name        the moveable entity's name
      * @see Entity
      */
-    MoveableBody(Group group, double initialSize, Color color, String name) {
+    public MoveableBody(Group group, double initialSize, Color color, String name) {
         super(group, initialSize);
         this.name.set(name);
         sprite.setFill(color);
         initializeNameText(group);
+        this.composite = new BodyComposite(this);
     }
 
     /**
@@ -70,11 +95,30 @@ public abstract class MoveableBody extends Entity {
      * @param name        the moveable entity's name
      * @see Entity
      */
-    MoveableBody(Group group, double initialSize, String name) {
+    public MoveableBody(Group group, double initialSize, String name) {
         super(group, initialSize);
         this.name.set(name);
         initializeNameText(group);
+        this.composite = new BodyComposite(this);
     }
+
+    @Override
+    public void addClone(BodyComponent clone) {
+        composite.addClone(clone);
+    }
+
+    @Override
+    public void removeClone(BodyComponent clone) {
+        composite.removeClone(clone);
+    }
+
+    @Override
+    public boolean isComposite() {
+        return false;
+    }
+
+    // Modify the splitSprite method
+    public abstract void splitSprite();
 
     /**
      * initialize the name of the entity to be properly displayed on the sprite
@@ -158,6 +202,10 @@ public abstract class MoveableBody extends Entity {
             sprite.setCenterY(sprite.getCenterY() + dy);
         }
     }
+    
+    public boolean isAlive() {
+        return getSprite().getParent() != null;
+    }
 
     /**
      * calculate the speed at which the entity is moving
@@ -169,19 +217,6 @@ public abstract class MoveableBody extends Entity {
         return BASE_MAX_SPEED / (1 + Math.log10(getMasse())) * speedMultiplier;
     }
 
-
-    /**
-     * splits the moving object in 2 equal parts
-     */
-    public void splitSprite() {
-        Player newBody = EntityFactory.createPlayer(sprite.getRadius() / 2, (Color) sprite.getFill());
-        newBody.sprite.setCenterX(sprite.getCenterX() + 30);
-        newBody.sprite.setCenterY(sprite.getCenterY() + 30);
-
-
-        sprite.setRadius(sprite.getRadius() / 2);
-
-    }
 
     /**
      * calculates the distance between the moving object and another entity
@@ -243,6 +278,11 @@ public abstract class MoveableBody extends Entity {
         return name.get();
     }
 
+
+    public void setNom(String nom) {
+        this.name.set(nom);
+    }
+
     /**
      * {@return the entity's speed in the x-axis}
      */
@@ -255,5 +295,31 @@ public abstract class MoveableBody extends Entity {
      */
     public double getActualSpeedY() {
         return actualSpeedY;
+    }
+
+    @Override
+    public boolean belongsToSameComposite(BodyComponent other) {
+        if (other instanceof MoveableBody) {
+            return composite == ((MoveableBody) other).composite;
+        }
+        return false;
+    }
+
+    public void setComposite(BodyComposite composite) {
+        this.composite = composite;
+    }
+
+    public double getTotalMasse() {
+        if (composite.isComposite()) {
+            // Calculer la masse totale du composite
+            double totalMasse = super.getMasse(); // Masse du corps principal
+            for (BodyComponent clone : composite.getClones()) {
+                if (clone instanceof MoveableBody) {
+                    totalMasse += ((MoveableBody) clone).getMasse();
+                }
+            }
+            return totalMasse;
+        }
+        return super.getMasse();
     }
 }

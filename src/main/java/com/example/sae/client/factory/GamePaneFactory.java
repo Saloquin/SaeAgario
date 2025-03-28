@@ -18,14 +18,7 @@ public class GamePaneFactory {
      * @return The game pane containing the game scene for the specified player
      */
     public static Pane createGamePane(Group root, GameEngine gameEngine, int playerId) {
-        Pane pane = new Pane(root);
-        // Add Event when space is pressed, launch the split of the player
-        pane.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.SPACE) {
-                gameEngine.getPlayer(playerId).splitSprite();
-            }
-        });
-        return pane;
+        return new Pane(root);
     }
     /**
      * {@return the name of the object}

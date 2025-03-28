@@ -1,5 +1,6 @@
 package com.example.sae.core;
 
+import com.example.sae.client.utils.config.Constants;
 import com.example.sae.core.entity.Entity;
 import com.example.sae.core.quadtree.Boundary;
 import javafx.beans.binding.Bindings;
@@ -11,8 +12,9 @@ import javafx.scene.layout.Pane;
  * Managed the view of the player
  */
 public class Camera extends Boundary {
-    public static final double ZOOM_FACTOR = 6; // Increased to reduce zoom intensity
-    public static final double DEZOOM_FACTOR = 1.5;
+    public static final double ZOOM_FACTOR = Constants.getCameraZoomFactor();
+    public static final double DEZOOM_FACTOR = Constants.getCameraDezoomFactor();
+
 
     /**
      * Constructor of the class
@@ -69,7 +71,7 @@ public class Camera extends Boundary {
      * @param pane   the pane to bind
      * @param entity the entity on which the pane is focused
      */
-    public void focusPaneOn(Pane pane, Entity entity) {
+    public static void focusPaneOn(Pane pane, Entity entity) {
         if (entity == null || entity.getSprite() == null) return;
 
         DoubleBinding zoomBinding = Bindings.createDoubleBinding(

@@ -1,13 +1,15 @@
 package com.example.sae.client;
 
+import com.example.sae.client.controller.managers.MinimapManager;
+import com.example.sae.client.controller.managers.PlayerInfoManager;
 import com.example.sae.client.factory.GamePaneFactory;
 import com.example.sae.core.Camera;
 import com.example.sae.core.GameEngine;
-import com.example.sae.core.entity.Enemy;
+import com.example.sae.core.entity.movable.Enemy;
 import com.example.sae.core.entity.EntityFactory;
-import com.example.sae.core.entity.Food;
-import com.example.sae.core.entity.powerUp.PowerUp;
-import javafx.beans.Observable;
+import com.example.sae.core.entity.immobile.Food;
+import com.example.sae.core.entity.immobile.powerUp.PowerUp;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
@@ -128,5 +130,6 @@ public abstract class Client {
     public BooleanProperty getGameIsEndedProperty() {
         return gameIsEnded;
     }
+
 }
 

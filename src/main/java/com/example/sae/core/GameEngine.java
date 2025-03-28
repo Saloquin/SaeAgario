@@ -1,9 +1,15 @@
 package com.example.sae.core;
 
+import com.example.sae.client.Client;
+import com.example.sae.client.controller.SoloController;
+import com.example.sae.client.controller.managers.MinimapManager;
+import com.example.sae.client.controller.managers.PlayerInfoManager;
+import com.example.sae.client.utils.config.Constants;
 import com.example.sae.core.entity.Entity;
-import com.example.sae.core.entity.MoveableBody;
-import com.example.sae.core.entity.Player;
-import com.example.sae.core.entity.powerUp.PowerUp;
+import com.example.sae.core.entity.movable.body.BodyComposite;
+import com.example.sae.core.entity.movable.body.MoveableBody;
+import com.example.sae.core.entity.movable.Player;
+import com.example.sae.core.entity.immobile.powerUp.PowerUp;
 import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
 import javafx.animation.ScaleTransition;
@@ -12,7 +18,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -29,20 +37,21 @@ public class GameEngine {
     private final HashSet<Entity> entitiesToRemove;
     /// Contains all entities Movable of the game.
     public final HashSet<MoveableBody> entitiesMovable;
-    public final  static double NB_FOOD_MAX = 1000;
-    public final  static double NB_POWERUP_MAX = 10;
-    public final  static double NB_ENEMY_MAX = 20;
-    public final  static double MASSE_INIT_PLAYER = 30;
-    public final  static double MASSE_INIT_FOOD = 4;
-    public static final double MASSE_INIT_ENEMY = 30;
-    public static final int ENEMY_RANGE = 1000;
-    private static final int QUAD_TREE_MAX_DEPTH = 6;
-    /// The {@link QuadTree} used to load only nearby entities around the player.
+
+    public final static double NB_FOOD_MAX = Constants.getNbFoodMax();
+    public final static double NB_POWERUP_MAX = Constants.getNbPowerUpMax();
+    public final static double NB_ENEMY_MAX = Constants.getNbEnemyMax();
+    public final static double MASSE_INIT_PLAYER = Constants.getMasseInitPlayer();
+    public final static double MASSE_INIT_FOOD = Constants.getMasseInitFood();
+    public final static double MASSE_INIT_ENEMY = Constants.getMasseInitEnemy();
+    public static final int ENEMY_RANGE = Constants.getEnemyRange();
+    private static final int QUAD_TREE_MAX_DEPTH = Constants.getQuadTreeMaxDepth();
+    public static final double MAP_LIMIT_WIDTH = Constants.getMapLimitWidth();
+    public static final double MAP_LIMIT_HEIGHT = Constants.getMapLimitHeight();
+
     private static QuadTree quadTree;
 
 
-    public static final double MAP_LIMIT_WIDTH = 2000;
-    public static final double MAP_LIMIT_HEIGHT = 2000;
 
     /// True if this is a server.
     private final boolean isServer;
@@ -117,6 +126,11 @@ public class GameEngine {
             updateEntityInQuadTree(entity);
             entity.Update();
         }
+        for (Player p : players.values()) {
+            if(p.getSprite().getCenterY()==9999999 && p.getSprite().getCenterX()==9999999){
+                removePlayer(getPlayerId(p));
+            }
+        }
     }
 
     /**
@@ -131,16 +145,16 @@ public class GameEngine {
      * Handle collisions between entities
      */
     private void handleCollisions() {
-        for (Entity entity1 : entitiesMovable) {
+        // Créer une copie de la collection pour l'itération
+        List<MoveableBody> entities = new ArrayList<>(entitiesMovable);
 
+        for (MoveableBody entity1 : entities) {
             double detectionRange = entity1.getSprite().getRadius() + 10;
-
             HashSet<Entity> nearbyEntities = getNearbyEntities(entity1, detectionRange);
 
             for (Entity entity2 : nearbyEntities) {
                 if (checkCollision(entity1, entity2)) {
-                    //DebugWindowController.addLog("Collision detected between: " + entity1 + " and " + entity2);
-                    handleCollision((MoveableBody) entity1, entity2);
+                    handleCollision(entity1, entity2);
                 }
             }
         }
@@ -155,12 +169,14 @@ public class GameEngine {
     private boolean checkCollision(Entity entity1, Entity entity2) {
         Shape intersect = Shape.intersect(entity1.getSprite(), entity2.getSprite());
         if (intersect.getBoundsInLocal().getWidth() != -1) {
-            // Calculate intersection area
+            // Calculer l'aire de l'intersection
             double intersectionArea = intersect.getBoundsInLocal().getWidth() * intersect.getBoundsInLocal().getHeight();
+            double entity2Area = Math.PI * Math.pow(entity2.getSprite().getRadius(), 2);
             double entity1Area = Math.PI * Math.pow(entity1.getSprite().getRadius(), 2);
 
-            // Check if overlap is at least 33%
-            return (intersectionArea / entity1Area) <= 0.33;
+            // L'entité 1 doit recouvrir au moins 33% de l'entité 2
+            double coverageRatio = intersectionArea / entity2Area;
+            return coverageRatio >= 0.33;
         }
         return false;
     }
@@ -171,59 +187,142 @@ public class GameEngine {
      * @param prey the entity maybe eaten
      */
     private void handleCollision(MoveableBody predator, Entity prey) {
-        if (!entities.contains(prey)) {
+        if (!entities.contains(prey) || !checkCollision(predator, prey) || !canEat(predator, prey)) {
             return;
         }
-
-        if (checkCollision(predator, prey) && canEat(predator, prey)) {
-            entities.remove(prey);
-
-            TranslateTransition transition = new TranslateTransition(Duration.millis(200), prey.getSprite());
-
-            double targetX = predator.getSprite().getCenterX() - prey.getSprite().getCenterX();
-            double targetY = predator.getSprite().getCenterY() - prey.getSprite().getCenterY();
-
-            transition.setToX(targetX);
-            transition.setToY(targetY);
-
-            ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(40), prey.getSprite());
-            scaleTransition.setToX(0);
-            scaleTransition.setToY(0);
-
-
-            predator.increaseSize(prey.getMasse());
-            if (prey instanceof PowerUp powerUp) {
-                try {
-                    powerUp.applyEffect(predator);
-                } catch (Exception e) {
-                    System.out.println("boule verte mangé");
-                }
-            }
-            transition.setOnFinished(e -> {
-                if (prey instanceof Player) {
-                    int playerId = getPlayerId((Player) prey);
-                    removePlayer(playerId);
-
-                } else {
-                    removeEntity(prey);
-                }
-
-                prey.onDeletion();
-            });
-            if (prey instanceof MoveableBody) {
-                ((MoveableBody) prey).deleteText();
-            }
-            transition.play();
-            scaleTransition.play();
-
+        removeFromCollections(prey);
+        predator.increaseSize(prey.getMasse());
+        startAnimations(predator, prey);
+        System.out.println(isCloneCollision(predator, prey));
+        if (isMainBodyCollision(predator, prey)) {
+            handleMainBodyCollision(predator, (MoveableBody) prey);
+        } else if (isCloneCollision(predator, prey)) {
+            handleCloneCollision(predator, (MoveableBody) prey);
+        } else if (isMainBodyCollisonWithOther(predator, prey)) {
+            handleMainBodyCollisionWithOther(predator, (MoveableBody) prey);
+        } else {
+            applyCollisionEffects(predator, prey);
         }
     }
 
-    /**
-     * Get the player'id of the player passed in parameter
-     * @param player The player
-     * @return the player'id
-     */
+    private void handleMainBodyCollisionWithOther(MoveableBody predator, MoveableBody prey) {
+        if(prey.getComposite().getClones().isEmpty()) {
+            if(prey instanceof Player player) {
+                removePlayer(getPlayerId(player));
+            }
+            removeEntity(prey);
+            entitiesMovable.remove(prey);
+            quadTree.remove(prey);
+        }
+        else {
+            MoveableBody firstClone = (MoveableBody) prey.getComposite().getClones().get(0);
+            BodyComposite composite = firstClone.getComposite();
+            composite.setMainBody(firstClone);
+            composite.removeClone(firstClone);
+
+            removeFromCollections(prey);
+            removeEntity(prey);
+            prey.onDeletion();
+
+            if (prey instanceof Player oldPlayer && firstClone instanceof Player newPlayer) {
+                handlePlayerMainBodyCollision(oldPlayer, newPlayer);
+            }
+        }
+    }
+
+    private boolean isMainBodyCollisonWithOther(MoveableBody predator, Entity prey) {
+        return prey instanceof MoveableBody preyBody &&
+                !preyBody.belongsToSameComposite(predator);
+    }
+
+    private void removeFromCollections(Entity entity) {
+        entities.remove(entity);
+        entitiesMovable.remove(entity);
+        quadTree.remove(entity);
+    }
+
+    private void startAnimations(MoveableBody predator, Entity prey) {
+        TranslateTransition transition = new TranslateTransition(Duration.millis(200), prey.getSprite());
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(40), prey.getSprite());
+
+        // Animation translation
+        double targetX = predator.getSprite().getCenterX() - prey.getSprite().getCenterX();
+        double targetY = predator.getSprite().getCenterY() - prey.getSprite().getCenterY();
+        transition.setToX(targetX);
+        transition.setToY(targetY);
+
+        // Animation réduction
+        scaleTransition.setToX(0);
+        scaleTransition.setToY(0);
+
+        if (prey instanceof MoveableBody) {
+            ((MoveableBody) prey).deleteText();
+        }
+
+        transition.setOnFinished(e -> prey.onDeletion());
+        transition.play();
+        scaleTransition.play();
+    }
+
+    private boolean isMainBodyCollision(MoveableBody predator, Entity prey) {
+        return prey instanceof MoveableBody preyBody &&
+                predator.belongsToSameComposite(preyBody) &&
+                preyBody == predator.getComposite().getMainBody();
+    }
+
+    private boolean isCloneCollision(MoveableBody predator, Entity prey) {
+        return prey instanceof MoveableBody preyBody && predator.belongsToSameComposite(preyBody);
+    }
+
+    private void handleMainBodyCollision(MoveableBody predator, MoveableBody prey) {
+        BodyComposite composite = predator.getComposite();
+        
+        composite.setMainBody(predator);
+        composite.removeClone(predator);
+
+        removeFromCollections(prey);
+        removeEntity(prey);
+        prey.onDeletion();
+
+
+        if (prey instanceof Player oldPlayer && predator instanceof Player newPlayer) {
+            handlePlayerMainBodyCollision(oldPlayer, newPlayer);
+        }
+    }
+
+    private void handlePlayerMainBodyCollision(Player oldPlayer, Player newPlayer) {
+        int oldPlayerId = getPlayerId(oldPlayer);
+        if (oldPlayerId != -1) {
+            removePlayer(oldPlayerId);
+            removeEntity(oldPlayer);
+            entitiesMovable.remove(oldPlayer);
+            quadTree.remove(oldPlayer);
+            players.put(oldPlayerId, newPlayer);
+            Camera.focusPaneOn(SoloController.getPane(), newPlayer);
+        }
+    }
+
+
+
+    private void handleCloneCollision(MoveableBody predator, MoveableBody prey) {
+        prey.getComposite().removeClone(prey);
+        predator.getComposite().removeClone(prey);
+        removeFromCollections(prey);
+        removeEntity(prey);
+        prey.onDeletion();
+    }
+
+    private void applyCollisionEffects(MoveableBody predator, Entity prey) {
+        if (prey instanceof PowerUp powerUp) {
+            try {
+                powerUp.applyEffect(predator);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     private int getPlayerId(Player player) {
         return players.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(player))
@@ -238,8 +337,18 @@ public class GameEngine {
      * @param prey the entity maybe eaten
      * @return {@code true} if the predator can eat the prey {@code false} otherwise
      */
-    private boolean canEat(Entity predator, Entity prey) {
-        return predator.getMasse() > prey.getMasse() * 1.33; // Must be 33% larger
+    public boolean canEat(Entity predator, Entity prey) {
+        // Vérification des composites
+        if (predator instanceof MoveableBody predatorBody &&
+                prey instanceof MoveableBody preyBody) {
+            // Si même composite
+            if (predatorBody.belongsToSameComposite(preyBody)) {
+                return predatorBody.getComposite().canClonesEatEachOther() &&
+                        predator.getMasse() >= prey.getMasse();
+            }
+        }
+
+        return predator.getMasse() > prey.getMasse() * 1.33;
     }
 
 
@@ -263,10 +372,14 @@ public class GameEngine {
     public void removeEntity(Entity entity) {
         entitiesToRemove.add(entity);
         entities.remove(entity);
-        quadTree.remove(entity);
+        entity.setPosition(9999999,9999999);
 
-        if (entity instanceof MoveableBody) {
-            entitiesMovable.remove((MoveableBody) entity);
+        if(entity instanceof MoveableBody) {
+            entitiesMovable.remove((MoveableBody)entity);
+            updateEntityInQuadTree(entity);
+        }
+        else{
+            quadTree.remove(entity);
         }
     }
 
@@ -353,8 +466,8 @@ public class GameEngine {
      */
     public List<MoveableBody> getSortedMovableEntities() {
         return entitiesMovable.stream()
-                .map(entity -> entity)
-                .sorted(Comparator.comparingDouble(MoveableBody::getMasse).reversed())
+                .map(entity -> (MoveableBody) entity)
+                .sorted(Comparator.comparingDouble(MoveableBody::getTotalMasse).reversed())
                 .limit(10)
                 .collect(Collectors.toList());
     }

@@ -37,7 +37,9 @@
                   prefHeight="250"
                   prefWidth="200"
                   AnchorPane.leftAnchor="0.0"
-                  AnchorPane.topAnchor="0.0"/>
+                  AnchorPane.topAnchor="0.0"
+
+        />
 
         <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <Canvas fx:id="minimap" height="250" width="250" styleClass="minimap-content"/>

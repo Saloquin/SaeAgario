@@ -7,7 +7,7 @@ import com.example.sae.client.controller.managers.MinimapManager;
 import com.example.sae.client.controller.managers.PlayerInfoManager;
 import com.example.sae.core.Camera;
 import com.example.sae.core.entity.EntityFactory;
-import com.example.sae.core.entity.Player;
+import com.example.sae.core.entity.movable.Player;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
