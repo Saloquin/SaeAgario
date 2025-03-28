@@ -179,4 +179,45 @@ public class QuadTree {
 
         return found;
     }
+
+    /**
+     * {@return the northwest quadtree}
+     */
+    public QuadTree getNorthwest() {
+        return northwest;
+    }
+
+    /**
+     * {@return the northeast quadtree}
+     */
+    public QuadTree getNortheast() {
+        return northeast;
+    }
+
+    /**
+     * {@return the southwest quadtree}
+     */
+    public QuadTree getSouthwest() {
+        return southwest;
+    }
+
+    /**
+     * {@return the southeast quadtree}
+     */
+    public QuadTree getSoutheast() {
+        return southeast;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        QuadTree that = (QuadTree) o;
+        return boundary.equals(that.boundary);
+    }
+
+    @Override
+    public String toString() {
+        return "QuadTree : " + boundary.toString();
+    }
 }

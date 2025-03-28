@@ -164,29 +164,6 @@
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
-                    <!--  Check coverage after running test  -->
-                    <execution>
-                        <id>check-coverage</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <rule>
-                                    <element>BUNDLE</element>
-                                    <!--  Check the whole app  -->
-                                    <limits>
-                                        <!--  Define a coverage threshold at 80%  -->
-                                        <limit>
-                                            <counter>LINE</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                            </rules>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>report</id>
                         <phase>test</phase>

@@ -80,4 +80,17 @@ public class Boundary {
         return height;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Boundary boundary = (Boundary) o;
+        return (x==boundary.getX() && y==boundary.getY() && width==boundary.getWidth() && height==boundary.getHeight());
+    }
+
+    @Override
+    public String toString() {
+        return "Boundary [x=" + x + ", y=" + y + ", width=" + width + ", height=" + height + "]";
+    }
+
 }
