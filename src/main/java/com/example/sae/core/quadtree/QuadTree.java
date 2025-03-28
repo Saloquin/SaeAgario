@@ -149,16 +149,6 @@ public class QuadTree {
         String indent = "  ".repeat(depth);
         int totalCount = entities.size();
 
-        // Print current node entities
-        System.out.println(indent + "Node at depth " + depth + " (" +
-                boundary.getX() + ", " + boundary.getY() + ") - " +
-                "Size: " + entities.size());
-
-        for (Entity entity : entities) {
-            System.out.println(indent + "- " + entity.getClass().getSimpleName() +
-                    " at [" + String.format("%.2f", entity.getSprite().getCenterX()) +
-                    ", " + String.format("%.2f", entity.getSprite().getCenterY()) + "]");
-        }
 
         // Recursively print child nodes
         if (divided) {

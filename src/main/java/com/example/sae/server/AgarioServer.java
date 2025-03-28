@@ -3,7 +3,6 @@ package com.example.sae.server;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.*;
 import com.example.sae.core.entity.powerUp.PowerUp;
-import com.example.sae.core.entity.powerUp.PowerUpType;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
@@ -13,7 +12,6 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class AgarioServer {
-    // normalement c bon
     private static final int PORT = 12345;
     private static final int TARGET_FPS = 30;
     private static final long FRAME_TIME = 1000000000 / TARGET_FPS; // 33ms en nanos
@@ -42,7 +40,6 @@ public class AgarioServer {
 
     private void initializeWorld() {
         EntityFactory.setRoot(root);
-        // Initialiser la nourriture
         while (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
             gameEngine.addEntity(EntityFactory.createFood(GameEngine.MASSE_INIT_FOOD));
         }
@@ -52,11 +49,9 @@ public class AgarioServer {
     }
 
     public void start() {
-        // Thread pour la mise à jour du jeu
         Thread gameUpdateThread = new Thread(this::gameLoop);
         gameUpdateThread.start();
 
-        // Thread principal pour accepter les connexions
         System.out.println("Serveur démarré sur le port " + PORT);
         while (running) {
 
@@ -86,7 +81,6 @@ public class AgarioServer {
                 lastUpdate = now;
             }
 
-            // à retirer
             if (now - lastFoodPowerUpUpdate >= 5000000000L) {
                 lastFoodPowerUpUpdate = now;
 
@@ -108,7 +102,6 @@ public class AgarioServer {
     }
 
     private void synchronizeEntities() {
-        // Synchronisation des entités entre le serveur et les clients
         for (Entity entity : gameEngine.getEntitiesToAdd()) {
             if (!(entity instanceof MoveableBody)) {
                 broadcastEntityCreation(entity);
@@ -118,11 +111,6 @@ public class AgarioServer {
         boolean broadcastedMasse = false;
         for (Entity entity : gameEngine.getEntitiesToRemove()) {
             broadcastEntityDeletion(entity);
-            /*
-            if (!(entity instanceof MoveableBody)) {
-                broadcastEntityDeletion(entity);
-            }
-            */
 
             if (!broadcastedMasse) {
                 for (Player player : gameEngine.getPlayers().values()) {
@@ -133,12 +121,10 @@ public class AgarioServer {
             }
         }
 
-        // Nettoyage manuel des entités
         gameEngine.cleanupEntities();
     }
 
     private void broadcastEntityCreation(Entity entity) {
-        // pour éviter que les joueurs soient créés en double
         if (entity instanceof MoveableBody) {
             return;
         }
@@ -157,14 +143,11 @@ public class AgarioServer {
     }
 
     private void broadcastEntityDeletion(Entity entity) {
-        // Supprimer l'entité de tous les clients
         if (entity == null) return;
-        // System.out.println("Delete prey broadcast : " + entity.getEntityId());
         clientHandlers.values().forEach(handler -> handler.sendMessage("DELETE|" + entity.getEntityId()));
     }
 
     private void broadcastEntityMasse(Player player) {
-        // System.out.println("update mass broadcast: " +  player.getEntityId());
         clientHandlers.values().forEach(handler -> handler.sendMessage("UPDATEMASSE|" + player.getEntityId() + "|" + player.getMasse()));
     }
 

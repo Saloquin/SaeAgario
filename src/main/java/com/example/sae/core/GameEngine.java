@@ -146,7 +146,6 @@ public class GameEngine {
                     buff.applyEffect(predator);
                 }
                 catch (Exception e){
-                    System.out.println("Grosse bouel verte mangée");
                 }
             }
             if (!isServer) {
@@ -208,10 +207,21 @@ public class GameEngine {
         }
     }
 
-    public synchronized Entity getEntityById(String id) {
+    public Entity getEntityById(String id){
+        /*
         return entities.stream().filter(
                 entity -> entity.getEntityId().equals(id)
         ).findFirst().orElse(null);
+
+         */
+        List<Entity> entitiesWithId = entities.stream().filter(
+                entity -> entity.getEntityId().equals(id)
+        ).toList();
+        if (entitiesWithId.isEmpty()) {
+            return null;
+        } else {
+            return entitiesWithId.get(0);
+        }
     }
 
     public HashSet<Entity> getEntitiesToRemove(){

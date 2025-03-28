@@ -139,23 +139,14 @@ public class Online extends Client {
                 case "GAMESTATE", "CREATE" -> createEntityUsingSocketData(Arrays.copyOfRange(parts, 1, parts.length));
                 case "MOVE" -> movePlayerUsingSocketData(parts);
                 case "DELETE" -> {
-                    // System.out.println(input);
-                    // DELETE|123456 => 123456
                     deleteEntityUsingSocketData(parts[1]);
                 }
                 case "UPDATEMASSE" -> {
                     String id = parts[1];
-                    // System.out.println("Update masse local broadcast: " + id);
                     double masse = Double.parseDouble(parts[2]);
-                    // Player player = (Player)gameEngine.getEntityById(id);
                     Stream<MoveableBody> allPlayers = gameEngine.entitiesMovable.stream();
                     List<MoveableBody> movingPlayers = allPlayers.filter(p -> id.equals(p.getEntityId())).toList();
-                    // System.out.println("player: " + player);
-                    /*
-                    if (player != null) {
-                        player.setMasse(masse);
-                    }
-                    */
+
                     movingPlayers.forEach(entity -> {
                         Platform.runLater(() -> {
                             Player player = (Player) entity;
@@ -182,7 +173,6 @@ public class Online extends Client {
                         String playerName = infos[8];
                         if (!id.equals(clientId)) {
                             Platform.runLater(() -> {
-                                // System.out.println(playerName);
                                 Player player = EntityFactory.createPlayer(id, x, y, masse, playerName, Color.rgb(r, g, b));
                                 gameEngine.addPlayer(player);
                                 player.setInputPosition(new double[]{ x, y });
@@ -218,49 +208,45 @@ public class Online extends Client {
             }
         }
 
-        // pour move un autre gars, pas nous
         public void movePlayerUsingSocketData(String[] parts) {
             String movingPlayerId = parts[1];
 
             if (movingPlayerId.equals(clientId)) {
                 return;
-                // System.out.println(clientId);
             }
 
             double x = Double.parseDouble(parts[2]);
             double y = Double.parseDouble(parts[3]);
 
-            // Stream<Entity> allPlayers = gameEngine.getEntitiesOfType(Player.class).stream();
             Stream<MoveableBody> allPlayers = gameEngine.entitiesMovable.stream();
             List<MoveableBody> movingPlayers = allPlayers.filter(p -> movingPlayerId.equals(p.getEntityId())).toList();
 
             movingPlayers.forEach(entity -> {
                 Platform.runLater(() -> {
-                    /*
-                    if (!movingPlayerId.equals(clientId)) {
-                        System.out.println(clientId + " /// " + movingPlayerId + " /// " + entity.getEntityId());
-                        System.out.println(x + ", " + y);
-                    }
-                    */
+          
                     Player movingPlayer = (Player)entity;
                     movingPlayer.setInputPosition(new double[]{ x, y });
                     movingPlayer.moveToward(new double[]{ x, y });
-                    // movingPlayer.getSprite().setCenterX(x);
-                    // movingPlayer.getSprite().setCenterY(y);
+        
                 });
             });
         }
 
         public void deleteEntityUsingSocketData(String entitiesId) {
-            System.out.println("Delete prey local broadcast: " + entitiesId);
-            Entity entity = gameEngine.getEntityById(entitiesId);
+            try{
 
-            if (entity != null) {
-                Platform.runLater(() -> {
-                    gameEngine.removePrey(entity);
-                    entity.onDeletion();
-                });
+                Entity entity = gameEngine.getEntityById(entitiesId);
+                if (entity != null) {
+                    Platform.runLater(() -> {
+                        gameEngine.removePrey(entity);
+                        entity.onDeletion();
+                    });
+                }
+            }catch (Exception e){
+                System.out.println("Entity not found");
             }
+
+
         }
 
         public void sendMessage(String message) {
