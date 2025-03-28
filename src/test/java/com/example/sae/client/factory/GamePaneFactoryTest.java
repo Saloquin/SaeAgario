@@ -2,9 +2,8 @@ package com.example.sae.client.factory;
 
 import com.example.sae.client.Client;
 import com.example.sae.client.Solo;
-import com.example.sae.client.controller.SoloController;
 import com.example.sae.core.entity.EntityFactory;
-import com.example.sae.core.entity.Player;
+
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
