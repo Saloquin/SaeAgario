@@ -13,19 +13,39 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
+/**
+ * Manages the game logic when the player is playing in offline (solo) mode.
+ * Extends of {@link Client}
+ */
+
 public class Solo extends Client {
+    /// The timer handling game updates
     private GameTimer gameTimer;
+    /// the player controlled in solo mode
     private Player player;
 
+    /// Handles effects from power-ups
     private EffectManager effectManager;
+
+    /// Property indicating whether the game has ended
+
     private final BooleanProperty gameIsEnded = new SimpleBooleanProperty(false);
 
+    /**
+     * Constructor of the class
+     * @param root The root group that contains the game content
+     * @param playerName The name of the player
+     * @param color The color of the player's sprite
+     */
     public Solo(Group root, String playerName, Color color) {
         super(root, playerName, color);
         this.gameTimer = new GameTimer(this);
         this.effectManager = new EffectManager();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init() {
         gameStarted = true;
@@ -42,6 +62,9 @@ public class Solo extends Client {
         gameTimer.start();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void update() {
         Player player = gameEngine.getPlayer(playerId);
@@ -58,10 +81,17 @@ public class Solo extends Client {
         }
     }
 
+    /**
+     * Returns the property indicating whether the game has ended.
+     * @return The {@link BooleanProperty} representing the game-ended state
+     */
     public BooleanProperty getGameIsEndedProperty() {
         return gameIsEnded;
     }
 
+    /**
+     * Stop the game
+     */
     public void stopSoloGame() {
         gameTimer.stop();
         if(!gameIsEnded.get()) {

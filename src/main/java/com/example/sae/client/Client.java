@@ -12,29 +12,36 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 /**
- * class that managed the Client
+ * Abstract base class that manages the game client logic.
  */
 public abstract class Client {
-    /// The GameEngine
+    /// The game engine that handles entity updates and game logic
     protected static GameEngine gameEngine;
-    /// The player's ID
+
+    /// The player's id
     public int playerId;
-    /// The group that contains the game
+
+    /// The root group containing all visual elements of the game
     protected Group root;
-    /// The camera
+
+    /// The camera used to follow the player and control view scaling
     protected Camera camera;
-    /// is the gameStarted ?
+
+    /// Indicates whether the game has started
     protected boolean gameStarted = false;
-    /// Player's name
+
+    /// The player's name
     protected String playerName;
-    /// Color of the player sprite
+
+    /// The player's color used to display their sprite
     protected Color color;
 
     /**
-     * constructor
-     * @param root the group that contains the game
-     * @param playerName the name of the player
-     * @param color the color of the sprite
+     * Constructs a new Client.
+     *
+     * @param root The root group containing the game content
+     * @param playerName The name of the player
+     * @param color The color of the player's sprite
      */
     public Client(Group root, String playerName, Color color) {
         this.root = root;
@@ -45,7 +52,8 @@ public abstract class Client {
     }
 
     /**
-     * get the camera
+     * Returns the game camera.
+     *
      * @return The camera
      */
     public Camera getCamera() {
@@ -53,49 +61,53 @@ public abstract class Client {
     }
 
     /**
-     * return if the game is started or not
-     * @return gameStarted
+     * Returns whether the game has started.
+     *
+     * @return {@code true} if the game has started, {@code false} otherwise
      */
-    public boolean getGameStarted(){
+    public boolean getGameStarted() {
         return gameStarted;
     }
 
     /**
-     * First function called after the constructor
+     * Called after construction to initialize the game.
      */
     public abstract void init();
 
     /**
-     * Called all functions that is needed to update the game
+     * Updates the game state.
      */
     public abstract void update();
 
     /**
-     * create the game pane
-     * @return Pane
+     * Creates and returns the game pane associated with this client.
+     *
+     * @return A {@link Pane} that contains the game view
      */
     public Pane createGamePane() {
         return GamePaneFactory.createGamePane(root, gameEngine, playerId);
     }
 
     /**
-     * get the player's ID
-     * @return playerId
+     * Returns the player's ID.
+     *
+     * @return The player's ID
      */
     public int getPlayerId() {
         return playerId;
     }
 
     /**
-     * get the gameEngine
-     * @return GameEngine
+     * Returns the game engine.
+     *
+     * @return The game engine
      */
     public static GameEngine getGameEngine() {
         return gameEngine;
     }
 
     /**
-     * managed the spawn of entities
+     * Manages entity spawning.
      */
     protected void manageEntities() {
         if (gameEngine.getEntitiesOfType(Enemy.class).size() < GameEngine.NB_ENEMY_MAX) {
@@ -107,6 +119,6 @@ public abstract class Client {
         if (gameEngine.getEntitiesOfType(PowerUp.class).size() < GameEngine.NB_POWERUP_MAX) {
             gameEngine.addEntity(EntityFactory.createRandomPowerUp());
         }
-
     }
 }
+

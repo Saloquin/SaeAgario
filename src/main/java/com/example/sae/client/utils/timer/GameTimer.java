@@ -4,48 +4,51 @@ import com.example.sae.client.Client;
 import javafx.animation.AnimationTimer;
 
 /**
- * Managed the inGameTimer
+ * Manages the in-game timer, calling the client's update method at a fixed frame rate.
  */
 public class GameTimer extends AnimationTimer {
-    /// The Client
+
+    /// The game client to update
     private final Client client;
-    /// The FPS number of the game
+
+    /// Frames per second
     public static final double FPS = 120;
-    /// set the frequency of refreshment
-    private final double interval = 1000000000 / FPS;
-    /// The last time the game update
+
+    /// Interval between updates
+    private final double interval = 1_000_000_000 / FPS;
+
+    /// Time of the last update
     private double last = 0;
 
-    /// Is true if the game is stopped
+    /// True if the timer is stopped
     private boolean stopped = false;
 
     /**
-     * constructor
-     * @param client Client
+     * Constructs a new GameTimer for the given client.
+     *
+     * @param client The game client to update
      */
     public GameTimer(Client client) {
         this.client = client;
     }
 
     /**
-     * Stoped the game timer
+     * Stops the game timer.
      */
     @Override
-    public void stop(){
+    public void stop() {
         super.stop();
         stopped = true;
     }
 
     /**
-     * Managed the game timer for updating
-     * @param now
-     *            The timestamp of the current frame given in nanoseconds. This
-     *            value will be the same for all {@code AnimationTimers} called
-     *            during one frame.
+     * Called every frame. Updates the game client if enough time has passed.
+     *
+     * @param now The timestamp of the current frame
      */
     @Override
     public void handle(long now) {
-        if(!stopped){
+        if (!stopped) {
             if (last == 0) {
                 last = now;
             }
@@ -55,6 +58,5 @@ public class GameTimer extends AnimationTimer {
                 client.update();
             }
         }
-
     }
 }

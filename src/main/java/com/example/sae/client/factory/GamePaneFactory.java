@@ -11,11 +11,12 @@ import java.util.Objects;
 
 public class GamePaneFactory {
     /**
+     * Creates a game pane that contains all elements needed to render and interact with the game for the given player.
      *
-     * @param root Contains the elements of the game
-     * @param gameEngine the gameEngine that manage the game
-     * @param playerId the players'id
-     * @return A pane that contains all elements needed for the game for the players'id
+     * @param root The root group containing all game elements
+     * @param gameEngine The game engine that manages the game state and logic
+     * @param playerId The ID of the player
+     * @return The game pane containing the game scene for the specified player
      */
     public static Pane createGamePane(Group root, GameEngine gameEngine, int playerId) {
         Pane pane = new Pane(root);
