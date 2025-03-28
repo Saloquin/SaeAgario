@@ -22,28 +22,46 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 import static com.example.sae.client.controller.SoloController.getMousePosition;
-import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
-import static com.example.sae.core.GameEngine.MAP_LIMIT_WIDTH;
 
 /**
- *
+ * Manages the game logic when the player is playing online.
  */
 public class Online extends Client {
+
+    /// The unique client ID assigned by the server
+    private String clientId;
+
+    /// Timer for game updates
     private final GameTimer gameTimer;
+
+    /// Background thread handling the server
     private final ThreadDeFond handler;
+
+    /// The socket used to communicate with the server
     private final Socket socket;
     private String clientId;
 
+    /**
+     * Constructs an online client for multiplayer gameplay.
+     *
+     * @param root The root group containing the game elements
+     * @param playerName The name of the player
+     * @param color The color of the player's sprite
+     * @throws IOException If the connection to the server fails
+     */
     public Online(Group root, String playerName, Color color) throws IOException {
         super(root, playerName, color);
         this.gameTimer = new GameTimer(this);
-        gameEngine = new GameEngine(MAP_LIMIT_WIDTH, MAP_LIMIT_HEIGHT, false);
+        this.gameEngine = new GameEngine(false);
         this.socket = new Socket("localhost", 12345);
         handler = new ThreadDeFond(this, socket);
         new Thread(handler).start();
         handler.sendMessage("READY");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init() {
         gameStarted = true;
@@ -53,6 +71,9 @@ public class Online extends Client {
         gameTimer.start();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void update() {
         Player player = gameEngine.getPlayer(playerId);
@@ -68,40 +89,47 @@ public class Online extends Client {
         }
 
         handler.sendMessage(String.format(Locale.US, "MOVE|%f|%f", getMousePosition()[0], getMousePosition()[1]));
-
         gameEngine.update();
     }
 
-    @Override
-    public void stopGame() {
-
-    }
-
+    /**
+     * Unused
+     */
     public void handleAppClosed(Stage stage) {
         stage.setOnHiding(event -> {
             try {
                 socket.close();
             } catch (IOException e) {
-                // throw new RuntimeException(e);
+                // Silently fail
             }
         });
     }
 
-    private void returnToMenu() {
-        Platform.exit();
-    }
-
+    /**
+     * Handles incoming messages and updates from the server in a separate thread.
+     */
     class ThreadDeFond implements Runnable {
+
         private final Online client;
         private final PrintWriter out;
         private final BufferedReader in;
 
+        /**
+         * Constructs the handler for server communication.
+         *
+         * @param client The associated online client
+         * @param socket The socket for server communication
+         * @throws IOException If input/output streams cannot be initialized
+         */
         public ThreadDeFond(Online client, Socket socket) throws IOException {
             this.client = client;
             this.out = new PrintWriter(socket.getOutputStream(), true);
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         }
 
+        /**
+         * Listens for messages from the server and handles them.
+         */
         @Override
         public void run() {
             try {
@@ -110,31 +138,33 @@ public class Online extends Client {
                     handleClientInput(input);
                 }
             } catch (IOException e) {
-                // e.printStackTrace();
+                // Silent catch, could log if needed
             }
         }
 
+        /**
+         * Parses and processes server commands.
+         *
+         * @param input The full message string received from the server
+         */
         private void handleClientInput(String input) {
             String[] parts = input.split("\\|");
             if (parts.length < 1) return;
 
             switch (parts[0]) {
                 case "ID" -> clientId = parts[1];
-                case "GAMESTATE" -> {
-                    setupWithSocketData(Arrays.copyOfRange(parts, 1, parts.length));
-                    // System.out.println(input);
-                }
-                case "CREATE" -> {
-                }
-                case "UPDATE" -> {
-                }
-                case "DELETE" -> {
-                    System.out.println(input);
-                    deleteWithSocketData(Arrays.copyOfRange(parts, 1, parts.length));
-                }
+                case "GAMESTATE" -> setupWithSocketData(Arrays.copyOfRange(parts, 1, parts.length));
+                case "CREATE" -> {}  // Future use
+                case "UPDATE" -> {}  // Future use
+                case "DELETE" -> deleteWithSocketData(Arrays.copyOfRange(parts, 1, parts.length));
             }
         }
 
+        /**
+         * Initializes game entities based on server data.
+         *
+         * @param parts Array of encoded entity data
+         */
         public void setupWithSocketData(String[] parts) {
             for (String part : parts) {
                 String[] infos = part.split(",");
@@ -144,16 +174,7 @@ public class Online extends Client {
                         double x = Double.parseDouble(infos[2]);
                         double y = Double.parseDouble(infos[3]);
                         String id = infos[1];
-                        if (id.equals(clientId)) {
-                            /*
-                            Platform.runLater(() -> {
-                                Player player = new Player(root, id, x, y, 5, Color.RED, true);
-                                camera.focusOn(player);
-                                gameEngine.addPlayer(player);
-                            });
-                            */
-                        } else {
-                            System.out.println(part);
+                        if (!id.equals(clientId)) {
                             Platform.runLater(() -> {
                                 Player player = new Player(root, id, x, y, 5, Color.BLUE, false);
                                 gameEngine.addPlayer(player);
@@ -175,30 +196,13 @@ public class Online extends Client {
                 }
             }
 
-            Platform.runLater(() -> {
-                gameEngine.update();
-            });
+            Platform.runLater(() -> gameEngine.update());
         }
 
+        /**
+         * Unused
+         */
         public void updateWithSocketData(String[] parts) {
-            /*
-            HashSet<Entity> entities = gameEngine.getEntities();
-
-            synchronized (entities) {
-                for (Entity entity : entities) {
-                    // retirer cette condition pour rebuild le joueur et les ennemis à chaque fois
-                    // if (entity instanceof Food) {
-                    Platform.runLater(() -> {
-                        gameEngine.removeEntity(entity);
-                        entity.onDeletion();
-                    });
-                    // }
-                }
-            }
-            */
-
-            // Player,null,0,00,0,00,5,00
-            // Food,food,-1614.77,-610.76,2.00
             for (String part : parts) {
                 String[] infos = part.split(",");
 
@@ -211,7 +215,6 @@ public class Online extends Client {
                             camera.focusOn(player);
                             gameEngine.addPlayer(player);
                         });
-                        // System.out.println(part);
                     }
                     case "Food" -> {
                         double x = Double.parseDouble(infos[2]);
@@ -228,25 +231,47 @@ public class Online extends Client {
                 }
             }
 
-            Platform.runLater(() -> {
-                gameEngine.update();
-            });
+            Platform.runLater(() -> gameEngine.update());
         }
 
+        /**
+         * Removes entities from the game based on IDs provided by the server.
+         *
+         * @param entitiesId The list of entity IDs to remove
+         */
         public void deleteWithSocketData(String[] entitiesId) {
             Stream<Entity> allEntities = gameEngine.getEntities().stream();
-            List<Entity> entitiesToRemove = allEntities.filter(e -> Arrays.asList(entitiesId).contains(e.getEntityId())).toList();
+            List<Entity> entitiesToRemove = allEntities
+                    .filter(e -> Arrays.asList(entitiesId).contains(e.getEntityId()))
+                    .toList();
 
-            entitiesToRemove.forEach(entity -> {
-                Platform.runLater(() -> {
-                    gameEngine.removeEntity(entity);
-                    entity.onDeletion();
-                });
-            });
+            entitiesToRemove.forEach(entity ->
+                    Platform.runLater(() -> {
+                        gameEngine.removeEntity(entity);
+                        entity.onDeletion();
+                    })
+            );
         }
 
+        /**
+         * Sends a message to the server.
+         *
+         * @param message The message string to send
+         */
         public void sendMessage(String message) {
             out.println(message);
         }
+    }
+
+    @Override
+    public void stopGame(){
+        
+    }
+
+    /**
+     * Exits the application and returns to the menu.
+     */
+    private void returnToMenu() {
+        Platform.exit();
     }
 }

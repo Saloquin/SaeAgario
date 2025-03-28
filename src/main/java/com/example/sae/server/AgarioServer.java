@@ -33,7 +33,7 @@ public class AgarioServer {
     private final boolean running;
 
     public AgarioServer() throws IOException {
-        this.gameEngine = new GameEngine(2000, 2000, true); // Même taille que le jeu original
+        this.gameEngine = new GameEngine(true); // Même taille que le jeu original
         this.clientHandlers = new ConcurrentHashMap<>();
         this.serverSocket = new ServerSocket(PORT);
         this.running = true;
