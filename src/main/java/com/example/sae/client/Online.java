@@ -117,6 +117,11 @@ public class Online extends Client {
                 }
             } catch (IOException e) {
                 // e.printStackTrace();
+            } finally {
+                Platform.runLater(() -> {
+                    gameIsEnded.set(true);
+                    stopOnlineGame();
+                });
             }
         }
 
@@ -203,9 +208,9 @@ public class Online extends Client {
                         int r = Integer.parseInt(infos[5]);
                         int g = Integer.parseInt(infos[6]);
                         int b = Integer.parseInt(infos[7]);
-                    
+                        String name = infos[8];
                         Platform.runLater(() -> {
-                            gameEngine.addEntity(new PowerUp(root, infos[1], x, y, masse, Color.rgb(r, g, b, 0.99)));
+                            gameEngine.addEntity(new PowerUp(root, infos[1], x, y, masse, Color.rgb(r, g, b, 0.99),name));
                         });
                     }
                     default -> System.out.println(part);

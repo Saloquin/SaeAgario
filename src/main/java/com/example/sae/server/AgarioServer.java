@@ -3,6 +3,7 @@ package com.example.sae.server;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.*;
 import com.example.sae.core.entity.powerUp.PowerUp;
+import com.example.sae.core.entity.powerUp.PowerUpType;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
@@ -178,7 +179,9 @@ public class AgarioServer {
                 entity.getColor().getRed()*255,
                 entity.getColor().getGreen()*255,
                 entity.getColor().getBlue()*255,
-                entity instanceof MoveableBody ? ((MoveableBody) entity).getNom() : ":(");
+                entity instanceof MoveableBody ? ((MoveableBody) entity).getNom() :
+                entity instanceof PowerUp ? ((PowerUp) entity).getType().name() : ":(");
+
     }
 
     private String serializeGameState() {

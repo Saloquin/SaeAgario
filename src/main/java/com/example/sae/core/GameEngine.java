@@ -2,6 +2,7 @@ package com.example.sae.core;
 
 import com.example.sae.client.utils.config.Constants;
 import com.example.sae.core.entity.*;
+import com.example.sae.core.entity.powerUp.PowerUp;
 import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
 import javafx.animation.ScaleTransition;
@@ -140,7 +141,14 @@ public class GameEngine {
             }
 
             predator.increaseSize(prey.getMasse());
-
+            if (prey instanceof PowerUp buff){
+                try{
+                    buff.applyEffect(predator);
+                }
+                catch (Exception e){
+                    System.out.println("Grosse bouel verte mangée");
+                }
+            }
             if (!isServer) {
             TranslateTransition transition = new TranslateTransition(Duration.millis(200 ), prey.getSprite());
 
@@ -200,7 +208,7 @@ public class GameEngine {
         }
     }
 
-    public Entity getEntityById(String id){
+    public synchronized Entity getEntityById(String id) {
         return entities.stream().filter(
                 entity -> entity.getEntityId().equals(id)
         ).findFirst().orElse(null);

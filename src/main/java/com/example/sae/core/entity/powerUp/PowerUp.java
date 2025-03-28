@@ -21,8 +21,9 @@ public class PowerUp extends Entity {
         sprite.setCenterY(Math.random() * (MAP_LIMIT_HEIGHT * 2) - MAP_LIMIT_HEIGHT);
     }
 
-    public PowerUp(Group group, String id, double x, double y, double size, Color color) {
+    public PowerUp(Group group, String id, double x, double y, double size, Color color,String name) {
         super(group, id, size, color);
+        type = PowerUpType.valueOf(name);
         sprite.setCenterX(x);
         sprite.setCenterY(y);
         sprite.setStroke(Color.BLACK);

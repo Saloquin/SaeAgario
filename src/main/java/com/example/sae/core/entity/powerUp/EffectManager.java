@@ -33,7 +33,6 @@ public class EffectManager {
 
         powerUpType.applyEffect(body);
         activeEffects.put(body, new Effect(powerUpType));
-        DebugWindowController.addLog("Effet supprimé - Total effets actifs: " + activeEffects.size());
 
     }
 
@@ -42,8 +41,6 @@ public class EffectManager {
             if (!Solo.getGameEngine().getEntities().contains(body) || effect.update()) {
                 effect.type.removeEffect(body);
                 activeEffects.remove(body);
-                DebugWindowController.addLog("Effet supprimé - Total effets actifs: " + activeEffects.size());
-
             }
         });
     }
