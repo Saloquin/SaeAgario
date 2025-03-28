@@ -89,6 +89,11 @@ public class GameEngine {
             updateEntityInQuadTree(entity);
             entity.Update();
         }
+        for (Player p : players.values()) {
+            if(p.getSprite().getCenterY()==9999999 && p.getSprite().getCenterX()==9999999){
+                removePlayer(getPlayerId(p));
+            }
+        }
     }
 
     public void cleanupEntities() {
@@ -119,11 +124,11 @@ public class GameEngine {
             // Calculer l'aire de l'intersection
             double intersectionArea = intersect.getBoundsInLocal().getWidth() * intersect.getBoundsInLocal().getHeight();
             double entity2Area = Math.PI * Math.pow(entity2.getSprite().getRadius(), 2);
+            double entity1Area = Math.PI * Math.pow(entity1.getSprite().getRadius(), 2);
 
-            // Si l'aire d'intersection est supérieure à 66% de l'aire de la proie
-            // OU si l'intersection est inférieure à 33% de l'aire du prédateur
-            return (intersectionArea / entity2Area) >= 0.66 ||
-                    (intersectionArea / (Math.PI * Math.pow(entity1.getSprite().getRadius(), 2))) <= 0.33;
+            // L'entité 1 doit recouvrir au moins 33% de l'entité 2
+            double coverageRatio = intersectionArea / entity2Area;
+            return coverageRatio >= 0.33;
         }
         return false;
     }
@@ -133,6 +138,7 @@ public class GameEngine {
             return;
         }
         removeFromCollections(prey);
+        predator.increaseSize(prey.getMasse());
         startAnimations(predator, prey);
         System.out.println(isCloneCollision(predator, prey));
         if (isMainBodyCollision(predator, prey)) {
@@ -147,7 +153,7 @@ public class GameEngine {
     }
 
     private void handleMainBodyCollisionWithOther(MoveableBody predator, MoveableBody prey) {
-        if(prey.getComposite().getClones().isEmpty()){
+        if(prey.getComposite().getClones().isEmpty()) {
             System.out.println("Plus de clones, game over");
             if(prey instanceof Player player) {
                 removePlayer(getPlayerId(player));
@@ -156,24 +162,20 @@ public class GameEngine {
             entitiesMovable.remove(prey);
             quadTree.remove(prey);
         }
-        else{
-            System.out.println("manger par predateur autre que moi tandis que j'ai un composite");
-
-
+        else {
+            System.out.println("mangé par prédateur autre que moi tandis que j'ai un composite");
             MoveableBody firstClone = (MoveableBody) prey.getComposite().getClones().get(0);
             BodyComposite composite = firstClone.getComposite();
             composite.setMainBody(firstClone);
             composite.removeClone(firstClone);
 
+            removeFromCollections(prey);
+            removeEntity(prey);
+            prey.onDeletion();
+
             if (prey instanceof Player oldPlayer && firstClone instanceof Player newPlayer) {
                 handlePlayerMainBodyCollision(oldPlayer, newPlayer);
             }
-//            // Update camera focus if predator is a Player
-//            if (firstClone instanceof Player player) {
-//                Client.getCamera().focusPaneOn(MinimapManager.getInstance().getPlayerView(), player);
-//                MinimapManager.getInstance().setPlayer(player);
-//                PlayerInfoManager.getInstance().setPlayer(player);
-//            }
         }
     }
 
@@ -223,16 +225,23 @@ public class GameEngine {
     }
 
     private void handleMainBodyCollision(MoveableBody predator, MoveableBody prey) {
+        BodyComposite composite = predator.getComposite();
+        // Changement du corps principal
+        composite.setMainBody(predator);
+        composite.removeClone(predator);
+
+        // Nettoyage complet de l'ancien corps principal
+        removeFromCollections(prey);
+        removeEntity(prey);
+        prey.onDeletion();
+
 
         if (prey instanceof Player oldPlayer && predator instanceof Player newPlayer) {
             handlePlayerMainBodyCollision(oldPlayer, newPlayer);
         }
 
-        BodyComposite composite = predator.getComposite();
-        composite.setMainBody(predator);
-        composite.removeClone(predator);
 
-        System.out.println("manger par mon clone");
+        System.out.println("mangé par mon clone");
     }
 
     private void handlePlayerMainBodyCollision(Player oldPlayer, Player newPlayer) {
@@ -254,10 +263,13 @@ public class GameEngine {
     private void handleCloneCollision(MoveableBody predator, MoveableBody prey) {
         System.out.println("je mange mon clone");
         prey.getComposite().removeClone(prey);
+        predator.getComposite().removeClone(prey);
+        removeFromCollections(prey);
+        removeEntity(prey);
+        prey.onDeletion();
     }
 
     private void applyCollisionEffects(MoveableBody predator, Entity prey) {
-        predator.increaseSize(prey.getMasse());
         if (prey instanceof PowerUp powerUp) {
             try {
                 powerUp.applyEffect(predator);
@@ -266,9 +278,7 @@ public class GameEngine {
             }
         }
         System.out.println("manger par predateur autre que moi tandis que je n'ai pas de composite");
-        /*if(prey instanceof Player player){
-            removePlayer(getPlayerId(player));
-        }*/
+
     }
 
     private int getPlayerId(Player player) {

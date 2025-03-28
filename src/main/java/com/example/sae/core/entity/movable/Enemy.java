@@ -4,6 +4,7 @@ import com.example.sae.client.Client;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.EntityFactory;
 import com.example.sae.core.entity.immobile.Food;
+import com.example.sae.core.entity.movable.body.BodyComponent;
 import com.example.sae.core.entity.movable.body.MoveableBody;
 import com.example.sae.core.entity.movable.enemyStrategy.ChaseClosestEntityStrategy;
 import com.example.sae.core.entity.movable.enemyStrategy.EnemyStrategy;
@@ -13,6 +14,7 @@ import com.example.sae.core.entity.immobile.powerUp.PowerUp;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import static com.example.sae.core.GameEngine.MAP_LIMIT_HEIGHT;
@@ -109,12 +111,19 @@ public class Enemy extends MoveableBody {
      */
     @Override
     public void Update() {
-        if(isComposite()) {
-            strategy= ((Enemy)composite.getMainBody()).getStrategy();
-        }
-        else {
+        if (/*composite != null && */composite.getMainBody() != this) {
+            // Si c'est un clone, copie la cible du corps principal
+            Enemy mainBody = (Enemy) composite.getMainBody();
+            this.targetPosition = mainBody.getTargetPosition();
+            // Garde sa propre stratégie mais met à jour
+            strategy = chooseOptimalStrategy();
+        } else {
+            // Si c'est le corps principal, choisit une nouvelle stratégie
             strategy = chooseOptimalStrategy();
         }
+
+        // Exécute la stratégie
+        System.out.println(Arrays.toString(getTargetPosition()));
         strategy.execute(this);
     }
 
@@ -230,6 +239,17 @@ public class Enemy extends MoveableBody {
             return new SeekFoodStrategy();
         } else {
             return new RandomMoveStrategy();
+        }
+    }
+
+    public void updateTargetForClones(double[] newTarget) {
+        setTargetPosition(newTarget);
+        if (composite != null && composite.getMainBody() == this) {
+            for (BodyComponent clone : composite.getClones()) {
+                if (clone instanceof Enemy enemy) {
+                    enemy.setTargetPosition(newTarget);
+                }
+            }
         }
     }
 

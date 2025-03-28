@@ -50,14 +50,17 @@ public class ChaseClosestEntityStrategy implements EnemyStrategy {
                 }
             }
         }
+        System.out.println("closestEntity: " + closestEntity);
 
-        if (closestEntity != null) {
-            enemy.moveToward(closestEntity.getPosition());
+        if (closestEntity != null && enemy.getComposite().getMainBody() == enemy) {
+            enemy.updateTargetForClones(closestEntity.getPosition());
+        }
+
+        if (enemy.getTargetPosition() != null) {
+            enemy.moveToward(enemy.getTargetPosition());
             return true;
         }
-        else {
-            new SeekFoodStrategy().execute(enemy);
-            return false;
-        }
+
+        return new SeekFoodStrategy().execute(enemy);
     }
 }

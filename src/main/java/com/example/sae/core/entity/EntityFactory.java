@@ -115,7 +115,7 @@ public class EntityFactory {
     }
 
     public static Enemy createEnemy(double mass, String name, Color color) {
-        return new Enemy(root, mass, name);
+        return new Enemy(root, mass, name,color);
     }
 
     /**

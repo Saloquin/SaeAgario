@@ -48,12 +48,15 @@ public class SeekFoodStrategy implements EnemyStrategy {
             }
         }
 
-        if (closestFood != null) {
-            enemy.moveToward(closestFood.getPosition());
-            return true;
-        } else {
-            new RandomMoveStrategy().execute(enemy);
-            return false;
+        if (closestFood != null && enemy.getComposite().getMainBody() == enemy) {
+            enemy.updateTargetForClones(closestFood.getPosition());
         }
+
+        if (enemy.getTargetPosition() != null) {
+            enemy.moveToward(enemy.getTargetPosition());
+            return true;
+        }
+
+        return new RandomMoveStrategy().execute(enemy);
     }
 }
