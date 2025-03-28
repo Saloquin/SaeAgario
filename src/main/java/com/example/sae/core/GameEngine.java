@@ -144,7 +144,7 @@ public class GameEngine {
         }
     }
 
-    private void removePrey(Entity prey) {
+    public void removePrey(Entity prey) {
         if (prey instanceof Player) {
             int playerId = getPlayerId((Player) prey);
             removePlayer(playerId);

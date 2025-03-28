@@ -139,11 +139,21 @@ public class Online extends Client {
                     String id = parts[1];
                     // System.out.println("Update masse local broadcast: " + id);
                     double masse = Double.parseDouble(parts[2]);
-                    Player player = (Player)gameEngine.getEntityById(id);
+                    // Player player = (Player)gameEngine.getEntityById(id);
+                    Stream<MoveableBody> allPlayers = gameEngine.entitiesMovable.stream();
+                    List<MoveableBody> movingPlayers = allPlayers.filter(p -> id.equals(p.getEntityId())).toList();
                     // System.out.println("player: " + player);
+                    /*
                     if (player != null) {
                         player.setMasse(masse);
                     }
+                    */
+                    movingPlayers.forEach(entity -> {
+                        Platform.runLater(() -> {
+                            Player player = (Player) entity;
+                            player.setMasse(masse);
+                        });
+                    });
                 }
             }
         }

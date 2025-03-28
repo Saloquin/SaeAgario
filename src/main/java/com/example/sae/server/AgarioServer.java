@@ -10,9 +10,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class AgarioServer {
-    // actuellement : le serveur est mis à jour quand qlqn rej, leave, ou qu'il mange qlqch
-    //                les clients sont sync quand qlqn rej, se déplace, leave, ou qu'il mange qlqch
-    // à faire : régler bug quand un joueur est proche d'un autre joueur
+    // normalement c bon
     private static final int PORT = 12345;
     private static final int TARGET_FPS = 30;
     private static final long FRAME_TIME = 1000000000 / TARGET_FPS; // 33ms en nanos
@@ -141,7 +139,7 @@ public class AgarioServer {
 
     private void broadcastEntityDeletion(Entity entity) {
         // Supprimer l'entité de tous les clients
-        if(entity == null) return;
+        if (entity == null) return;
         // System.out.println("Delete prey broadcast : " + entity.getEntityId());
         clientHandlers.values().forEach(handler -> handler.sendMessage("DELETE|" + entity.getEntityId()));
     }
@@ -245,19 +243,18 @@ public class AgarioServer {
                     }
                 }
                 case "DELETE" -> {
-                    // System.out.println("Delete prey serveur : " + parts[1]);
+                    System.out.println("Delete prey serveur : " + parts[1]);
                     Entity entity = gameEngine.getEntityById(parts[1]);
-                    if (entity == null){
+                    if (entity == null) {
                         // System.out.println("Entity not found");
                         return;
                     }
-                    gameEngine.removeEntity(entity);
-                    // entity.onDeletion();
+
+                    gameEngine.removePrey(entity);
                     broadcastEntityDeletion(gameEngine.getEntityById(parts[1]));
 
                     Player player = (Player) gameEngine.getEntityById(parts[2]);
-
-                    if(player == null){
+                    if (player == null) {
                         // System.out.println("Player not found");
                         return;
                     }
