@@ -2,6 +2,7 @@ package com.example.sae.server;
 
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.*;
+import com.example.sae.core.entity.powerUp.PowerUp;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
@@ -20,6 +21,7 @@ public class AgarioServer {
     private final Map<String, ClientHandler> clientHandlers;
     private final ServerSocket serverSocket;
     private volatile boolean running;
+    private Group root = new Group();
 
     public AgarioServer() throws IOException {
         this.gameEngine = new GameEngine(2000, 2000, true, true); // Même taille que le jeu original
@@ -38,21 +40,14 @@ public class AgarioServer {
     }
 
     private void initializeWorld() {
+        EntityFactory.setRoot(root);
         // Initialiser la nourriture
-        for (int i = 0; i < 90; i++) {
-            Food food = new Food(null, 2); // null car pas besoin de Group côté serveur
-            gameEngine.addEntity(food);
+        while (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
+            gameEngine.addEntity(EntityFactory.createFood(GameEngine.MASSE_INIT_FOOD));
         }
-        gameEngine.addEntity(new Food(null, "a", 100, 0, 2, Color.BLACK));
-        gameEngine.addEntity(new Food(null, "b", 100, 10, 2, Color.RED));
-        gameEngine.addEntity(new Food(null, "c", 200, 0, 2, Color.BLACK));
-        gameEngine.addEntity(new Food(null, "d", 200, 10, 2, Color.RED));
-        gameEngine.addEntity(new Food(null, "e", 300, 0, 2, Color.BLACK));
-        gameEngine.addEntity(new Food(null, "f", 300, 10, 2, Color.RED));
-        gameEngine.addEntity(new Food(null, "g", 400, 0, 2, Color.BLACK));
-        gameEngine.addEntity(new Food(null, "h", 400, 10, 2, Color.RED));
-        gameEngine.addEntity(new Food(null, "i", 500, 0, 2, Color.BLACK));
-        gameEngine.addEntity(new Food(null, "j", 500, 10, 2, Color.RED));
+        while (gameEngine.getEntitiesOfType(PowerUp.class).size() < GameEngine.NB_POWERUP_MAX) {
+            gameEngine.addEntity(EntityFactory.createRandomPowerUp());
+        }
     }
 
     public void start() {
@@ -63,6 +58,7 @@ public class AgarioServer {
         // Thread principal pour accepter les connexions
         System.out.println("Serveur démarré sur le port " + PORT);
         while (running) {
+
             try {
                 Socket clientSocket = serverSocket.accept();
                 String clientId = UUID.randomUUID().toString();
@@ -79,7 +75,7 @@ public class AgarioServer {
 
     private void gameLoop() {
         long lastUpdate = System.nanoTime();
-        long groscaca = System.nanoTime();
+        long lastFoodPowerUpUpdate = System.nanoTime();
 
         while (running) {
             long now = System.nanoTime();
@@ -90,8 +86,19 @@ public class AgarioServer {
             }
 
             // à retirer
-            if (now - groscaca >= 5000000000L) {
-                groscaca = now;
+            if (now - lastFoodPowerUpUpdate >= 5000000000L) {
+                lastFoodPowerUpUpdate = now;
+
+                if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_FOOD_MAX) {
+                    System.out.println("Adding food");
+                    gameEngine.addEntity(EntityFactory.createFood(GameEngine.MASSE_INIT_FOOD));
+                    gameEngine.getEntitiesOfType(Food.class).size();
+                }
+
+                if (gameEngine.getEntitiesOfType(Food.class).size() < GameEngine.NB_POWERUP_MAX) {
+                    System.out.println("Adding powerup");
+                    gameEngine.addEntity(EntityFactory.createRandomPowerUp());
+                }
 
                 System.out.println("---------------");
                 clientHandlers.values().forEach(handler -> System.out.println(serializeEntity(handler.player)));
@@ -169,8 +176,8 @@ public class AgarioServer {
                 entity.getPosition()[1],
                 entity.getMasse(),
                 entity.getColor().getRed()*255,
-                entity.getColor().getBlue()*255,
                 entity.getColor().getGreen()*255,
+                entity.getColor().getBlue()*255,
                 entity instanceof MoveableBody ? ((MoveableBody) entity).getNom() : ":(");
     }
 
@@ -199,9 +206,7 @@ public class AgarioServer {
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.ready = false;
 
-            // Créer un nouveau joueur pour ce client
-            // this.player = new Player(null, clientId, MoveableBody.DEFAULT_MASSE, Color.RED); // null car pas besoin de Group côté serveur
-            EntityFactory.setRoot(new Group());
+
 
             this.player = EntityFactory.createPlayer(clientId, MoveableBody.DEFAULT_MASSE, "verisubbo", Color.GREEN);
             this.player.setInputPosition(new double[]{ 0, 0 });

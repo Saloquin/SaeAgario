@@ -2,7 +2,6 @@ package com.example.sae.core;
 
 import com.example.sae.client.utils.config.Constants;
 import com.example.sae.core.entity.*;
-import com.example.sae.core.entity.powerUp.PowerUp;
 import com.example.sae.core.quadtree.Boundary;
 import com.example.sae.core.quadtree.QuadTree;
 import javafx.animation.ScaleTransition;

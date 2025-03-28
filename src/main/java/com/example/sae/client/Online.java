@@ -6,6 +6,7 @@ import com.example.sae.client.utils.debug.DebugWindow;
 import com.example.sae.client.utils.timer.GameTimer;
 import com.example.sae.core.GameEngine;
 import com.example.sae.core.entity.*;
+import com.example.sae.core.entity.powerUp.PowerUp;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -193,6 +194,18 @@ public class Online extends Client {
                         int b = Integer.parseInt(infos[7]);
                         Platform.runLater(() -> {
                             gameEngine.addEntity(new Food(root, infos[1], x, y, masse, Color.rgb(r, g, b, 0.99)));
+                        });
+                    }
+                    case "PowerUp" -> {
+                        double x = Double.parseDouble(infos[2]);
+                        double y = Double.parseDouble(infos[3]);
+                        double masse = Double.parseDouble(infos[4]);
+                        int r = Integer.parseInt(infos[5]);
+                        int g = Integer.parseInt(infos[6]);
+                        int b = Integer.parseInt(infos[7]);
+                    
+                        Platform.runLater(() -> {
+                            gameEngine.addEntity(new PowerUp(root, infos[1], x, y, masse, Color.rgb(r, g, b, 0.99)));
                         });
                     }
                     default -> System.out.println(part);

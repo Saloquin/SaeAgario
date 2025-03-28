@@ -21,6 +21,13 @@ public class PowerUp extends Entity {
         sprite.setCenterY(Math.random() * (MAP_LIMIT_HEIGHT * 2) - MAP_LIMIT_HEIGHT);
     }
 
+    public PowerUp(Group group, String id, double x, double y, double size, Color color) {
+        super(group, id, size, color);
+        sprite.setCenterX(x);
+        sprite.setCenterY(y);
+        sprite.setStroke(Color.BLACK);
+        sprite.setStrokeWidth(2);
+    }
     public void applyEffect(MoveableBody body) {
         EffectManager.applyEffect(body, type);
     }
